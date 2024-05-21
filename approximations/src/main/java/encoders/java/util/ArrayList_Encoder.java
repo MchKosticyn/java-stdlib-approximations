@@ -1,4 +1,4 @@
-package encoders.util;
+package encoders.java.util;
 
 import org.usvm.api.encoder.EncoderFor;
 import org.usvm.api.encoder.ObjectEncoder;

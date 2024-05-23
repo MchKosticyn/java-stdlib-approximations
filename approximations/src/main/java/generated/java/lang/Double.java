@@ -44,7 +44,7 @@ public final class Double implements LibSLRuntime.Automaton, Comparable<Double> 
 
     public static final double NaN = 0.0d / 0.0d;
 
-    public static final Class TYPE = java.lang.Double.class;
+    public static final Class TYPE = PrimitiveTypeUtils.getPrimitiveClass("double");
 
     static {
         Engine.assume(true);
@@ -421,8 +421,8 @@ public final class Double implements LibSLRuntime.Automaton, Comparable<Double> 
         java.lang.Double result = null;
         // WARNING: no state checks in static context
         /* body */ {
-            result = (java.lang.Double) ((Object) new Double((Void) null, 
-                /* state = */ Double.__$lsl_States.Initialized, 
+            result = (java.lang.Double) ((Object) new Double((Void) null,
+                /* state = */ Double.__$lsl_States.Initialized,
                 /* value = */ d
             ));
         }

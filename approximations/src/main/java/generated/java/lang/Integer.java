@@ -28,7 +28,7 @@ public final class Integer implements LibSLRuntime.Automaton, Comparable<Integer
 
     public static final int MAX_VALUE = 2147483647;
 
-    public static final Class TYPE = java.lang.Integer.class;
+    public static final Class TYPE = PrimitiveTypeUtils.getPrimitiveClass("int");
 
     public static final int SIZE = 32;
 
@@ -422,8 +422,8 @@ public final class Integer implements LibSLRuntime.Automaton, Comparable<Integer
     public static java.lang.Integer valueOf(int i) {
         java.lang.Integer result = null;
         /* body */ {
-            result = (java.lang.Integer) ((Object) new Integer((Void) null, 
-                /* state = */ Integer.__$lsl_States.Initialized, 
+            result = (java.lang.Integer) ((Object) new Integer((Void) null,
+                /* state = */ Integer.__$lsl_States.Initialized,
                 /* value = */ i
             ));
         }

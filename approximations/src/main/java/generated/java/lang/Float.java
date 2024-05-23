@@ -44,7 +44,7 @@ public final class Float implements LibSLRuntime.Automaton, Comparable<Float> {
 
     public static final float NaN = 0.0f / 0.0f;
 
-    public static final Class TYPE = java.lang.Float.class;
+    public static final Class TYPE = PrimitiveTypeUtils.getPrimitiveClass("float");
 
     static {
         Engine.assume(true);
@@ -434,8 +434,8 @@ public final class Float implements LibSLRuntime.Automaton, Comparable<Float> {
         java.lang.Float result = null;
         // WARNING: no state checks in static context
         /* body */ {
-            result = (java.lang.Float) ((Object) new Float((Void) null, 
-                /* state = */ Float.__$lsl_States.Initialized, 
+            result = (java.lang.Float) ((Object) new Float((Void) null,
+                /* state = */ Float.__$lsl_States.Initialized,
                 /* value = */ f
             ));
         }

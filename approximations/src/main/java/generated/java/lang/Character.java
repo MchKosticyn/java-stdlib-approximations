@@ -26,7 +26,7 @@ public final class Character implements LibSLRuntime.Automaton, Serializable {
 
     public static final int SIZE = 16;
 
-    public static final Class TYPE = java.lang.Character.class;
+    public static final Class TYPE = PrimitiveTypeUtils.getPrimitiveClass("char");
 
     public static final byte COMBINING_SPACING_MARK = 8;
 
@@ -252,8 +252,8 @@ public final class Character implements LibSLRuntime.Automaton, Serializable {
     public static java.lang.Character valueOf(char c) {
         java.lang.Character result = null;
         /* body */ {
-            result = (java.lang.Character) ((Object) new Character((Void) null, 
-                /* state = */ Character.__$lsl_States.Initialized, 
+            result = (java.lang.Character) ((Object) new Character((Void) null,
+                /* state = */ Character.__$lsl_States.Initialized,
                 /* value = */ c
             ));
         }

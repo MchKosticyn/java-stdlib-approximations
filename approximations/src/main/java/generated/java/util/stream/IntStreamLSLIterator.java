@@ -29,12 +29,12 @@ public class IntStreamLSLIterator implements LibSLRuntime.Automaton, PrimitiveIt
         Engine.assume(true);
     }
 
-    public IntStreamLSL parent;
+    public IntStreamImpl parent;
 
     public int cursor;
 
     @LibSLRuntime.AutomatonConstructor
-    public IntStreamLSLIterator(Void __$lsl_token, final byte p0, final IntStreamLSL p1,
+    public IntStreamLSLIterator(Void __$lsl_token, final byte p0, final IntStreamImpl p1,
             final int p2) {
         this.parent = p1;
         this.cursor = p2;
@@ -53,7 +53,7 @@ public class IntStreamLSLIterator implements LibSLRuntime.Automaton, PrimitiveIt
         boolean result = false;
         /* body */ {
             Engine.assume(this.parent != null);
-            result = this.cursor != ((IntStreamLSL) ((Object) this.parent)).length;
+            result = this.cursor != ((IntStreamImpl) ((Object) this.parent)).length;
         }
         return result;
     }
@@ -66,9 +66,9 @@ public class IntStreamLSLIterator implements LibSLRuntime.Automaton, PrimitiveIt
         Integer result = null;
         /* body */ {
             Engine.assume(this.parent != null);
-            final int[] parentStorage = ((IntStreamLSL) ((Object) this.parent)).storage;
+            final int[] parentStorage = ((IntStreamImpl) ((Object) this.parent)).storage;
             final int i = this.cursor;
-            if (i >= ((IntStreamLSL) ((Object) this.parent)).length) {
+            if (i >= ((IntStreamImpl) ((Object) this.parent)).length) {
                 throw new NoSuchElementException();
             }
             this.cursor = i + 1;
@@ -85,9 +85,9 @@ public class IntStreamLSLIterator implements LibSLRuntime.Automaton, PrimitiveIt
         int result = 0;
         /* body */ {
             Engine.assume(this.parent != null);
-            final int[] parentStorage = ((IntStreamLSL) ((Object) this.parent)).storage;
+            final int[] parentStorage = ((IntStreamImpl) ((Object) this.parent)).storage;
             final int i = this.cursor;
-            if (i >= ((IntStreamLSL) ((Object) this.parent)).length) {
+            if (i >= ((IntStreamImpl) ((Object) this.parent)).length) {
                 throw new NoSuchElementException();
             }
             this.cursor = i + 1;
@@ -117,13 +117,13 @@ public class IntStreamLSLIterator implements LibSLRuntime.Automaton, PrimitiveIt
                 throw new NullPointerException();
             }
             int i = this.cursor;
-            final int size = ((IntStreamLSL) ((Object) this.parent)).length;
+            final int size = ((IntStreamImpl) ((Object) this.parent)).length;
             if (i != size) {
-                final int[] pStorage = ((IntStreamLSL) ((Object) this.parent)).storage;
+                final int[] pStorage = ((IntStreamImpl) ((Object) this.parent)).storage;
                 while (i < size) {
                     final int item = pStorage[i];
                     userAction.accept(item);
-                    i += 1;
+                    i++;
                 }
                 ;
                 this.cursor = i;
@@ -142,28 +142,17 @@ public class IntStreamLSLIterator implements LibSLRuntime.Automaton, PrimitiveIt
                 throw new NullPointerException();
             }
             int i = this.cursor;
-            final int size = ((IntStreamLSL) ((Object) this.parent)).length;
+            final int size = ((IntStreamImpl) ((Object) this.parent)).length;
             if (i != size) {
-                final int[] pStorage = ((IntStreamLSL) ((Object) this.parent)).storage;
+                final int[] pStorage = ((IntStreamImpl) ((Object) this.parent)).storage;
                 while (i < size) {
                     final int item = pStorage[i];
                     userAction.accept(item);
-                    i += 1;
+                    i++;
                 }
                 ;
                 this.cursor = i;
             }
-        }
-    }
-
-    public static final class __$lsl_States {
-        public static final byte Initialized = (byte) 0;
-    }
-
-    @Approximate(IntStreamLSLIterator.class)
-    public static final class __hook {
-        private __hook(Void o1, Void o2) {
-            Engine.assume(false);
         }
     }
 }

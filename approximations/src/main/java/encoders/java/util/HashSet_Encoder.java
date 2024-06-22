@@ -1,5 +1,6 @@
 package encoders.java.util;
 
+import generated.java.util.HashSetImpl;
 import org.usvm.api.encoder.EncoderFor;
 import org.usvm.api.encoder.ObjectEncoder;
 
@@ -12,7 +13,7 @@ public class HashSet_Encoder implements ObjectEncoder {
 
     @Override
     public Object encode(Object object) {
-        generated.java.util.HashSet result = new generated.java.util.HashSet();
+        HashSetImpl result = new HashSetImpl();
         result.addAll(Arrays.asList(((Set<?>) object).toArray()));
         return result;
     }

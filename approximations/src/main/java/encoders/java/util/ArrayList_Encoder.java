@@ -1,5 +1,6 @@
 package encoders.java.util;
 
+import generated.java.util.AbstractListImpl;
 import org.usvm.api.encoder.EncoderFor;
 import org.usvm.api.encoder.ObjectEncoder;
 
@@ -10,7 +11,7 @@ public class ArrayList_Encoder implements ObjectEncoder {
 
     @Override
     public Object encode(Object list) {
-        generated.java.util.ArrayList result = new generated.java.util.ArrayList();
+        AbstractListImpl result = new AbstractListImpl();
         result.addAll(((ArrayList<?>) list).stream().toList());
         return result;
     }

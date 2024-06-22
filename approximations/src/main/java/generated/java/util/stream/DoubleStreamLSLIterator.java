@@ -29,12 +29,12 @@ public class DoubleStreamLSLIterator implements LibSLRuntime.Automaton, Primitiv
         Engine.assume(true);
     }
 
-    public DoubleStreamLSL parent;
+    public DoubleStreamImpl parent;
 
     public int cursor;
 
     @LibSLRuntime.AutomatonConstructor
-    public DoubleStreamLSLIterator(Void __$lsl_token, final byte p0, final DoubleStreamLSL p1,
+    public DoubleStreamLSLIterator(Void __$lsl_token, final byte p0, final DoubleStreamImpl p1,
             final int p2) {
         this.parent = p1;
         this.cursor = p2;
@@ -53,7 +53,7 @@ public class DoubleStreamLSLIterator implements LibSLRuntime.Automaton, Primitiv
         boolean result = false;
         /* body */ {
             Engine.assume(this.parent != null);
-            result = this.cursor != ((DoubleStreamLSL) ((Object) this.parent)).length;
+            result = this.cursor != ((DoubleStreamImpl) ((Object) this.parent)).length;
         }
         return result;
     }
@@ -66,9 +66,9 @@ public class DoubleStreamLSLIterator implements LibSLRuntime.Automaton, Primitiv
         Double result = null;
         /* body */ {
             Engine.assume(this.parent != null);
-            final double[] parentStorage = ((DoubleStreamLSL) ((Object) this.parent)).storage;
+            final double[] parentStorage = ((DoubleStreamImpl) ((Object) this.parent)).storage;
             final int i = this.cursor;
-            if (i >= ((DoubleStreamLSL) ((Object) this.parent)).length) {
+            if (i >= ((DoubleStreamImpl) ((Object) this.parent)).length) {
                 throw new NoSuchElementException();
             }
             this.cursor = i + 1;
@@ -85,9 +85,9 @@ public class DoubleStreamLSLIterator implements LibSLRuntime.Automaton, Primitiv
         double result = 0.0d;
         /* body */ {
             Engine.assume(this.parent != null);
-            final double[] parentStorage = ((DoubleStreamLSL) ((Object) this.parent)).storage;
+            final double[] parentStorage = ((DoubleStreamImpl) ((Object) this.parent)).storage;
             final int i = this.cursor;
-            if (i >= ((DoubleStreamLSL) ((Object) this.parent)).length) {
+            if (i >= ((DoubleStreamImpl) ((Object) this.parent)).length) {
                 throw new NoSuchElementException();
             }
             this.cursor = i + 1;
@@ -117,13 +117,13 @@ public class DoubleStreamLSLIterator implements LibSLRuntime.Automaton, Primitiv
                 throw new NullPointerException();
             }
             int i = this.cursor;
-            final int size = ((DoubleStreamLSL) ((Object) this.parent)).length;
+            final int size = ((DoubleStreamImpl) ((Object) this.parent)).length;
             if (i != size) {
-                final double[] pStorage = ((DoubleStreamLSL) ((Object) this.parent)).storage;
+                final double[] pStorage = ((DoubleStreamImpl) ((Object) this.parent)).storage;
                 while (i < size) {
                     final double item = pStorage[i];
                     userAction.accept(item);
-                    i += 1;
+                    i++;
                 }
                 ;
                 this.cursor = i;
@@ -142,28 +142,17 @@ public class DoubleStreamLSLIterator implements LibSLRuntime.Automaton, Primitiv
                 throw new NullPointerException();
             }
             int i = this.cursor;
-            final int size = ((DoubleStreamLSL) ((Object) this.parent)).length;
+            final int size = ((DoubleStreamImpl) ((Object) this.parent)).length;
             if (i != size) {
-                final double[] pStorage = ((DoubleStreamLSL) ((Object) this.parent)).storage;
+                final double[] pStorage = ((DoubleStreamImpl) ((Object) this.parent)).storage;
                 while (i < size) {
                     final double item = pStorage[i];
                     userAction.accept(item);
-                    i += 1;
+                    i++;
                 }
                 ;
                 this.cursor = i;
             }
-        }
-    }
-
-    public static final class __$lsl_States {
-        public static final byte Initialized = (byte) 0;
-    }
-
-    @Approximate(DoubleStreamLSLIterator.class)
-    public static final class __hook {
-        private __hook(Void o1, Void o2) {
-            Engine.assume(false);
         }
     }
 }

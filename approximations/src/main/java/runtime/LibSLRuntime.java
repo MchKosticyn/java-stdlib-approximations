@@ -22,20 +22,9 @@ public final class LibSLRuntime {
     */
     private static final Object SOMETHING = LibSLRuntime.class;
 
-    public interface HasAutomaton {
-    }
-
     @Target(ElementType.CONSTRUCTOR)
     @Retention(RetentionPolicy.RUNTIME)
     public @interface DirectCallOnly {
-    }
-
-    public interface Automaton {
-    }
-
-    @Target(ElementType.CONSTRUCTOR)
-    @Retention(RetentionPolicy.RUNTIME)
-    public @interface AutomatonConstructor {
     }
 
     public static abstract class LibSLException extends Error {
@@ -117,15 +106,15 @@ public final class LibSLRuntime {
         int len = 0;
         int pos = BUFF_SIZE_BYTE;
         while (v != 0) {
-            pos -= 1;
-            len += 1;
+            pos--;
+            len++;
             chars[pos] = (char) ('0' + (v % 10));
             v /= 10;
         }
 
         if (isNegative) {
-            pos -= 1;
-            len += 1;
+            pos--;
+            len++;
             chars[pos] = '-';
         }
 
@@ -151,15 +140,15 @@ public final class LibSLRuntime {
         int len = 0;
         int pos = BUFF_SIZE_SHORT;
         while (v != 0) {
-            pos -= 1;
-            len += 1;
+            pos--;
+            len++;
             chars[pos] = (char) ('0' + (v % 10));
             v /= 10;
         }
 
         if (isNegative) {
-            pos -= 1;
-            len += 1;
+            pos--;
+            len++;
             chars[pos] = '-';
         }
 
@@ -185,15 +174,15 @@ public final class LibSLRuntime {
         int len = 0;
         int pos = BUFF_SIZE_INT;
         while (v != 0) {
-            pos -= 1;
-            len += 1;
+            pos--;
+            len++;
             chars[pos] = (char) ('0' + (v % 10));
             v /= 10;
         }
 
         if (isNegative) {
-            pos -= 1;
-            len += 1;
+            pos--;
+            len++;
             chars[pos] = '-';
         }
 
@@ -219,15 +208,15 @@ public final class LibSLRuntime {
         int len = 0;
         int pos = BUFF_SIZE_LONG;
         while (v != 0) {
-            pos -= 1;
-            len += 1;
+            pos--;
+            len++;
             chars[pos] = (char) ('0' + (v % 10));
             v /= 10;
         }
 
         if (isNegative) {
-            pos -= 1;
-            len += 1;
+            pos--;
+            len++;
             chars[pos] = '-';
         }
 
@@ -283,12 +272,12 @@ public final class LibSLRuntime {
             // corrections
             if (remainder - (float) fraction >= 0.5f) {
                 // rounding of last decimal digit
-                fraction += 1;
+                fraction++;
 
                 // overflow?
                 if (fraction >= FLOAT_MULTIPLIER_REGULAR_int) {
                     fraction = 0;
-                    integral += 1;
+                    integral++;
 
                     // overflow?
                     if (integral >= 10)
@@ -334,7 +323,7 @@ public final class LibSLRuntime {
                 }
                 if (v >= 1E+1f) {
                     v *= 1E-1f;
-                    exp += 1;
+                    exp++;
                 }
             }
             if (v > 0.0f && v <= 1.0f) {
@@ -360,7 +349,7 @@ public final class LibSLRuntime {
                 }
                 if (v < 1E-0f) {
                     v *= 1E1f;
-                    exp -= 1;
+                    exp--;
                 }
             }
 
@@ -372,17 +361,17 @@ public final class LibSLRuntime {
             // corrections
             if (remainder - (float) fraction >= 0.5f) {
                 // rounding of last decimal digit
-                fraction += 1;
+                fraction++;
 
                 // overflow?
                 if (fraction >= FLOAT_MULTIPLIER_SCIENTIFIC_int) {
                     fraction = 0;
-                    integral += 1;
+                    integral++;
 
                     // overflow?
                     if (integral >= 10) {
                         integral = 1;
-                        exp += 1;
+                        exp++;
                     }
                 }
             }
@@ -408,7 +397,7 @@ public final class LibSLRuntime {
         int cutZeroes = 0;
         while (decimal % 10 == 0) {
             decimal /= 10;
-            cutZeroes += 1;
+            cutZeroes++;
         }
 
         final String decimals = toString(decimal);
@@ -466,12 +455,12 @@ public final class LibSLRuntime {
             // corrections
             if (remainder - (double) fraction >= 0.5d) {
                 // rounding of last decimal digit
-                fraction += 1;
+                fraction++;
 
                 // overflow?
                 if (fraction >= DOUBLE_MULTIPLIER_REGULAR_long) {
                     fraction = 0;
-                    integral += 1;
+                    integral++;
 
                     // overflow?
                     if (integral >= 10)
@@ -529,7 +518,7 @@ public final class LibSLRuntime {
                 }
                 if (v >= 1E+1) {
                     v *= 1E-1;
-                    exp += 1;
+                    exp++;
                 }
             }
             if (v > 0.0 && v <= 1.0) {
@@ -567,7 +556,7 @@ public final class LibSLRuntime {
                 }
                 if (v < 1E-0) {
                     v *= 1E1;
-                    exp -= 1;
+                    exp--;
                 }
             }
 
@@ -579,17 +568,17 @@ public final class LibSLRuntime {
             // corrections
             if (remainder - (double) fraction >= 0.5d) {
                 // rounding of last decimal digit
-                fraction += 1;
+                fraction++;
 
                 // overflow?
                 if (fraction >= DOUBLE_MULTIPLIER_SCIENTIFIC_long) {
                     fraction = 0;
-                    integral += 1;
+                    integral++;
 
                     // overflow?
                     if (integral >= 10) {
                         integral = 1;
-                        exp += 1;
+                        exp++;
                     }
                 }
             }
@@ -615,7 +604,7 @@ public final class LibSLRuntime {
         int cutZeroes = 0;
         while (decimal % 10 == 0) {
             decimal /= 10;
-            cutZeroes += 1;
+            cutZeroes++;
         }
 
         final String decimals = toString(decimal);
@@ -781,7 +770,7 @@ public final class LibSLRuntime {
             res += hashCode(key) ^ hashCode(unseen.get(key));
 
             unseen.remove(key);
-            count -= 1;
+            count--;
         }
 
         return res;
@@ -886,7 +875,7 @@ public final class LibSLRuntime {
                 return false;
 
             unseen.remove(key);
-            length -= 1;
+            length--;
         }
         return true;
     }
@@ -1272,7 +1261,7 @@ public final class LibSLRuntime {
                         map.set(key, unseen.get(key));
 
                         unseen.remove(key);
-                        count -= 1;
+                        count--;
                     }
                 }
             }
@@ -1301,7 +1290,7 @@ public final class LibSLRuntime {
                         map.set(key, unseen.get(key));
 
                     unseen.remove(key);
-                    count -= 1;
+                    count--;
                 }
             }
         }

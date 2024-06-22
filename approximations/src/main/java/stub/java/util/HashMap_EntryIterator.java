@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 import runtime.LibSLRuntime;
 
 @SuppressWarnings({"all", "unchecked"})
-public final class HashMap_EntryIterator implements LibSLRuntime.HasAutomaton, Iterator {
+public final class HashMap_EntryIterator implements Iterator {
     private HashMap_EntryIterator(Void a, Void b) {
         super();
     }

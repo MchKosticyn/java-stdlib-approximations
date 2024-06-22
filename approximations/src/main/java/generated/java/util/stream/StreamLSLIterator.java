@@ -27,12 +27,12 @@ public class StreamLSLIterator implements LibSLRuntime.Automaton, Iterator {
         Engine.assume(true);
     }
 
-    public StreamLSL parent;
+    public StreamImpl parent;
 
     public int cursor;
 
     @LibSLRuntime.AutomatonConstructor
-    public StreamLSLIterator(Void __$lsl_token, final byte p0, final StreamLSL p1, final int p2) {
+    public StreamLSLIterator(Void __$lsl_token, final byte p0, final StreamImpl p1, final int p2) {
         this.parent = p1;
         this.cursor = p2;
     }
@@ -50,7 +50,7 @@ public class StreamLSLIterator implements LibSLRuntime.Automaton, Iterator {
         boolean result = false;
         /* body */ {
             Engine.assume(this.parent != null);
-            result = this.cursor != ((StreamLSL) ((Object) this.parent)).length;
+            result = this.cursor != ((StreamImpl) ((Object) this.parent)).length;
         }
         return result;
     }
@@ -63,9 +63,9 @@ public class StreamLSLIterator implements LibSLRuntime.Automaton, Iterator {
         Object result = null;
         /* body */ {
             Engine.assume(this.parent != null);
-            final Object[] parentStorage = ((StreamLSL) ((Object) this.parent)).storage;
+            final Object[] parentStorage = ((StreamImpl) ((Object) this.parent)).storage;
             final int i = this.cursor;
-            if (i >= ((StreamLSL) ((Object) this.parent)).length) {
+            if (i >= ((StreamImpl) ((Object) this.parent)).length) {
                 throw new NoSuchElementException();
             }
             this.cursor = i + 1;
@@ -95,28 +95,17 @@ public class StreamLSLIterator implements LibSLRuntime.Automaton, Iterator {
                 throw new NullPointerException();
             }
             int i = this.cursor;
-            final int size = ((StreamLSL) ((Object) this.parent)).length;
+            final int size = ((StreamImpl) ((Object) this.parent)).length;
             if (i != size) {
-                final Object[] pStorage = ((StreamLSL) ((Object) this.parent)).storage;
+                final Object[] pStorage = ((StreamImpl) ((Object) this.parent)).storage;
                 while (i < size) {
                     final Object item = pStorage[i];
                     userAction.accept(item);
-                    i += 1;
+                    i++;
                 }
                 ;
                 this.cursor = i;
             }
-        }
-    }
-
-    public static final class __$lsl_States {
-        public static final byte Initialized = (byte) 0;
-    }
-
-    @Approximate(StreamLSLIterator.class)
-    public static final class __hook {
-        private __hook(Void o1, Void o2) {
-            Engine.assume(false);
         }
     }
 }

@@ -151,11 +151,4 @@ public final class LibSLGlobals {
         VM_SYSTEM_LOADER_INITIALIZING = 3;
         VM_SYSTEM_SHUTDOWN = 5;
     }
-
-    @Approximate(LibSLGlobals.class)
-    public static final class __hook {
-        private __hook(Void o1, Void o2) {
-            Engine.assume(false);
-        }
-    }
 }

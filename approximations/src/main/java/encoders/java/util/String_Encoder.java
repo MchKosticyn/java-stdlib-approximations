@@ -1,5 +1,6 @@
 package encoders.java.util;
 
+import generated.java.lang.StringImpl;
 import org.usvm.api.encoder.EncoderFor;
 import org.usvm.api.encoder.ObjectEncoder;
 
@@ -8,6 +9,6 @@ public class String_Encoder implements ObjectEncoder {
 
     @Override
     public Object encode(Object object) {
-        return new generated.java.lang.String(((String) object).getBytes());
+        return new StringImpl(((String) object).getBytes());
     }
 }

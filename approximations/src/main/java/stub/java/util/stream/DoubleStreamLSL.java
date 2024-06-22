@@ -27,10 +27,12 @@ import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
+
+import org.jetbrains.annotations.NotNull;
 import runtime.LibSLRuntime;
 
 @SuppressWarnings({"all", "unchecked"})
-public class DoubleStreamLSL implements LibSLRuntime.HasAutomaton, DoubleStream {
+public class DoubleStreamLSL extends BaseStream implements DoubleStream {
     private DoubleStreamLSL(Void a, Void b) {
         super();
     }
@@ -135,10 +137,12 @@ public class DoubleStreamLSL implements LibSLRuntime.HasAutomaton, DoubleStream 
         throw new LinkageError();
     }
 
+    @NotNull
     public PrimitiveIterator.OfDouble iterator() {
         throw new LinkageError();
     }
 
+    @NotNull
     public Spliterator.OfDouble spliterator() {
         throw new LinkageError();
     }
@@ -147,19 +151,23 @@ public class DoubleStreamLSL implements LibSLRuntime.HasAutomaton, DoubleStream 
         throw new LinkageError();
     }
 
+    @NotNull
     public DoubleStream sequential() {
         throw new LinkageError();
     }
 
+    @NotNull
     public DoubleStream parallel() {
         throw new LinkageError();
     }
 
+    @NotNull
     public DoubleStream unordered() {
         throw new LinkageError();
     }
 
-    public DoubleStream onClose(Runnable closeHandler) {
+    @NotNull
+    public DoubleStream onClose(@NotNull Runnable closeHandler) {
         throw new LinkageError();
     }
 

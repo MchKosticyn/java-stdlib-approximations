@@ -29,12 +29,12 @@ public class LongStreamLSLIterator implements LibSLRuntime.Automaton, PrimitiveI
         Engine.assume(true);
     }
 
-    public LongStreamLSL parent;
+    public LongStreamImpl parent;
 
     public int cursor;
 
     @LibSLRuntime.AutomatonConstructor
-    public LongStreamLSLIterator(Void __$lsl_token, final byte p0, final LongStreamLSL p1,
+    public LongStreamLSLIterator(Void __$lsl_token, final byte p0, final LongStreamImpl p1,
             final int p2) {
         this.parent = p1;
         this.cursor = p2;
@@ -53,7 +53,7 @@ public class LongStreamLSLIterator implements LibSLRuntime.Automaton, PrimitiveI
         boolean result = false;
         /* body */ {
             Engine.assume(this.parent != null);
-            result = this.cursor != ((LongStreamLSL) ((Object) this.parent)).length;
+            result = this.cursor != ((LongStreamImpl) ((Object) this.parent)).length;
         }
         return result;
     }
@@ -66,9 +66,9 @@ public class LongStreamLSLIterator implements LibSLRuntime.Automaton, PrimitiveI
         Long result = null;
         /* body */ {
             Engine.assume(this.parent != null);
-            final long[] parentStorage = ((LongStreamLSL) ((Object) this.parent)).storage;
+            final long[] parentStorage = ((LongStreamImpl) ((Object) this.parent)).storage;
             final int i = this.cursor;
-            if (i >= ((LongStreamLSL) ((Object) this.parent)).length) {
+            if (i >= ((LongStreamImpl) ((Object) this.parent)).length) {
                 throw new NoSuchElementException();
             }
             this.cursor = i + 1;
@@ -85,9 +85,9 @@ public class LongStreamLSLIterator implements LibSLRuntime.Automaton, PrimitiveI
         long result = 0L;
         /* body */ {
             Engine.assume(this.parent != null);
-            final long[] parentStorage = ((LongStreamLSL) ((Object) this.parent)).storage;
+            final long[] parentStorage = ((LongStreamImpl) ((Object) this.parent)).storage;
             final int i = this.cursor;
-            if (i >= ((LongStreamLSL) ((Object) this.parent)).length) {
+            if (i >= ((LongStreamImpl) ((Object) this.parent)).length) {
                 throw new NoSuchElementException();
             }
             this.cursor = i + 1;
@@ -117,13 +117,13 @@ public class LongStreamLSLIterator implements LibSLRuntime.Automaton, PrimitiveI
                 throw new NullPointerException();
             }
             int i = this.cursor;
-            final int size = ((LongStreamLSL) ((Object) this.parent)).length;
+            final int size = ((LongStreamImpl) ((Object) this.parent)).length;
             if (i != size) {
-                final long[] pStorage = ((LongStreamLSL) ((Object) this.parent)).storage;
+                final long[] pStorage = ((LongStreamImpl) ((Object) this.parent)).storage;
                 while (i < size) {
                     final long item = pStorage[i];
                     userAction.accept(item);
-                    i += 1;
+                    i++;
                 }
                 ;
                 this.cursor = i;
@@ -142,28 +142,17 @@ public class LongStreamLSLIterator implements LibSLRuntime.Automaton, PrimitiveI
                 throw new NullPointerException();
             }
             int i = this.cursor;
-            final int size = ((LongStreamLSL) ((Object) this.parent)).length;
+            final int size = ((LongStreamImpl) ((Object) this.parent)).length;
             if (i != size) {
-                final long[] pStorage = ((LongStreamLSL) ((Object) this.parent)).storage;
+                final long[] pStorage = ((LongStreamImpl) ((Object) this.parent)).storage;
                 while (i < size) {
                     final long item = pStorage[i];
                     userAction.accept(item);
-                    i += 1;
+                    i++;
                 }
                 ;
                 this.cursor = i;
             }
-        }
-    }
-
-    public static final class __$lsl_States {
-        public static final byte Initialized = (byte) 0;
-    }
-
-    @Approximate(LongStreamLSLIterator.class)
-    public static final class __hook {
-        private __hook(Void o1, Void o2) {
-            Engine.assume(false);
         }
     }
 }

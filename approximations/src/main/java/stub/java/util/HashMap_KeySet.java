@@ -15,9 +15,6 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public final class HashMap_KeySet extends AbstractSet<Object> {
-    private HashMap_KeySet(Void a, Void b) {
-        super();
-    }
 
     private HashMap_KeySet(HashMap _this) {
         throw new LinkageError();

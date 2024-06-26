@@ -19,11 +19,11 @@ public final class SpliteratorsImpl {
     public static final int _characteristics = LibSLGlobals.SPLITERATOR_SIZED | LibSLGlobals.SPLITERATOR_SUBSIZED;
 
     public static Spliterator<Object> spliterator(Object[] arr, int additionalCharacteristics) {
-        return new Spliterators_ArraySpliterator(arr, 0, arr.length, additionalCharacteristics);
+        return new ArraySpliterator(arr, 0, arr.length, additionalCharacteristics);
     }
 
     public static Spliterator<Object> spliterator(Object[] arr, int fromIndex, int toIndex, int additionalCharacteristics) {
-        return new Spliterators_ArraySpliterator(arr, fromIndex, toIndex, additionalCharacteristics);
+        return new ArraySpliterator(arr, fromIndex, toIndex, additionalCharacteristics);
     }
 
     public static Spliterator.OfDouble spliterator(double[] arr, int additionalCharacteristics) {

@@ -13,10 +13,7 @@ import java.util.function.Consumer;
 import runtime.LibSLRuntime;
 
 @SuppressWarnings({"all", "unchecked"})
-public final class LinkedList_DescendingIterator implements LibSLRuntime.HasAutomaton, Iterator {
-    private LinkedList_DescendingIterator(Void a, Void b) {
-        super();
-    }
+public final class LinkedList_DescendingIterator implements Iterator {
 
     public boolean hasNext() {
         throw new LinkageError();

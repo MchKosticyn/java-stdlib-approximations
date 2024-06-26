@@ -13,10 +13,7 @@ import java.util.function.Consumer;
 import runtime.LibSLRuntime;
 
 @SuppressWarnings({"all", "unchecked"})
-public class HashMap_ValueIterator implements LibSLRuntime.HasAutomaton, Iterator {
-    private HashMap_ValueIterator(Void a, Void b) {
-        super();
-    }
+public class HashMap_ValueIterator implements Iterator {
 
     public void forEachRemaining(Consumer userAction) {
         throw new LinkageError();

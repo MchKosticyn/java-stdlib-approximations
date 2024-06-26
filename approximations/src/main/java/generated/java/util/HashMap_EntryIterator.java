@@ -35,7 +35,7 @@ public class HashMap_EntryIterator implements Iterator<Map.Entry<Object, Object>
         this.currentKey = currentKey;
     }
 
-    private void _checkForComodification() {
+    private void _checkForModification() {
         if (this.parent.modCount != this.expectedModCount) {
             throw new ConcurrentModificationException();
         }
@@ -51,7 +51,7 @@ public class HashMap_EntryIterator implements Iterator<Map.Entry<Object, Object>
         }
 
         while (isNotEmpty()) {
-            _checkForComodification();
+            _checkForModification();
             Object curKey = this.unseen.anyKey();
             userAction.accept(this.unseen.get(curKey));
             this.unseen.remove(curKey);
@@ -63,7 +63,7 @@ public class HashMap_EntryIterator implements Iterator<Map.Entry<Object, Object>
     }
 
     public Map.Entry<Object, Object> next() {
-        _checkForComodification();
+        _checkForModification();
         if (this.unseen.size() == 0) {
             throw new NoSuchElementException();
         }
@@ -80,7 +80,7 @@ public class HashMap_EntryIterator implements Iterator<Map.Entry<Object, Object>
         if (key == null) {
             throw new IllegalStateException();
         }
-        _checkForComodification();
+        _checkForModification();
         this.parent.storage.remove(key);
         this.parent.modCount++;
         this.unseen.remove(key);

@@ -14,9 +14,6 @@ import runtime.LibSLRuntime;
 
 @SuppressWarnings({"all", "unchecked"})
 public final class HashMap_EntryIterator implements Iterator {
-    private HashMap_EntryIterator(Void a, Void b) {
-        super();
-    }
 
     public void forEachRemaining(Consumer userAction) {
         throw new LinkageError();

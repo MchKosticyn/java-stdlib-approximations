@@ -21,12 +21,13 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
-import generated.java.util.stream.StreamImpl;
+import generated.java.util.stream.StreamStubImpl;
 import org.jacodb.approximation.annotation.Approximate;
 import org.jetbrains.annotations.NotNull;
 import org.usvm.api.Engine;
 import org.usvm.api.SymbolicList;
 import runtime.LibSLRuntime;
+import stub.java.util.SubListStub;
 
 @Approximate(java.util.AbstractList.class)
 public class AbstractListImpl implements List<Object>, Cloneable, Serializable {
@@ -68,7 +69,7 @@ public class AbstractListImpl implements List<Object>, Cloneable, Serializable {
     }
 
     public boolean _isValidIndex(int index) {
-        return index >= 0 && index < storage.size();
+        return _isValidIndex(index, storage.size());
     }
 
     public void _checkValidIndex(int index, int length) {
@@ -79,10 +80,6 @@ public class AbstractListImpl implements List<Object>, Cloneable, Serializable {
 
     public void _checkValidIndex(int index) {
         _checkValidIndex(index, storage.size());
-    }
-
-    public boolean _isValidAddIndex(int index, int length) {
-        return index >= 0 && index <= length;
     }
 
     public boolean _isValidAddIndex(int index) {
@@ -136,7 +133,7 @@ public class AbstractListImpl implements List<Object>, Cloneable, Serializable {
         }
     }
 
-    public void _checkForComodification(int expectedModCount) {
+    public void _checkForModification(int expectedModCount) {
         if (this.modCount != expectedModCount) {
             throw new ConcurrentModificationException();
         }
@@ -192,7 +189,7 @@ public class AbstractListImpl implements List<Object>, Cloneable, Serializable {
             this.storage.set(i, newItem);
             i++;
         }
-        _checkForComodification(expectedModCount);
+        _checkForModification(expectedModCount);
     }
 
     public boolean _removeIf(Predicate<Object> filter, int start, int end) {
@@ -208,14 +205,14 @@ public class AbstractListImpl implements List<Object>, Cloneable, Serializable {
                 this.storage.remove(i);
             }
         }
-        _checkForComodification(expectedModCount);
+        _checkForModification(expectedModCount);
         return oldLength != this.storage.size();
     }
 
     @SuppressWarnings("DataFlowIssue")
     public boolean _equalsRange(List<Object> other, int from, int to) {
-        if (other instanceof stub.java.util.ArrayList_SubList) {
-            ArrayList_SubListImpl otherSubList = (ArrayList_SubListImpl) other;
+        if (other instanceof SubListStub) {
+            SubListStubImpl otherSubList = (SubListStubImpl) other;
             AbstractListImpl otherRoot = otherSubList.root;
             SymbolicList<Object> otherStorage = otherRoot.storage;
             if (to != otherSubList.length)
@@ -268,7 +265,7 @@ public class AbstractListImpl implements List<Object>, Cloneable, Serializable {
             items[i] = this.storage.get(i);
         }
 
-        return new StreamImpl(items, count, Engine.makeSymbolicList(), parallel, false);
+        return new StreamStubImpl(items, count, Engine.makeSymbolicList(), parallel, false);
     }
 
     @SuppressWarnings({"ConstantValue"})
@@ -332,7 +329,7 @@ public class AbstractListImpl implements List<Object>, Cloneable, Serializable {
         int outerLimit = end - 1;
         for (int i = start; i < outerLimit; i++) {
             int innerLimit = (end - i) - 1;
-            for (int j = start; j < innerLimit; j += 1) {
+            for (int j = start; j < innerLimit; j++) {
                 int idxB = j + 1;
                 Object a = this.storage.get(j);
                 Object b = this.storage.get(idxB);
@@ -342,12 +339,12 @@ public class AbstractListImpl implements List<Object>, Cloneable, Serializable {
                 }
             }
         }
-        _checkForComodification(expectedModCount);
+        _checkForModification(expectedModCount);
     }
 
     public boolean add(Object e) {
         this.storage.insert(this.storage.size(), e);
-        this.modCount += 1;
+        this.modCount++;
         return true;
     }
 
@@ -365,7 +362,7 @@ public class AbstractListImpl implements List<Object>, Cloneable, Serializable {
 
     public void clear() {
         this.storage = Engine.makeSymbolicList();
-        this.modCount += 1;
+        this.modCount++;
     }
 
     public Object clone() throws CloneNotSupportedException {
@@ -393,7 +390,7 @@ public class AbstractListImpl implements List<Object>, Cloneable, Serializable {
             while (result && (i < otherLength)) {
                 Object item = otherStorage.get(i);
                 result = LibSLRuntime.ListActions.find(this.storage, item, 0, this.storage.size()) != -1;
-                i += 1;
+                i++;
             }
             return result;
         }
@@ -410,7 +407,7 @@ public class AbstractListImpl implements List<Object>, Cloneable, Serializable {
 
     @SuppressWarnings("unused")
     public void ensureCapacity(int minCapacity) {
-        this.modCount += 1;
+        this.modCount++;
     }
 
     public boolean equals(Object other) {
@@ -425,8 +422,8 @@ public class AbstractListImpl implements List<Object>, Cloneable, Serializable {
             int size = this.storage.size();
             int otherSize = otherStorage.size();
             boolean result = size == otherSize && LibSLRuntime.equals(this.storage, otherStorage);
-            otherList._checkForComodification(otherExpectedModCount);
-            _checkForComodification(expectedModCount);
+            otherList._checkForModification(otherExpectedModCount);
+            _checkForModification(expectedModCount);
             return result;
         }
 
@@ -442,9 +439,9 @@ public class AbstractListImpl implements List<Object>, Cloneable, Serializable {
         while ((this.modCount == expectedModCount) && (i < this.storage.size())) {
             Object item = this.storage.get(i);
             _action.accept(item);
-            i += 1;
+            i++;
         }
-        _checkForComodification(expectedModCount);
+        _checkForModification(expectedModCount);
     }
 
     public Object get(int index) {
@@ -465,7 +462,7 @@ public class AbstractListImpl implements List<Object>, Cloneable, Serializable {
 
     @NotNull
     public Iterator<Object> iterator() {
-        return new ArrayList_ListItrImpl(this, 0, this.modCount, -1);
+        return new ListIteratorStubImpl(this, 0, this.modCount, -1);
     }
 
     public int lastIndexOf(Object o) {
@@ -485,13 +482,13 @@ public class AbstractListImpl implements List<Object>, Cloneable, Serializable {
 
     @NotNull
     public ListIterator<Object> listIterator() {
-        return new ArrayList_ListItrImpl(this, 0, this.modCount, -1);
+        return new ListIteratorStubImpl(this, 0, this.modCount, -1);
     }
 
     @NotNull
     public ListIterator<Object> listIterator(int index) {
         _checkValidIndex(index);
-        return new ArrayList_ListItrImpl(this, index, this.modCount, -1);
+        return new ListIteratorStubImpl(this, index, this.modCount, -1);
     }
 
     public Stream<Object> parallelStream() {
@@ -525,7 +522,7 @@ public class AbstractListImpl implements List<Object>, Cloneable, Serializable {
             throw new NullPointerException();
         }
         _replaceAllRange(op, 0, this.storage.size());
-        this.modCount += 1;
+        this.modCount++;
     }
 
     public boolean retainAll(@NotNull Collection c) {
@@ -545,7 +542,7 @@ public class AbstractListImpl implements List<Object>, Cloneable, Serializable {
     }
 
     public Spliterator<Object> spliterator() {
-        return new ArrayList_SpliteratorImpl(this, 0, -1, 0);
+        return new SpliteratorStubImpl(this, 0, -1, 0);
     }
 
     public Stream<Object> stream() {
@@ -555,14 +552,14 @@ public class AbstractListImpl implements List<Object>, Cloneable, Serializable {
     @NotNull
     public List<Object> subList(int fromIndex, int toIndex) {
         _subListRangeCheck(fromIndex, toIndex, this.storage.size());
-        return new ArrayList_SubListImpl(this, null, fromIndex, toIndex - fromIndex, this.modCount);
+        return new SubListStubImpl(this, null, fromIndex, toIndex - fromIndex, this.modCount);
     }
 
     @NotNull
     public Object[] toArray() {
         int len = this.storage.size();
         Object[] result = new Object[len];
-        for (int i = 0; i < len; i += 1) {
+        for (int i = 0; i < len; i++) {
             result[i] = this.storage.get(i);
         }
         return result;
@@ -573,7 +570,7 @@ public class AbstractListImpl implements List<Object>, Cloneable, Serializable {
         Object[] unused = ((Object[]) generator.apply(0));
         int len = this.storage.size();
         Object[] result = new Object[len];
-        for (int i = 0; i < len; i += 1) {
+        for (int i = 0; i < len; i++) {
             result[i] = this.storage.get(i);
         }
         return result;
@@ -587,7 +584,7 @@ public class AbstractListImpl implements List<Object>, Cloneable, Serializable {
         if (aLen < len) {
             array = new Object[len];
         }
-        for (int i = 0; i < len; i += 1) {
+        for (int i = 0; i < len; i++) {
             array[i] = this.storage.get(i);
         }
         if (aLen > len) {
@@ -602,6 +599,6 @@ public class AbstractListImpl implements List<Object>, Cloneable, Serializable {
 
     @SuppressWarnings("unused")
     public void trimToSize() {
-        this.modCount += 1;
+        this.modCount++;
     }
 }

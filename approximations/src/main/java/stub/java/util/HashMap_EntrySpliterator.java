@@ -12,10 +12,7 @@ import java.util.function.Consumer;
 import runtime.LibSLRuntime;
 
 @SuppressWarnings({"all", "unchecked"})
-public final class HashMap_EntrySpliterator implements LibSLRuntime.HasAutomaton, Spliterator {
-    private HashMap_EntrySpliterator(Void a, Void b) {
-        super();
-    }
+public final class HashMap_EntrySpliterator implements Spliterator {
 
     public int characteristics() {
         throw new LinkageError();

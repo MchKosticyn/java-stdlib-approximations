@@ -10,13 +10,14 @@ import java.util.function.Consumer;
 import org.jacodb.approximation.annotation.Approximate;
 import org.usvm.api.Engine;
 import org.usvm.api.SymbolicList;
+import stub.java.util.SubListIteratorStub;
 
-@Approximate(stub.java.util.ArrayList_SubList$ListIterator.class)
-public final class ArrayList_SubList$ListIterator implements ListIterator<Object> {
+@Approximate(SubListIteratorStub.class)
+public final class SubListIteratorStubImpl implements ListIterator<Object> {
 
     public AbstractListImpl root;
 
-    public ArrayList_SubListImpl sublist;
+    public SubListStubImpl sublist;
 
     public int cursor;
 
@@ -28,9 +29,9 @@ public final class ArrayList_SubList$ListIterator implements ListIterator<Object
 
     public int lastRet;
 
-    public ArrayList_SubList$ListIterator(
+    public SubListIteratorStubImpl(
         AbstractListImpl root,
-        ArrayList_SubListImpl subList,
+        SubListStubImpl subList,
         int cursor,
         int expectedModCount,
         int offset,
@@ -47,7 +48,7 @@ public final class ArrayList_SubList$ListIterator implements ListIterator<Object
         this.lastRet = lastRet;
     }
 
-    private void _checkForComodification() {
+    private void _checkForModification() {
         if (this.root.modCount != this.expectedModCount) {
             throw new ConcurrentModificationException();
         }
@@ -71,7 +72,7 @@ public final class ArrayList_SubList$ListIterator implements ListIterator<Object
 
     public Object next() {
         Engine.assume(this.root != null);
-        _checkForComodification();
+        _checkForModification();
         SymbolicList<Object> rootStorage = this.root.storage;
         int i = this.offset + this.cursor;
         if (i >= rootStorage.size()) {
@@ -84,7 +85,7 @@ public final class ArrayList_SubList$ListIterator implements ListIterator<Object
 
     public Object previous() {
         Engine.assume(this.root != null);
-        _checkForComodification();
+        _checkForModification();
         int i = (this.offset + this.cursor) - 1;
         if (i < this.offset) {
             throw new NoSuchElementException();
@@ -103,7 +104,7 @@ public final class ArrayList_SubList$ListIterator implements ListIterator<Object
         if (this.lastRet < 0) {
             throw new IllegalStateException();
         }
-        _checkForComodification();
+        _checkForModification();
         if (this.lastRet >= this.size) {
             throw new ConcurrentModificationException();
         } else {
@@ -121,7 +122,7 @@ public final class ArrayList_SubList$ListIterator implements ListIterator<Object
         if (this.lastRet < 0) {
             throw new IllegalStateException();
         }
-        _checkForComodification();
+        _checkForModification();
         SymbolicList<Object> rootStorage = this.root.storage;
         int index = this.offset + this.lastRet;
         if (index >= rootStorage.size()) {
@@ -133,7 +134,7 @@ public final class ArrayList_SubList$ListIterator implements ListIterator<Object
 
     public void add(Object e) {
         Engine.assume(this.root != null);
-        _checkForComodification();
+        _checkForModification();
         int i = this.offset + this.cursor;
         if ((this.offset + this.lastRet) > this.root.storage.size()) {
             throw new ConcurrentModificationException();
@@ -166,7 +167,7 @@ public final class ArrayList_SubList$ListIterator implements ListIterator<Object
             }
             this.cursor = i - this.offset;
             this.lastRet = this.cursor - 1;
-            _checkForComodification();
+            _checkForModification();
         }
     }
 }

@@ -11,8 +11,8 @@ import org.jacodb.approximation.annotation.Approximate;
 import org.usvm.api.Engine;
 import org.usvm.api.SymbolicList;
 
-@Approximate(stub.java.util.ArrayList_ListItr.class)
-public final class ArrayList_ListItrImpl implements ListIterator<Object> {
+@Approximate(stub.java.util.ListIteratorStubImpl.class)
+public final class ListIteratorStubImpl implements ListIterator<Object> {
 
     public AbstractListImpl parent;
 
@@ -23,7 +23,7 @@ public final class ArrayList_ListItrImpl implements ListIterator<Object> {
     public int lastRet;
 
     @SuppressWarnings("ConstantValue")
-    public ArrayList_ListItrImpl(AbstractListImpl parent, int cursor, int expectedMocCount, int lastRet) {
+    public ListIteratorStubImpl(AbstractListImpl parent, int cursor, int expectedMocCount, int lastRet) {
         Engine.assume(this.parent != null);
         this.parent = parent;
         this.cursor = cursor;
@@ -32,7 +32,7 @@ public final class ArrayList_ListItrImpl implements ListIterator<Object> {
     }
 
     @SuppressWarnings("DataFlowIssue")
-    private void _checkForComodification() {
+    private void _checkForModification() {
         Engine.assume(parent != null);
         int modCount = this.parent.modCount;
         if (modCount != this.expectedModCount) {
@@ -60,7 +60,7 @@ public final class ArrayList_ListItrImpl implements ListIterator<Object> {
 
     @SuppressWarnings("DataFlowIssue")
     public Object next() {
-        _checkForComodification();
+        _checkForModification();
         Engine.assume(parent != null);
         SymbolicList<Object> parentStorage = this.parent.storage;
         int i = this.cursor;
@@ -74,7 +74,7 @@ public final class ArrayList_ListItrImpl implements ListIterator<Object> {
 
     @SuppressWarnings("DataFlowIssue")
     public Object previous() {
-        _checkForComodification();
+        _checkForModification();
         Engine.assume(parent != null);
         SymbolicList<Object> parentStorage = this.parent.storage;
         int i = this.cursor - 1;
@@ -94,7 +94,7 @@ public final class ArrayList_ListItrImpl implements ListIterator<Object> {
         if (this.lastRet < 0) {
             throw new IllegalStateException();
         }
-        _checkForComodification();
+        _checkForModification();
         Engine.assume(parent != null);
         SymbolicList<Object> pStorage = this.parent.storage;
         if (this.lastRet >= pStorage.size()) {
@@ -113,7 +113,7 @@ public final class ArrayList_ListItrImpl implements ListIterator<Object> {
         if (this.lastRet < 0) {
             throw new IllegalStateException();
         }
-        _checkForComodification();
+        _checkForModification();
         Engine.assume(parent != null);
         SymbolicList<Object> pStorage = this.parent.storage;
         if (this.lastRet >= pStorage.size()) {
@@ -124,7 +124,7 @@ public final class ArrayList_ListItrImpl implements ListIterator<Object> {
 
     @SuppressWarnings("DataFlowIssue")
     public void add(Object e) {
-        _checkForComodification();
+        _checkForModification();
         int i = this.cursor;
         Engine.assume(parent != null);
         SymbolicList<Object> pStorage = this.parent.storage;
@@ -155,7 +155,7 @@ public final class ArrayList_ListItrImpl implements ListIterator<Object> {
             }
             this.cursor = i;
             this.lastRet = i - 1;
-            _checkForComodification();
+            _checkForModification();
         }
     }
 }

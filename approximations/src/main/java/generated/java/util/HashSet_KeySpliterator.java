@@ -56,7 +56,7 @@ public final class HashSet_KeySpliterator implements Spliterator<Object> {
         return hi;
     }
 
-    private void _checkForComodification() {
+    private void _checkForModification() {
         if (this.expectedModCount != this.parent.modCount) {
             throw new ConcurrentModificationException();
         }
@@ -122,7 +122,7 @@ public final class HashSet_KeySpliterator implements Spliterator<Object> {
             Object key = keysStorage[i];
             userAction.accept(key);
             this.index++;
-            _checkForComodification();
+            _checkForModification();
             return true;
         }
         return false;

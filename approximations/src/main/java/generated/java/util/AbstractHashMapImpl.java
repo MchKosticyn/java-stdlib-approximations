@@ -1,6 +1,7 @@
 package generated.java.util;
 
 import org.jacodb.approximation.annotation.Approximate;
+import org.jetbrains.annotations.NotNull;
 import org.usvm.api.Engine;
 import runtime.LibSLRuntime;
 
@@ -10,7 +11,6 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-@SuppressWarnings("NullableProblems")
 @Approximate(java.util.AbstractMap.class)
 public class AbstractHashMapImpl implements Map<Object, Object>, Cloneable, Serializable {
 
@@ -64,7 +64,7 @@ public class AbstractHashMapImpl implements Map<Object, Object>, Cloneable, Seri
         this.modCount = 0;
     }
 
-    public void _checkForComodification(int expectedModCount) {
+    public void _checkForModification(int expectedModCount) {
         if (this.modCount != expectedModCount) {
             throw new ConcurrentModificationException();
         }
@@ -82,8 +82,8 @@ public class AbstractHashMapImpl implements Map<Object, Object>, Cloneable, Seri
         return clonedMap;
     }
 
-    @SuppressWarnings("unchecked")
-    public Object compute(Object key, BiFunction remappingFunction) {
+    @SuppressWarnings({"unchecked", "ConstantValue"})
+    public Object compute(Object key, @NotNull BiFunction remappingFunction) {
         if (remappingFunction == null) {
             throw new NullPointerException();
         }
@@ -95,7 +95,7 @@ public class AbstractHashMapImpl implements Map<Object, Object>, Cloneable, Seri
         }
         int expectedModCount = this.modCount;
         Object newValue = remappingFunction.apply(key, oldValue);
-        _checkForComodification(expectedModCount);
+        _checkForModification(expectedModCount);
         if (newValue == null) {
             this.storage.remove(key);
         } else {
@@ -110,8 +110,8 @@ public class AbstractHashMapImpl implements Map<Object, Object>, Cloneable, Seri
         return newValue;
     }
 
-    @SuppressWarnings("unchecked")
-    public Object computeIfAbsent(Object key, Function mappingFunction) {
+    @SuppressWarnings({"unchecked", "ConstantValue"})
+    public Object computeIfAbsent(Object key, @NotNull Function mappingFunction) {
         if (mappingFunction == null) {
             throw new NullPointerException();
         }
@@ -127,7 +127,7 @@ public class AbstractHashMapImpl implements Map<Object, Object>, Cloneable, Seri
 
         int expectedModCount = this.modCount;
         Object newValue = mappingFunction.apply(key);
-        _checkForComodification(expectedModCount);
+        _checkForModification(expectedModCount);
         if (newValue != null) {
             if (entry != null) {
                 entry.setValue(newValue);
@@ -141,7 +141,7 @@ public class AbstractHashMapImpl implements Map<Object, Object>, Cloneable, Seri
     }
 
     @SuppressWarnings({"ConstantValue", "unchecked"})
-    public Object computeIfPresent(Object key, BiFunction remappingFunction) {
+    public Object computeIfPresent(Object key, @NotNull BiFunction remappingFunction) {
         if (remappingFunction == null) {
             throw new NullPointerException();
         }
@@ -156,7 +156,7 @@ public class AbstractHashMapImpl implements Map<Object, Object>, Cloneable, Seri
 
         int expectedModCount = this.modCount;
         Object newValue = remappingFunction.apply(key, oldValue);
-        _checkForComodification(expectedModCount);
+        _checkForModification(expectedModCount);
         if (newValue == null) {
             this.storage.remove(key);
         } else {
@@ -195,6 +195,7 @@ public class AbstractHashMapImpl implements Map<Object, Object>, Cloneable, Seri
         return false;
     }
 
+    @NotNull
     public Set<Map.Entry<Object, Object>> entrySet() {
         return new HashMap_EntrySet(this.storage, this);
     }
@@ -251,7 +252,7 @@ public class AbstractHashMapImpl implements Map<Object, Object>, Cloneable, Seri
                 userAction.accept(curKey, curValue);
                 unseen.remove(curKey);
             }
-            _checkForComodification(expectedModCount);
+            _checkForModification(expectedModCount);
         }
     }
 
@@ -281,12 +282,13 @@ public class AbstractHashMapImpl implements Map<Object, Object>, Cloneable, Seri
         return this.storage.size() == 0;
     }
 
+    @NotNull
     public Set<Object> keySet() {
         return new HashMap_KeySet(this.storage, this);
     }
 
-    @SuppressWarnings("unchecked")
-    public Object merge(Object key, Object value, BiFunction remappingFunction) {
+    @SuppressWarnings({"unchecked", "ConstantValue"})
+    public Object merge(Object key, @NotNull Object value, @NotNull BiFunction remappingFunction) {
         if (value == null) {
             throw new NullPointerException();
         }
@@ -304,7 +306,7 @@ public class AbstractHashMapImpl implements Map<Object, Object>, Cloneable, Seri
             } else {
                 int expectedModCount = this.modCount;
                 result = remappingFunction.apply(oldValue, value);
-                _checkForComodification(expectedModCount);
+                _checkForModification(expectedModCount);
             }
             if (result == null) {
                 this.storage.remove(key);
@@ -335,8 +337,8 @@ public class AbstractHashMapImpl implements Map<Object, Object>, Cloneable, Seri
         return null;
     }
 
-    @SuppressWarnings("unchecked")
-    public void putAll(Map m) {
+    @SuppressWarnings({"unchecked", "ConstantValue"})
+    public void putAll(@NotNull Map m) {
         if (m == null) {
             throw new NullPointerException();
         }
@@ -435,7 +437,7 @@ public class AbstractHashMapImpl implements Map<Object, Object>, Cloneable, Seri
                 entry.setValue(function.apply(key, entry.getValue()));
                 unseen.remove(key);
             }
-            _checkForComodification(expectedModCount);
+            _checkForModification(expectedModCount);
         }
     }
 
@@ -467,6 +469,7 @@ public class AbstractHashMapImpl implements Map<Object, Object>, Cloneable, Seri
         return result.concat("}");
     }
 
+    @NotNull
     public Collection<Object> values() {
         return new HashMap_Values(this.storage, this);
     }

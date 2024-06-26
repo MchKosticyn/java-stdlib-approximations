@@ -55,15 +55,15 @@ public class HashMapImpl extends AbstractHashMapImpl {
         return super.clone();
     }
 
-    public Object compute(Object key, BiFunction remappingFunction) {
+    public Object compute(Object key, @NotNull BiFunction remappingFunction) {
         return super.compute(key, remappingFunction);
     }
 
-    public Object computeIfAbsent(Object key, Function mappingFunction) {
+    public Object computeIfAbsent(Object key, @NotNull Function mappingFunction) {
         return super.computeIfAbsent(key, mappingFunction);
     }
 
-    public Object computeIfPresent(Object key, BiFunction remappingFunction) {
+    public Object computeIfPresent(Object key, @NotNull BiFunction remappingFunction) {
         return super.computeIfPresent(key, remappingFunction);
     }
 
@@ -109,7 +109,7 @@ public class HashMapImpl extends AbstractHashMapImpl {
         return super.keySet();
     }
 
-    public Object merge(Object key, Object value, BiFunction remappingFunction) {
+    public Object merge(Object key, @NotNull Object value, @NotNull BiFunction remappingFunction) {
         return super.merge(key, value, remappingFunction);
     }
 
@@ -117,7 +117,7 @@ public class HashMapImpl extends AbstractHashMapImpl {
         return super.put(key, value);
     }
 
-    public void putAll(Map m) {
+    public void putAll(@NotNull Map m) {
         super.putAll(m);
     }
 

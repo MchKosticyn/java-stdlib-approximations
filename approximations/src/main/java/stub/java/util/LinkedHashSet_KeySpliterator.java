@@ -13,10 +13,7 @@ import java.util.function.Consumer;
 import runtime.LibSLRuntime;
 
 @SuppressWarnings({"all", "unchecked"})
-public final class LinkedHashSet_KeySpliterator implements LibSLRuntime.HasAutomaton, Spliterator {
-    private LinkedHashSet_KeySpliterator(Void a, Void b) {
-        super();
-    }
+public final class LinkedHashSet_KeySpliterator implements Spliterator {
 
     private LinkedHashSet_KeySpliterator(HashMap source, int origin, int fence, int est,
             int expectedModCount) {

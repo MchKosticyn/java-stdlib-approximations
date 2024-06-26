@@ -20,10 +20,7 @@ import java.util.stream.Stream;
 import runtime.LibSLRuntime;
 
 @SuppressWarnings({"all", "unchecked"})
-public class HashMap_Values extends AbstractCollection implements LibSLRuntime.HasAutomaton {
-    private HashMap_Values(Void a, Void b) {
-        super();
-    }
+public class HashMap_Values extends AbstractCollection {
 
     public boolean add(Object e) {
         throw new LinkageError();

@@ -4,7 +4,6 @@ import java.lang.IllegalStateException;
 import java.lang.NullPointerException;
 import java.lang.Object;
 import java.lang.SuppressWarnings;
-import java.lang.Void;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -48,7 +47,7 @@ public final class HashSet_KeyIterator implements Iterator<Object> {
         LibSLRuntime.error("Private constructor call");
     }
 
-    private void _checkForComodification() {
+    private void _checkForModification() {
         if (this.expectedModCount != this.parent.modCount) {
             throw new ConcurrentModificationException();
         }
@@ -65,7 +64,7 @@ public final class HashSet_KeyIterator implements Iterator<Object> {
     @SuppressWarnings("DataFlowIssue")
     public Object next() {
         Engine.assume(this.parent != null);
-        _checkForComodification();
+        _checkForModification();
         LibSLRuntime.Map<Object, Object> parentStorage = this.parent.storage;
         int length = parentStorage.size();
         if (this.index >= length) {
@@ -89,7 +88,7 @@ public final class HashSet_KeyIterator implements Iterator<Object> {
             throw new IllegalStateException();
         }
         this.nextWasCalled = false;
-        _checkForComodification();
+        _checkForModification();
         parentStorage.remove(this.currentKey);
         this.expectedModCount = this.parent.modCount;
     }
@@ -104,7 +103,7 @@ public final class HashSet_KeyIterator implements Iterator<Object> {
         int length = parentStorage.size();
         int i = this.index;
         while (i < length) {
-            _checkForComodification();
+            _checkForModification();
             Object key = this.unseenKeys.anyKey();
             this.unseenKeys.remove(key);
             Engine.assume(key != this.currentKey);

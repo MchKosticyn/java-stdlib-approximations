@@ -14,10 +14,7 @@ import java.util.function.Consumer;
 import runtime.LibSLRuntime;
 
 @SuppressWarnings({"all", "unchecked"})
-public final class LinkedHashSet_KeyIterator implements LibSLRuntime.HasAutomaton, Iterator {
-    private LinkedHashSet_KeyIterator(Void a, Void b) {
-        super();
-    }
+public final class LinkedHashSet_KeyIterator implements Iterator {
 
     private LinkedHashSet_KeyIterator(HashMap source) {
         throw new LinkageError();

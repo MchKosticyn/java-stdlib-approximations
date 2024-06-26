@@ -35,7 +35,7 @@ public final class LinkedList_DescendingIterator implements Iterator<Object> {
     }
 
     @SuppressWarnings("DataFlowIssue")
-    private void _checkForComodofication() {
+    private void _checkForModification() {
         Engine.assume(this.parent != null);
         if (this.parent.modCount != this.expectedModCount) {
             throw new ConcurrentModificationException();
@@ -44,7 +44,7 @@ public final class LinkedList_DescendingIterator implements Iterator<Object> {
 
     public Object next() {
         Engine.assume(this.parent != null);
-        _checkForComodofication();
+        _checkForModification();
         SymbolicList<Object> parentStorage = this.parent.storage;
         int i = this.cursor - 1;
         if (i < 0) {
@@ -64,7 +64,7 @@ public final class LinkedList_DescendingIterator implements Iterator<Object> {
             throw new IllegalStateException();
         }
         Engine.assume(this.parent != null);
-        _checkForComodofication();
+        _checkForModification();
         SymbolicList<Object> pStorage = this.parent.storage;
         if (this.lastRet >= pStorage.size()) {
             throw new ConcurrentModificationException();
@@ -90,7 +90,7 @@ public final class LinkedList_DescendingIterator implements Iterator<Object> {
             return;
 
         while (i < size) {
-            _checkForComodofication();
+            _checkForModification();
             Object item = es.get(i);
             userAction.accept(item);
             i++;

@@ -11,10 +11,7 @@ import java.lang.Void;
 import runtime.LibSLRuntime;
 
 @SuppressWarnings({"all", "unchecked"})
-public final class VoidOutputStream extends OutputStream implements LibSLRuntime.HasAutomaton {
-    private VoidOutputStream(Void a, Void b) {
-        super();
-    }
+public final class VoidOutputStream extends OutputStream {
 
     public void close() {
         throw new LinkageError();

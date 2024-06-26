@@ -26,10 +26,7 @@ import java.util.stream.Stream;
 import runtime.LibSLRuntime;
 
 @SuppressWarnings({"all", "unchecked"})
-public final class LinkedList_SubList extends AbstractList implements LibSLRuntime.HasAutomaton, List, RandomAccess {
-    private LinkedList_SubList(Void a, Void b) {
-        super();
-    }
+public final class LinkedList_SubList extends AbstractList implements List, RandomAccess {
 
     public LinkedList_SubList(LinkedList root, int fromIndex, int toIndex) {
         throw new LinkageError();

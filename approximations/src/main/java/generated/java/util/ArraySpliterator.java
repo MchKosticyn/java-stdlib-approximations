@@ -9,8 +9,8 @@ import java.util.Spliterator;
 import java.util.function.Consumer;
 import org.jacodb.approximation.annotation.Approximate;
 
-@Approximate(stub.java.util.Spliterators_ArraySpliterator.class)
-public final class Spliterators_ArraySpliterator implements Spliterator<Object> {
+@Approximate(stub.java.util.ArraySpliterator.class)
+public final class ArraySpliterator implements Spliterator<Object> {
 
     public Object[] array;
 
@@ -20,7 +20,7 @@ public final class Spliterators_ArraySpliterator implements Spliterator<Object> 
 
     public int characteristics;
 
-    public Spliterators_ArraySpliterator(Object[] array, int index, int fence, int characteristics) {
+    public ArraySpliterator(Object[] array, int index, int fence, int characteristics) {
         this.array = array;
         this.index = index;
         this.fence = fence;
@@ -28,7 +28,7 @@ public final class Spliterators_ArraySpliterator implements Spliterator<Object> 
     }
 
     @SuppressWarnings("unused")
-    public Spliterators_ArraySpliterator(Object[] arr, int additionalCharacteristics) {
+    public ArraySpliterator(Object[] arr, int additionalCharacteristics) {
         this(arr, 0, arr.length, additionalCharacteristics);
     }
 
@@ -94,6 +94,6 @@ public final class Spliterators_ArraySpliterator implements Spliterator<Object> 
             return null;
 
         this.index = mid;
-        return new Spliterators_ArraySpliterator(this.array, lo, mid, this.characteristics);
+        return new ArraySpliterator(this.array, lo, mid, this.characteristics);
     }
 }

@@ -3,11 +3,9 @@ package generated.java.util.stream;
 import generated.runtime.LibSLGlobals;
 import java.lang.Double;
 import java.lang.IllegalArgumentException;
-import java.lang.IllegalStateException;
 import java.lang.NullPointerException;
 import java.lang.Object;
 import java.lang.Runnable;
-import java.lang.Void;
 import java.util.DoubleSummaryStatistics;
 import java.util.OptionalDouble;
 import java.util.PrimitiveIterator;
@@ -23,1234 +21,599 @@ import java.util.function.DoubleUnaryOperator;
 import java.util.function.ObjDoubleConsumer;
 import java.util.function.Supplier;
 import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
 import java.util.stream.Stream;
+
 import org.jacodb.approximation.annotation.Approximate;
+import org.jetbrains.annotations.NotNull;
 import org.usvm.api.Engine;
 import org.usvm.api.SymbolicList;
 import runtime.LibSLRuntime;
 import stub.java.util.Spliterators_DoubleArraySpliterator;
+import stub.java.util.stream.*;
+import generated.java.lang.DoubleImpl;
 
-@Approximate(stub.java.util.stream.DoubleStreamLSL.class)
-public class DoubleStreamImpl implements DoubleStream {
+@Approximate(DoubleStreamStub.class)
+public class DoubleStreamImpl extends BaseStreamImpl implements DoubleStream {
 
     public double[] storage;
 
-    public transient int length;
-
-    public SymbolicList<Runnable> closeHandlers;
-
-    public boolean isParallel;
-
-    public boolean linkedOrConsumed;
-
-    @LibSLRuntime.AutomatonConstructor
-    public DoubleStreamImpl(Void __$lsl_token, final byte p0, final double[] p1, final int p2,
-                            final SymbolicList<Runnable> p3, final boolean p4, final boolean p5) {
-        this.storage = p1;
-        this.length = p2;
-        this.closeHandlers = p3;
-        this.isParallel = p4;
-        this.linkedOrConsumed = p5;
+    public DoubleStreamImpl(
+        double[] storage,
+        int length,
+        SymbolicList<Runnable> closeHandlers,
+        boolean isParallel,
+        boolean linkedOrConsumed
+    ) {
+        super(length, closeHandlers, isParallel, linkedOrConsumed);
+        this.storage = storage;
     }
 
-    @LibSLRuntime.AutomatonConstructor
-    public DoubleStreamImpl(final Void __$lsl_token) {
-        this(__$lsl_token, __$lsl_States.Initialized, null, 0, null, false, false);
-    }
-
-    /**
-     * [SUBROUTINE] DoubleStreamAutomaton::_actionApply(DoubleConsumer) -> void
-     * Source: java/util/stream/DoubleStream.main.lsl:117
-     */
     private void _actionApply(DoubleConsumer _action) {
-        /* body */ {
-            if (_action == null) {
-                throw new NullPointerException();
-            }
-            int i = 0;
-            for (i = 0; i < this.length; i++) {
-                _action.accept(storage[i]);
-            }
-            ;
+        if (_action == null)
+            throw new NullPointerException();
+
+        for (int i = 0; i < this.length; i++) {
+            _action.accept(storage[i]);
         }
     }
 
-    /**
-     * [SUBROUTINE] DoubleStreamAutomaton::_findFirst() -> OptionalDouble
-     * Source: java/util/stream/DoubleStream.main.lsl:136
-     */
     private OptionalDouble _findFirst() {
-        OptionalDouble result = null;
-        /* body */ {
-            if (this.length == 0) {
-                result = OptionalDouble.empty();
-            } else {
-                final double first = storage[0];
-                result = OptionalDouble.of(first);
-            }
-        }
-        return result;
+        if (this.length == 0)
+            return OptionalDouble.empty();
+
+        double first = storage[0];
+        return OptionalDouble.of(first);
     }
 
-    /**
-     * [SUBROUTINE] DoubleStreamAutomaton::_sum() -> double
-     * Source: java/util/stream/DoubleStream.main.lsl:150
-     */
     private double _sum() {
-        double result = 0.0d;
-        /* body */ {
-            result = 0;
-            if (this.length != 0) {
-                boolean anyNaN = false;
-                boolean anyPositiveInfinity = false;
-                boolean anyNegativeInfinity = false;
-                int i = 0;
-                for (i = 0; i < this.length; i++) {
-                    final double element = storage[i];
-                    result += element;
-                    if (element != element) {
-                        anyNaN = true;
-                    }
-                    if (element == DOUBLE_POSITIVE_INFINITY) {
-                        anyPositiveInfinity = true;
-                    }
-                    if (element == DOUBLE_NEGATIVE_INFINITY) {
-                        anyNegativeInfinity = true;
-                    }
-                }
-                ;
-                if (anyNaN) {
-                    result = DOUBLE_NAN;
-                } else {
-                    if (anyPositiveInfinity && anyNegativeInfinity) {
-                        result = DOUBLE_NAN;
-                    } else {
-                        if (anyPositiveInfinity && (result == DOUBLE_NEGATIVE_INFINITY)) {
-                            result = DOUBLE_NAN;
-                        } else {
-                            if (anyNegativeInfinity && (result == DOUBLE_POSITIVE_INFINITY)) {
-                                result = DOUBLE_NAN;
-                            }
-                        }
-                    }
-                }
-            }
+        if (this.length == 0)
+            return 0;
+
+        double result = 0;
+        boolean anyNaN = false;
+        boolean anyPositiveInfinity = false;
+        boolean anyNegativeInfinity = false;
+        for (int i = 0; i < this.length; i++) {
+            double element = storage[i];
+            result += element;
+            if (element != element)
+                anyNaN = true;
+            if (element == DoubleImpl.POSITIVE_INFINITY)
+                anyPositiveInfinity = true;
+            if (element == DoubleImpl.NEGATIVE_INFINITY)
+                anyNegativeInfinity = true;
         }
+        if (anyNaN)
+            return DoubleImpl.NaN;
+
+        if (anyPositiveInfinity && anyNegativeInfinity)
+            return DoubleImpl.NaN;
+
+        if (anyPositiveInfinity && (result == DoubleImpl.NEGATIVE_INFINITY))
+            return DoubleImpl.NaN;
+
+        if (anyNegativeInfinity && (result == DoubleImpl.POSITIVE_INFINITY))
+            return DoubleImpl.NaN;
+
         return result;
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::filter(DoubleStream, DoublePredicate) -> DoubleStream
-     * Source: java/util/stream/DoubleStream.main.lsl:197
-     */
-    public DoubleStream filter(DoublePredicate predicate) {
-        DoubleStream result = null;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
+    @NotNull
+    @SuppressWarnings("ConstantValue")
+    public DoubleStreamImpl filter(@NotNull DoublePredicate predicate) {
+        super.evaluate();
+
+        if (predicate == null)
+            throw new NullPointerException();
+
+        double[] filteredStorage = new double[this.length];
+        int filteredLength = 0;
+        for (int i = 0; i < this.length; i++) {
+            if (predicate.test(storage[i])) {
+                filteredStorage[filteredLength] = storage[i];
+                filteredLength++;
             }
-            if (predicate == null) {
-                throw new NullPointerException();
-            }
-            double[] filteredStorage = new double[this.length];
-            int filteredLength = 0;
-            int i = 0;
-            for (i = 0; i < this.length; i++) {
-                if (predicate.test(storage[i])) {
-                    filteredStorage[filteredLength] = storage[i];
-                    filteredLength++;
-                }
-            }
-            ;
-            Engine.assume(filteredLength <= this.length);
-            double[] resultStorage = new double[filteredLength];
-            LibSLRuntime.ArrayActions.copy(filteredStorage, 0, resultStorage, 0, filteredLength);
-            result = (stub.java.util.stream.DoubleStreamLSL) ((Object) new DoubleStreamImpl((Void) null,
-                /* state = */ DoubleStreamImpl.__$lsl_States.Initialized,
-                /* storage = */ resultStorage,
-                /* length = */ filteredLength,
-                /* closeHandlers = */ this.closeHandlers,
-                /* isParallel = */ false,
-                /* linkedOrConsumed = */ false
-            ));
-            this.linkedOrConsumed = true;
         }
+
+        Engine.assume(filteredLength <= this.length);
+        double[] resultStorage = new double[filteredLength];
+        LibSLRuntime.ArrayActions.copy(filteredStorage, 0, resultStorage, 0, filteredLength);
+        return new DoubleStreamImpl(resultStorage, filteredLength, this.closeHandlers, false, false);
+    }
+
+    @NotNull
+    @SuppressWarnings("ConstantValue")
+    public DoubleStreamImpl map(@NotNull DoubleUnaryOperator mapper) {
+        super.evaluate();
+
+        if (mapper == null)
+            throw new NullPointerException();
+
+        double[] mappedStorage = new double[this.length];
+        for (int i = 0; i < this.length; i++) {
+            mappedStorage[i] = mapper.applyAsDouble(storage[i]);
+        }
+
+        return new DoubleStreamImpl(mappedStorage, this.length, this.closeHandlers, false, false);
+    }
+
+    @NotNull
+    @SuppressWarnings("unchecked")
+    public StreamStubImpl mapToObj(@NotNull DoubleFunction mapper) {
+        super.evaluate();
+
+        Object[] objStorage = new Object[this.length];
+        for (int i = 0; i < this.length; i++) {
+            objStorage[i] = mapper.apply(storage[i]);
+        }
+
+        return new StreamStubImpl(objStorage, this.length, this.closeHandlers, false, false);
+    }
+
+    @NotNull
+    @SuppressWarnings("ConstantValue")
+    public LongStreamImpl mapToLong(@NotNull DoubleToLongFunction mapper) {
+        super.evaluate();
+
+        if (mapper == null)
+            throw new NullPointerException();
+
+        long[] mappedStorage = new long[this.length];
+        for (int i = 0; i < this.length; i++) {
+            mappedStorage[i] = mapper.applyAsLong(storage[i]);
+        }
+
+        return new LongStreamImpl(mappedStorage, this.length, this.closeHandlers, false, false);
+    }
+
+    @NotNull
+    @SuppressWarnings("ConstantValue")
+    public IntStreamImpl mapToInt(@NotNull DoubleToIntFunction mapper) {
+        super.evaluate();
+
+        if (mapper == null)
+            throw new NullPointerException();
+
+        int[] mappedStorage = new int[this.length];
+        for (int i = 0; i < this.length; i++) {
+            mappedStorage[i] = mapper.applyAsInt(storage[i]);
+        }
+
+        return new IntStreamImpl(mappedStorage, this.length, this.closeHandlers, false, false);
+    }
+
+    @SuppressWarnings("ConstantValue")
+    public DoubleStream flatMap(@NotNull DoubleFunction mapper) {
+        // TODO: dummy approximation
+        super.evaluate();
+
+        if (mapper == null)
+            throw new NullPointerException();
+
+        DoubleStream result = Engine.makeSymbolic(DoubleStream.class);
+        Engine.assume(result != null);
         return result;
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::map(DoubleStream, DoubleUnaryOperator) -> DoubleStream
-     * Source: java/util/stream/DoubleStream.main.lsl:238
-     */
-    public DoubleStream map(DoubleUnaryOperator mapper) {
-        DoubleStream result = null;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            if (mapper == null) {
-                throw new NullPointerException();
-            }
-            double[] mappedStorage = new double[this.length];
-            int i = 0;
-            for (i = 0; i < this.length; i++) {
-                mappedStorage[i] = mapper.applyAsDouble(storage[i]);
-            }
-            ;
-            result = (stub.java.util.stream.DoubleStreamLSL) ((Object) new DoubleStreamImpl((Void) null,
-                /* state = */ DoubleStreamImpl.__$lsl_States.Initialized,
-                /* storage = */ mappedStorage,
-                /* length = */ this.length,
-                /* closeHandlers = */ this.closeHandlers,
-                /* isParallel = */ false,
-                /* linkedOrConsumed = */ false
-            ));
-            this.linkedOrConsumed = true;
-        }
-        return result;
-    }
+    @NotNull
+    public DoubleStreamImpl sorted() {
+        super.evaluate();
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::mapToObj(DoubleStream, DoubleFunction) -> Stream
-     * Source: java/util/stream/DoubleStream.main.lsl:269
-     */
-    public Stream mapToObj(DoubleFunction mapper) {
-        Stream result = null;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            final Object[] objStorage = new Object[this.length];
-            int i = 0;
-            for (i = 0; i < this.length; i++) {
-                objStorage[i] = mapper.apply(storage[i]);
-            }
-            ;
-            result = (stub.java.util.stream.StreamLSL) ((Object) new StreamImpl((Void) null,
-                /* state = */ StreamImpl.__$lsl_States.Initialized,
-                /* storage = */ objStorage,
-                /* length = */ this.length,
-                /* closeHandlers = */ this.closeHandlers,
-                /* isParallel = */ false,
-                /* linkedOrConsumed = */ false
-            ));
-            this.linkedOrConsumed = true;
-        }
-        return result;
-    }
+        if (this.length == 0)
+            return new DoubleStreamImpl(this.storage, 0, this.closeHandlers, false, false);
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::mapToLong(DoubleStream, DoubleToLongFunction) -> LongStream
-     * Source: java/util/stream/DoubleStream.main.lsl:298
-     */
-    public LongStream mapToLong(DoubleToLongFunction mapper) {
-        LongStream result = null;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            if (mapper == null) {
-                throw new NullPointerException();
-            }
-            long[] mappedStorage = new long[this.length];
-            int i = 0;
-            for (i = 0; i < this.length; i++) {
-                mappedStorage[i] = mapper.applyAsLong(storage[i]);
-            }
-            ;
-            result = (stub.java.util.stream.LongStreamLSL) ((Object) new LongStreamImpl((Void) null,
-                /* state = */ LongStreamImpl.__$lsl_States.Initialized,
-                /* storage = */ mappedStorage,
-                /* length = */ this.length,
-                /* closeHandlers = */ this.closeHandlers,
-                /* isParallel = */ false,
-                /* linkedOrConsumed = */ false
-            ));
-            this.linkedOrConsumed = true;
-        }
-        return result;
-    }
-
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::mapToInt(DoubleStream, DoubleToIntFunction) -> IntStream
-     * Source: java/util/stream/DoubleStream.main.lsl:329
-     */
-    public IntStream mapToInt(DoubleToIntFunction mapper) {
-        IntStream result = null;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            if (mapper == null) {
-                throw new NullPointerException();
-            }
-            int[] mappedStorage = new int[this.length];
-            int i = 0;
-            for (i = 0; i < this.length; i++) {
-                mappedStorage[i] = mapper.applyAsInt(storage[i]);
-            }
-            ;
-            result = (stub.java.util.stream.IntStreamLSL) ((Object) new IntStreamImpl((Void) null,
-                /* state = */ IntStreamImpl.__$lsl_States.Initialized,
-                /* storage = */ mappedStorage,
-                /* length = */ this.length,
-                /* closeHandlers = */ this.closeHandlers,
-                /* isParallel = */ false,
-                /* linkedOrConsumed = */ false
-            ));
-            this.linkedOrConsumed = true;
-        }
-        return result;
-    }
-
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::flatMap(DoubleStream, DoubleFunction) -> DoubleStream
-     * Source: java/util/stream/DoubleStream.main.lsl:360
-     */
-    public DoubleStream flatMap(DoubleFunction mapper) {
-        DoubleStream result = null;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            if (mapper == null) {
-                throw new NullPointerException();
-            }
-            result = Engine.makeSymbolic(DoubleStream.class);
-            Engine.assume(result != null);
-            this.linkedOrConsumed = true;
-        }
-        return result;
-    }
-
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::sorted(DoubleStream) -> DoubleStream
-     * Source: java/util/stream/DoubleStream.main.lsl:376
-     */
-    public DoubleStream sorted() {
-        DoubleStream result = null;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            if (this.length == 0) {
-                result = (stub.java.util.stream.DoubleStreamLSL) ((Object) new DoubleStreamImpl((Void) null,
-                    /* state = */ DoubleStreamImpl.__$lsl_States.Initialized,
-                    /* storage = */ this.storage,
-                    /* length = */ 0,
-                    /* closeHandlers = */ this.closeHandlers,
-                    /* isParallel = */ false,
-                    /* linkedOrConsumed = */ false
-                ));
-            } else {
-                Engine.assume(this.length > 0);
-                final int outerLimit = this.length - 1;
-                int innerLimit = 0;
-                int i = 0;
-                int j = 0;
-                for (i = 0; i < outerLimit; i++) {
-                    innerLimit = (this.length - i) - 1;
-                    for (j = 0; j < innerLimit; j++) {
-                        final int idxA = j;
-                        final int idxB = j + 1;
-                        final double a = storage[idxA];
-                        final double b = storage[idxB];
-                        if (a > b) {
-                            storage[idxA] = b;
-                            storage[idxB] = a;
-                        }
-                    }
-                    ;
-                }
-                ;
-                result = (stub.java.util.stream.DoubleStreamLSL) ((Object) new DoubleStreamImpl((Void) null,
-                    /* state = */ DoubleStreamImpl.__$lsl_States.Initialized,
-                    /* storage = */ this.storage,
-                    /* length = */ this.length,
-                    /* closeHandlers = */ this.closeHandlers,
-                    /* isParallel = */ false,
-                    /* linkedOrConsumed = */ false
-                ));
-            }
-            this.linkedOrConsumed = true;
-        }
-        return result;
-    }
-
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::distinct(DoubleStream) -> DoubleStream
-     * Source: java/util/stream/DoubleStream.main.lsl:439
-     */
-    public DoubleStream distinct() {
-        DoubleStream result = null;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            double[] distinctStorage = null;
-            int distinctLength = 0;
-            final int size = this.length;
-            if (size == 0) {
-                distinctStorage = new double[0];
-                distinctLength = 0;
-            } else {
-                final double[] items = this.storage;
-                Engine.assume(items != null);
-                Engine.assume(items.length != 0);
-                Engine.assume(size == items.length);
-                int i = 0;
-                int j = 0;
-                final SymbolicList<Double> uniqueItems = Engine.makeSymbolicList();
-                final LibSLRuntime.Map<Double, Object> visited = new LibSLRuntime.Map<>(new LibSLRuntime.HashMapContainer<>());
-                for (i = 0; i < size; i++) {
-                    final double item = items[i];
-                    if (!visited.hasKey(item)) {
-                        visited.set(item, LibSLGlobals.SOMETHING);
-                        uniqueItems.insert(j, item);
-                        j++;
-                    }
-                }
-                ;
-                distinctLength = j;
-                Engine.assume(distinctLength > 0);
-                Engine.assume(distinctLength <= size);
-                distinctStorage = new double[distinctLength];
-                for (i = 0; i < distinctLength; i++) {
-                    final Double item = uniqueItems.get(i);
-                    Engine.assume(item != null);
-                    distinctStorage[i] = ((double) item);
-                }
-                ;
-            }
-            result = (stub.java.util.stream.DoubleStreamLSL) ((Object) new DoubleStreamImpl((Void) null,
-                /* state = */ DoubleStreamImpl.__$lsl_States.Initialized,
-                /* storage = */ distinctStorage,
-                /* length = */ distinctLength,
-                /* closeHandlers = */ this.closeHandlers,
-                /* isParallel = */ false,
-                /* linkedOrConsumed = */ false
-            ));
-            this.linkedOrConsumed = true;
-        }
-        return result;
-    }
-
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::peek(Stream, DoubleConsumer) -> DoubleStream
-     * Source: java/util/stream/DoubleStream.main.lsl:511
-     */
-    public DoubleStream peek(DoubleConsumer _action) {
-        DoubleStream result = null;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            _actionApply(_action);
-            result = (stub.java.util.stream.DoubleStreamLSL) ((Object) new DoubleStreamImpl((Void) null,
-                /* state = */ DoubleStreamImpl.__$lsl_States.Initialized,
-                /* storage = */ this.storage,
-                /* length = */ this.length,
-                /* closeHandlers = */ this.closeHandlers,
-                /* isParallel = */ false,
-                /* linkedOrConsumed = */ false
-            ));
-            this.linkedOrConsumed = true;
-        }
-        return result;
-    }
-
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::limit(DoubleStream, long) -> DoubleStream
-     * Source: java/util/stream/DoubleStream.main.lsl:527
-     */
-    public DoubleStream limit(long maxSize) {
-        DoubleStream result = null;
-        /* body */ {
-            final int maxSizeInt = ((int) maxSize);
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            if (maxSizeInt < 0) {
-                throw new IllegalArgumentException();
-            }
-            if (maxSizeInt == 0) {
-                result = (stub.java.util.stream.DoubleStreamLSL) ((Object) new DoubleStreamImpl((Void) null,
-                    /* state = */ DoubleStreamImpl.__$lsl_States.Initialized,
-                    /* storage = */ this.storage,
-                    /* length = */ 0,
-                    /* closeHandlers = */ this.closeHandlers,
-                    /* isParallel = */ false,
-                    /* linkedOrConsumed = */ false
-                ));
-            } else {
-                if (maxSizeInt > this.length) {
-                    result = (stub.java.util.stream.DoubleStreamLSL) ((Object) new DoubleStreamImpl((Void) null,
-                        /* state = */ DoubleStreamImpl.__$lsl_States.Initialized,
-                        /* storage = */ this.storage,
-                        /* length = */ this.length,
-                        /* closeHandlers = */ this.closeHandlers,
-                        /* isParallel = */ false,
-                        /* linkedOrConsumed = */ false
-                    ));
-                } else {
-                    final double[] limitStorage = new double[maxSizeInt];
-                    LibSLRuntime.ArrayActions.copy(this.storage, 0, limitStorage, 0, maxSizeInt);
-                    result = (stub.java.util.stream.DoubleStreamLSL) ((Object) new DoubleStreamImpl((Void) null,
-                        /* state = */ DoubleStreamImpl.__$lsl_States.Initialized,
-                        /* storage = */ limitStorage,
-                        /* length = */ maxSizeInt,
-                        /* closeHandlers = */ this.closeHandlers,
-                        /* isParallel = */ false,
-                        /* linkedOrConsumed = */ false
-                    ));
+        Engine.assume(this.length > 0);
+        int outerLimit = this.length - 1;
+        for (int i = 0; i < outerLimit; i++) {
+            int innerLimit = this.length - i - 1;
+            for (int j = 0; j < innerLimit; j++) {
+                int idxB = j + 1;
+                double a = storage[j];
+                double b = storage[idxB];
+                if (a > b) {
+                    storage[j] = b;
+                    storage[idxB] = a;
                 }
             }
-            this.linkedOrConsumed = true;
         }
-        return result;
+
+        return new DoubleStreamImpl(this.storage, this.length, this.closeHandlers, false, false);
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::skip(DoubleStream, long) -> DoubleStream
-     * Source: java/util/stream/DoubleStream.main.lsl:569
-     */
-    public DoubleStream skip(long n) {
-        DoubleStream result = null;
-        /* body */ {
-            final int offset = ((int) n);
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            if (offset < 0) {
-                throw new IllegalArgumentException();
-            }
-            if (offset == 0) {
-                result = (stub.java.util.stream.DoubleStreamLSL) ((Object) new DoubleStreamImpl((Void) null,
-                    /* state = */ DoubleStreamImpl.__$lsl_States.Initialized,
-                    /* storage = */ this.storage,
-                    /* length = */ this.length,
-                    /* closeHandlers = */ this.closeHandlers,
-                    /* isParallel = */ false,
-                    /* linkedOrConsumed = */ false
-                ));
-            } else {
-                if (offset >= this.length) {
-                    double[] newArray = {};
-                    result = (stub.java.util.stream.DoubleStreamLSL) ((Object) new DoubleStreamImpl((Void) null,
-                        /* state = */ DoubleStreamImpl.__$lsl_States.Initialized,
-                        /* storage = */ newArray,
-                        /* length = */ 0,
-                        /* closeHandlers = */ this.closeHandlers,
-                        /* isParallel = */ false,
-                        /* linkedOrConsumed = */ false
-                    ));
-                } else {
-                    final int newLength = this.length - offset;
-                    final double[] skipStorage = new double[newLength];
-                    int i = 0;
-                    int skipIndex = 0;
-                    for (i = offset; i < this.length; i++) {
-                        skipStorage[skipIndex] = storage[i];
-                        skipIndex++;
-                    }
-                    ;
-                    result = (stub.java.util.stream.DoubleStreamLSL) ((Object) new DoubleStreamImpl((Void) null,
-                        /* state = */ DoubleStreamImpl.__$lsl_States.Initialized,
-                        /* storage = */ skipStorage,
-                        /* length = */ newLength,
-                        /* closeHandlers = */ this.closeHandlers,
-                        /* isParallel = */ false,
-                        /* linkedOrConsumed = */ false
-                    ));
+    @NotNull
+    @SuppressWarnings("DataFlowIssue")
+    public DoubleStreamImpl distinct() {
+        super.evaluate();
+
+        double[] distinctStorage;
+        int distinctLength = 0;
+        int size = this.length;
+        if (size == 0) {
+            distinctStorage = new double[0];
+        } else {
+            double[] items = this.storage;
+            Engine.assume(items != null);
+            Engine.assume(items.length != 0);
+            Engine.assume(size == items.length);
+            SymbolicList<Double> uniqueItems = Engine.makeSymbolicList();
+            LibSLRuntime.Map<Double, Object> visited = new LibSLRuntime.Map<>(new LibSLRuntime.HashMapContainer<>());
+            for (int i = 0; i < size; i++) {
+                double item = items[i];
+                if (!visited.hasKey(item)) {
+                    visited.set(item, LibSLGlobals.SOMETHING);
+                    uniqueItems.insert(distinctLength, item);
+                    distinctLength++;
                 }
             }
-            this.linkedOrConsumed = true;
+
+            Engine.assume(distinctLength > 0);
+            Engine.assume(distinctLength <= size);
+            distinctStorage = new double[distinctLength];
+            for (int i = 0; i < distinctLength; i++) {
+                Double item = uniqueItems.get(i);
+                Engine.assume(item != null);
+                distinctStorage[i] = item;
+            }
         }
-        return result;
+        return new DoubleStreamImpl(distinctStorage, distinctLength, this.closeHandlers, false, false);
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::forEach(DoubleStream, DoubleConsumer) -> void
-     * Source: java/util/stream/DoubleStream.main.lsl:625
-     */
+    @NotNull
+    public DoubleStreamImpl peek(@NotNull DoubleConsumer _action) {
+        super.evaluate();
+
+        _actionApply(_action);
+        return new DoubleStreamImpl(this.storage, this.length, this.closeHandlers, false, false);
+    }
+
+    @NotNull
+    public DoubleStreamImpl limit(long maxSize) {
+        super.evaluate();
+
+        int maxSizeInt = (int) maxSize;
+
+        if (maxSizeInt < 0)
+            throw new IllegalArgumentException();
+
+        if (maxSizeInt == 0)
+            return new DoubleStreamImpl(this.storage, 0, this.closeHandlers, false, false);
+
+        if (maxSizeInt > this.length)
+            return new DoubleStreamImpl(this.storage, this.length, this.closeHandlers, false, false);
+
+        double[] limitStorage = new double[maxSizeInt];
+        LibSLRuntime.ArrayActions.copy(this.storage, 0, limitStorage, 0, maxSizeInt);
+        return new DoubleStreamImpl(limitStorage, maxSizeInt, this.closeHandlers, false, false);
+    }
+
+    @NotNull
+    public DoubleStreamImpl skip(long n) {
+        super.evaluate();
+
+        int offset = (int) n;
+
+        if (offset < 0)
+            throw new IllegalArgumentException();
+
+        if (offset == 0)
+            return new DoubleStreamImpl(this.storage, this.length, this.closeHandlers, false, false);
+
+        if (offset >= this.length) {
+            double[] newArray = {};
+            return new DoubleStreamImpl(newArray, 0, this.closeHandlers, false, false);
+        }
+
+        int newLength = this.length - offset;
+        double[] skipStorage = new double[newLength];
+        int skipIndex = 0;
+        for (int i = offset; i < this.length; i++) {
+            skipStorage[skipIndex] = storage[i];
+            skipIndex++;
+        }
+
+        return new DoubleStreamImpl(skipStorage, newLength, this.closeHandlers, false, false);
+    }
+
     public void forEach(DoubleConsumer _action) {
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            _actionApply(_action);
-            this.linkedOrConsumed = true;
-        }
+        super.evaluate();
+        _actionApply(_action);
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::forEachOrdered(DoubleStream, DoubleConsumer) -> void
-     * Source: java/util/stream/DoubleStream.main.lsl:634
-     */
     public void forEachOrdered(DoubleConsumer _action) {
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            _actionApply(_action);
-            this.linkedOrConsumed = true;
-        }
+        forEach(_action);
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::toArray(DoubleStream) -> array<double>
-     * Source: java/util/stream/DoubleStream.main.lsl:643
-     */
     public double[] toArray() {
-        double[] result = null;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            result = this.storage;
-            this.linkedOrConsumed = true;
-        }
-        return result;
+        super.evaluate();
+
+        // TODO: copy array?
+        return this.storage;
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::reduce(DoubleStream, double, DoubleBinaryOperator) -> double
-     * Source: java/util/stream/DoubleStream.main.lsl:652
-     */
     public double reduce(double identity, DoubleBinaryOperator accumulator) {
-        double result = 0.0d;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
+        super.evaluate();
+
+        if (accumulator == null)
+            throw new NullPointerException();
+
+        double result = identity;
+        if (this.length != 0) {
+            Engine.assume(this.length > 0);
+            for (int i = 0; i < this.length; i++) {
+                result = accumulator.applyAsDouble(result, storage[i]);
             }
-            if (accumulator == null) {
-                throw new NullPointerException();
-            }
-            result = identity;
-            if (this.length != 0) {
-                Engine.assume(this.length > 0);
-                int i = 0;
-                for (i = 0; i < this.length; i++) {
-                    result = accumulator.applyAsDouble(result, storage[i]);
-                }
-                ;
-            }
-            this.linkedOrConsumed = true;
         }
+
         return result;
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::reduce(DoubleStream, DoubleBinaryOperator) -> OptionalDouble
-     * Source: java/util/stream/DoubleStream.main.lsl:681
-     */
     public OptionalDouble reduce(DoubleBinaryOperator accumulator) {
-        OptionalDouble result = null;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            if (accumulator == null) {
-                throw new NullPointerException();
-            }
-            if (this.length == 0) {
-                result = OptionalDouble.empty();
-            } else {
-                if (this.length > 0) {
-                    double value = storage[0];
-                    int i = 0;
-                    for (i = 1; i < this.length; i++) {
-                        value = accumulator.applyAsDouble(value, storage[i]);
-                    }
-                    ;
-                    result = OptionalDouble.of(value);
-                }
-            }
-            this.linkedOrConsumed = true;
+        super.evaluate();
+
+        if (accumulator == null)
+            throw new NullPointerException();
+
+        if (this.length == 0)
+            return OptionalDouble.empty();
+
+        Engine.assume(this.length > 0);
+        double value = storage[0];
+        for (int i = 1; i < this.length; i++) {
+            value = accumulator.applyAsDouble(value, storage[i]);
         }
-        return result;
+
+        return OptionalDouble.of(value);
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::collect(DoubleStream, Supplier, ObjDoubleConsumer, BiConsumer) -> Object
-     * Source: java/util/stream/DoubleStream.main.lsl:715
-     */
+    @SuppressWarnings("unchecked")
     public Object collect(Supplier supplier, ObjDoubleConsumer accumulator, BiConsumer combiner) {
-        Object result = null;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            if (supplier == null) {
-                throw new NullPointerException();
-            }
-            if (accumulator == null) {
-                throw new NullPointerException();
-            }
-            if (combiner == null) {
-                throw new NullPointerException();
-            }
-            result = supplier.get();
-            int i = 0;
-            for (i = 0; i < this.length; i++) {
-                accumulator.accept(result, storage[i]);
-            }
-            ;
-            this.linkedOrConsumed = true;
+        super.evaluate();
+
+        if (supplier == null)
+            throw new NullPointerException();
+
+        if (accumulator == null)
+            throw new NullPointerException();
+
+        if (combiner == null)
+            throw new NullPointerException();
+
+        Object result = supplier.get();
+        for (int i = 0; i < this.length; i++) {
+            accumulator.accept(result, storage[i]);
         }
+
         return result;
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::min(DoubleStream) -> OptionalDouble
-     * Source: java/util/stream/DoubleStream.main.lsl:747
-     */
     public OptionalDouble min() {
-        OptionalDouble result = null;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            if (this.length == 0) {
-                result = OptionalDouble.empty();
-            } else {
-                double min = storage[0];
-                int i = 0;
-                for (i = 1; i < this.length; i++) {
-                    if (min > storage[i]) {
-                        min = storage[i];
-                    }
-                }
-                ;
-                result = OptionalDouble.of(min);
-            }
-            this.linkedOrConsumed = true;
+        super.evaluate();
+
+        if (this.length == 0)
+            return OptionalDouble.empty();
+
+        double min = storage[0];
+        for (int i = 1; i < this.length; i++) {
+            if (min > storage[i])
+                min = storage[i];
         }
-        return result;
+
+        return OptionalDouble.of(min);
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::max(DoubleStream) -> OptionalDouble
-     * Source: java/util/stream/DoubleStream.main.lsl:779
-     */
     public OptionalDouble max() {
-        OptionalDouble result = null;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            if (this.length == 0) {
-                result = OptionalDouble.empty();
-            } else {
-                double max = storage[0];
-                int i = 0;
-                for (i = 1; i < this.length; i++) {
-                    if (max < storage[i]) {
-                        max = storage[i];
-                    }
-                }
-                ;
-                result = OptionalDouble.of(max);
-            }
-            this.linkedOrConsumed = true;
+        super.evaluate();
+
+        if (this.length == 0)
+            return OptionalDouble.empty();
+
+        double max = storage[0];
+        for (int i = 1; i < this.length; i++) {
+            if (max < storage[i])
+                max = storage[i];
         }
-        return result;
+
+        return OptionalDouble.of(max);
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::count(DoubleStream) -> long
-     * Source: java/util/stream/DoubleStream.main.lsl:811
-     */
     public long count() {
-        long result = 0L;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            result = this.length;
-            this.linkedOrConsumed = true;
-        }
-        return result;
+        return super.count();
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::anyMatch(DoubleStream, DoublePredicate) -> boolean
-     * Source: java/util/stream/DoubleStream.main.lsl:820
-     */
     public boolean anyMatch(DoublePredicate predicate) {
-        boolean result = false;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            if (predicate == null) {
-                throw new NullPointerException();
-            }
-            result = false;
-            int i = 0;
-            while ((i < this.length) && !predicate.test(storage[i])) {
-                i++;
-            }
-            ;
-            if (i < this.length) {
-                result = true;
-            }
-            this.linkedOrConsumed = true;
+        super.evaluate();
+
+        if (predicate == null)
+            throw new NullPointerException();
+
+        int i = 0;
+        while (i < this.length && !predicate.test(storage[i])) {
+            i++;
         }
-        return result;
+
+        return i < this.length;
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::allMatch(DoubleStream, DoublePredicate) -> boolean
-     * Source: java/util/stream/DoubleStream.main.lsl:848
-     */
     public boolean allMatch(DoublePredicate predicate) {
-        boolean result = false;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            if (predicate == null) {
-                throw new NullPointerException();
-            }
-            result = true;
-            if (this.length > 0) {
-                result = false;
-                int i = 0;
-                while ((i < this.length) && predicate.test(storage[i])) {
-                    i++;
-                }
-                ;
-                if (i == this.length) {
-                    result = true;
-                }
-            }
-            this.linkedOrConsumed = true;
+        super.evaluate();
+
+        if (predicate == null)
+            throw new NullPointerException();
+
+        if (this.length == 0)
+            return true;
+
+        Engine.assume(this.length > 0);
+        int i = 0;
+        while (i < this.length && predicate.test(storage[i])) {
+            i++;
         }
-        return result;
+
+        return i == this.length;
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::noneMatch(DoubleStream, DoublePredicate) -> boolean
-     * Source: java/util/stream/DoubleStream.main.lsl:874
-     */
     public boolean noneMatch(DoublePredicate predicate) {
-        boolean result = false;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            if (predicate == null) {
-                throw new NullPointerException();
-            }
-            result = true;
-            if (this.length > 0) {
-                result = false;
-                int i = 0;
-                while ((i < this.length) && !predicate.test(storage[i])) {
-                    i++;
-                }
-                ;
-                if (i == this.length) {
-                    result = true;
-                }
-            }
-            this.linkedOrConsumed = true;
+        super.evaluate();
+
+        if (predicate == null)
+            throw new NullPointerException();
+
+        if (this.length == 0)
+            return true;
+
+        Engine.assume(this.length > 0);
+
+        int i = 0;
+        while (i < this.length && !predicate.test(storage[i])) {
+            i++;
         }
-        return result;
+
+        return i == this.length;
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::findFirst(DoubleStream) -> OptionalDouble
-     * Source: java/util/stream/DoubleStream.main.lsl:900
-     */
     public OptionalDouble findFirst() {
-        OptionalDouble result = null;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            result = _findFirst();
-            this.linkedOrConsumed = true;
-        }
-        return result;
+        super.evaluate();
+
+        return _findFirst();
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::findAny(DoubleStream) -> OptionalDouble
-     * Source: java/util/stream/DoubleStream.main.lsl:909
-     */
     public OptionalDouble findAny() {
-        OptionalDouble result = null;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            result = _findFirst();
-            this.linkedOrConsumed = true;
-        }
-        return result;
+        return findFirst();
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::iterator(DoubleStream) -> PrimitiveIterator_OfDouble
-     * Source: java/util/stream/DoubleStream.main.lsl:918
-     */
+    @NotNull
     public PrimitiveIterator.OfDouble iterator() {
-        PrimitiveIterator.OfDouble result = null;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            result = (stub.java.util.stream.DoubleStreamLSLIterator) ((Object) new DoubleStreamLSLIterator((Void) null,
-                /* state = */ DoubleStreamLSLIterator.__$lsl_States.Initialized,
-                /* parent = */ this,
-                /* cursor = */ 0
-            ));
-            this.linkedOrConsumed = true;
-        }
-        return result;
+        super.evaluate();
+
+        return new DoubleStreamStubIteratorImpl(this, 0);
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::spliterator(DoubleStream) -> Spliterator_OfDouble
-     * Source: java/util/stream/DoubleStream.main.lsl:932
-     */
+    @NotNull
     public Spliterator.OfDouble spliterator() {
-        Spliterator.OfDouble result = null;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            result = (Spliterators_DoubleArraySpliterator) ((Object) new generated.java.util.Spliterators_DoubleArraySpliterator((Void) null,
-                /* state = */ generated.java.util.Spliterators_DoubleArraySpliterator.__$lsl_States.Initialized,
-                /* array = */ this.storage,
-                /* index = */ 0,
-                /* fence = */ this.length,
-                /* characteristics = */ LibSLGlobals.SPLITERATOR_ORDERED | LibSLGlobals.SPLITERATOR_IMMUTABLE | LibSLGlobals.SPLITERATOR_SIZED | LibSLGlobals.SPLITERATOR_SUBSIZED
-            ));
-            this.linkedOrConsumed = true;
-        }
-        return result;
+        super.evaluate();
+
+        return new Spliterators_DoubleArraySpliterator(this.storage, 0, this.length, spliteratorCharacteristics);
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::isParallel(DoubleStream) -> boolean
-     * Source: java/util/stream/DoubleStream.main.lsl:948
-     */
     public boolean isParallel() {
-        boolean result = false;
-        /* body */ {
-            result = this.isParallel;
-        }
-        return result;
+        return super.isParallel();
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::sequential(DoubleStream) -> DoubleStream
-     * Source: java/util/stream/DoubleStream.main.lsl:954
-     */
-    public DoubleStream sequential() {
-        DoubleStream result = null;
-        /* body */ {
-            this.isParallel = false;
-            result = this;
-        }
-        return result;
+    @NotNull
+    public DoubleStreamImpl sequential() {
+        return (DoubleStreamImpl) super.sequential();
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::parallel(DoubleStream) -> DoubleStream
-     * Source: java/util/stream/DoubleStream.main.lsl:961
-     */
-    public DoubleStream parallel() {
-        DoubleStream result = null;
-        /* body */ {
-            this.isParallel = true;
-            result = this;
-        }
-        return result;
+    @NotNull
+    public DoubleStreamImpl parallel() {
+        return (DoubleStreamImpl) super.parallel();
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::unordered(DoubleStream) -> DoubleStream
-     * Source: java/util/stream/DoubleStream.main.lsl:968
-     */
-    public DoubleStream unordered() {
-        DoubleStream result = null;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            result = (stub.java.util.stream.DoubleStreamLSL) ((Object) new DoubleStreamImpl((Void) null,
-                /* state = */ DoubleStreamImpl.__$lsl_States.Initialized,
-                /* storage = */ this.storage,
-                /* length = */ this.length,
-                /* closeHandlers = */ this.closeHandlers,
-                /* isParallel = */ false,
-                /* linkedOrConsumed = */ false
-            ));
-            this.linkedOrConsumed = true;
-        }
-        return result;
+    @NotNull
+    public DoubleStreamImpl unordered() {
+        super.evaluate();
+
+        return new DoubleStreamImpl(this.storage, this.length, this.closeHandlers, false, false);
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::onClose(DoubleStream, Runnable) -> DoubleStream
-     * Source: java/util/stream/DoubleStream.main.lsl:981
-     */
-    public DoubleStream onClose(Runnable closeHandler) {
-        DoubleStream result = null;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            final int listLength = this.closeHandlers.size();
-            this.closeHandlers.insert(listLength, closeHandler);
-            result = this;
-        }
-        return result;
+    @NotNull
+    public DoubleStreamImpl onClose(@NotNull Runnable closeHandler) {
+        return (DoubleStreamImpl) super.onClose(closeHandler);
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::close(DoubleStream) -> void
-     * Source: java/util/stream/DoubleStream.main.lsl:993
-     */
     public void close() {
-        /* body */ {
-            final int listLength = this.closeHandlers.size();
-            int i = 0;
-            for (i = 0; i < listLength; i++) {
-                final Runnable currentHandler = ((Runnable) this.closeHandlers.get(i));
-                currentHandler.run();
-            }
-            ;
-            this.closeHandlers = Engine.makeSymbolicList();
-            this.linkedOrConsumed = true;
-        }
+        super.close();
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::dropWhile(DoubleStream, DoublePredicate) -> DoubleStream
-     * Source: java/util/stream/DoubleStream.main.lsl:1017
-     */
-    public DoubleStream dropWhile(DoublePredicate predicate) {
-        DoubleStream result = null;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            if (predicate == null) {
-                throw new NullPointerException();
-            }
-            if (this.length == 0) {
-                final double[] emptyStorage = new double[0];
-                result = (stub.java.util.stream.DoubleStreamLSL) ((Object) new DoubleStreamImpl((Void) null,
-                    /* state = */ DoubleStreamImpl.__$lsl_States.Initialized,
-                    /* storage = */ emptyStorage,
-                    /* length = */ 0,
-                    /* closeHandlers = */ this.closeHandlers,
-                    /* isParallel = */ false,
-                    /* linkedOrConsumed = */ false
-                ));
-            } else {
-                Engine.assume(this.length > 0);
-                int dropLength = 0;
-                int i = 0;
-                while ((i < this.length) && predicate.test(storage[i])) {
-                    dropLength++;
-                    i += 1;
-                }
-                ;
-                if (dropLength == 0) {
-                    result = (stub.java.util.stream.DoubleStreamLSL) ((Object) new DoubleStreamImpl((Void) null,
-                        /* state = */ DoubleStreamImpl.__$lsl_States.Initialized,
-                        /* storage = */ this.storage,
-                        /* length = */ this.length,
-                        /* closeHandlers = */ this.closeHandlers,
-                        /* isParallel = */ false,
-                        /* linkedOrConsumed = */ false
-                    ));
-                } else {
-                    final int newLength = this.length - dropLength;
-                    final double[] newStorage = new double[newLength];
-                    int j = dropLength;
-                    i = dropLength;
-                    while (i < this.length) {
-                        newStorage[j] = storage[i];
-                        j += 1;
-                        i += 1;
-                    }
-                    ;
-                    result = (stub.java.util.stream.DoubleStreamLSL) ((Object) new DoubleStreamImpl((Void) null,
-                        /* state = */ DoubleStreamImpl.__$lsl_States.Initialized,
-                        /* storage = */ newStorage,
-                        /* length = */ newLength,
-                        /* closeHandlers = */ this.closeHandlers,
-                        /* isParallel = */ false,
-                        /* linkedOrConsumed = */ false
-                    ));
-                }
-            }
-            this.linkedOrConsumed = true;
+    @SuppressWarnings("ConstantValue")
+    @NotNull
+    public DoubleStreamImpl dropWhile(@NotNull DoublePredicate predicate) {
+        super.evaluate();
+
+        if (predicate == null)
+            throw new NullPointerException();
+
+        if (this.length == 0)
+            return new DoubleStreamImpl(new double[0], 0, this.closeHandlers, false, false);
+
+        Engine.assume(this.length > 0);
+        int dropLength = 0;
+        while (dropLength < this.length && predicate.test(storage[dropLength])) {
+            dropLength++;
         }
-        return result;
+
+        if (dropLength == 0)
+            return new DoubleStreamImpl(this.storage, this.length, this.closeHandlers, false, false);
+
+        int newLength = this.length - dropLength;
+        double[] newStorage = new double[newLength];
+        LibSLRuntime.ArrayActions.copy(storage, dropLength, newStorage, 0, newLength);
+        return new DoubleStreamImpl(newStorage, newLength, this.closeHandlers, false, false);
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::takeWhile(DoubleStream, DoublePredicate) -> DoubleStream
-     * Source: java/util/stream/DoubleStream.main.lsl:1092
-     */
-    public DoubleStream takeWhile(DoublePredicate predicate) {
-        DoubleStream result = null;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            if (predicate == null) {
-                throw new NullPointerException();
-            }
-            if (this.length == 0) {
-                final double[] emptyStorage = new double[0];
-                result = (stub.java.util.stream.DoubleStreamLSL) ((Object) new DoubleStreamImpl((Void) null,
-                    /* state = */ DoubleStreamImpl.__$lsl_States.Initialized,
-                    /* storage = */ emptyStorage,
-                    /* length = */ 0,
-                    /* closeHandlers = */ this.closeHandlers,
-                    /* isParallel = */ false,
-                    /* linkedOrConsumed = */ false
-                ));
-            } else {
-                Engine.assume(this.length > 0);
-                int takeLength = 0;
-                int i = 0;
-                while ((i < this.length) && predicate.test(storage[i])) {
-                    takeLength += 1;
-                    i += 1;
-                }
-                ;
-                if (takeLength == this.length) {
-                    result = (stub.java.util.stream.DoubleStreamLSL) ((Object) new DoubleStreamImpl((Void) null,
-                        /* state = */ DoubleStreamImpl.__$lsl_States.Initialized,
-                        /* storage = */ this.storage,
-                        /* length = */ this.length,
-                        /* closeHandlers = */ this.closeHandlers,
-                        /* isParallel = */ false,
-                        /* linkedOrConsumed = */ false
-                    ));
-                } else {
-                    final int newLength = takeLength;
-                    final double[] newStorage = new double[newLength];
-                    int j = 0;
-                    i = 0;
-                    while (i < takeLength) {
-                        newStorage[j] = storage[i];
-                        j += 1;
-                        i += 1;
-                    }
-                    ;
-                    result = (stub.java.util.stream.DoubleStreamLSL) ((Object) new DoubleStreamImpl((Void) null,
-                        /* state = */ DoubleStreamImpl.__$lsl_States.Initialized,
-                        /* storage = */ newStorage,
-                        /* length = */ newLength,
-                        /* closeHandlers = */ this.closeHandlers,
-                        /* isParallel = */ false,
-                        /* linkedOrConsumed = */ false
-                    ));
-                }
-            }
-            this.linkedOrConsumed = true;
+    @NotNull
+    @SuppressWarnings("ConstantValue")
+    public DoubleStreamImpl takeWhile(@NotNull DoublePredicate predicate) {
+        super.evaluate();
+
+        if (predicate == null)
+            throw new NullPointerException();
+
+        if (this.length == 0)
+            return new DoubleStreamImpl(new double[0], 0, this.closeHandlers, false, false);
+
+        Engine.assume(this.length > 0);
+        int takeLength = 0;
+        while (takeLength < this.length && predicate.test(storage[takeLength])) {
+            takeLength++;
         }
-        return result;
+
+        if (takeLength == this.length)
+            return new DoubleStreamImpl(this.storage, this.length, this.closeHandlers, false, false);
+
+        double[] newStorage = new double[takeLength];
+        LibSLRuntime.ArrayActions.copy(storage, 0, newStorage, 0, takeLength);
+
+        return new DoubleStreamImpl(newStorage, takeLength, this.closeHandlers, false, false);
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::sum(DoubleStream) -> double
-     * Source: java/util/stream/DoubleStream.main.lsl:1167
-     */
     public double sum() {
-        double result = 0.0d;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            result = _sum();
-            this.linkedOrConsumed = true;
-        }
-        return result;
+        super.evaluate();
+
+        return _sum();
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::average(DoubleStream) -> OptionalDouble
-     * Source: java/util/stream/DoubleStream.main.lsl:1177
-     */
     public OptionalDouble average() {
-        OptionalDouble result = null;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            if (this.length == 0) {
-                result = OptionalDouble.empty();
-            } else {
-                double curSum = _sum();
-                double divisionResult = curSum / this.length;
-                result = OptionalDouble.of(divisionResult);
-            }
-            this.linkedOrConsumed = true;
-        }
-        return result;
+        super.evaluate();
+
+        if (this.length == 0)
+            return OptionalDouble.empty();
+
+        double curSum = _sum();
+        double divisionResult = curSum / this.length;
+        return OptionalDouble.of(divisionResult);
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::summaryStatistics(DoubleStream) -> DoubleSummaryStatistics
-     * Source: java/util/stream/DoubleStream.main.lsl:1196
-     */
     public DoubleSummaryStatistics summaryStatistics() {
-        DoubleSummaryStatistics result = null;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            result = new DoubleSummaryStatistics();
-            int i = 0;
-            for (i = 0; i < this.length; i += 1) {
-                result.accept(storage[i]);
-            }
-            ;
-            this.linkedOrConsumed = true;
+        super.evaluate();
+
+        DoubleSummaryStatistics result = new DoubleSummaryStatistics();
+        for (int i = 0; i < this.length; i++) {
+            result.accept(storage[i]);
         }
+
         return result;
     }
 
-    /**
-     * [FUNCTION] DoubleStreamAutomaton::boxed(DoubleStream) -> Stream
-     * Source: java/util/stream/DoubleStream.main.lsl:1217
-     */
-    public Stream boxed() {
-        Stream result = null;
-        /* body */ {
-            if (this.linkedOrConsumed) {
-                throw new IllegalStateException();
-            }
-            final Double[] doubleArray = new Double[this.length];
-            int i = 0;
-            for (i = 0; i < this.length; i += 1) {
-                doubleArray[i] = storage[i];
-            }
-            ;
-            result = (stub.java.util.stream.StreamLSL) ((Object) new StreamImpl((Void) null,
-                /* state = */ StreamImpl.__$lsl_States.Initialized,
-                /* storage = */ doubleArray,
-                /* length = */ this.length,
-                /* closeHandlers = */ this.closeHandlers,
-                /* isParallel = */ false,
-                /* linkedOrConsumed = */ false
-            ));
-            this.linkedOrConsumed = true;
+    @SuppressWarnings("unchecked")
+    public Stream<Double> boxed() {
+        super.evaluate();
+
+        Double[] doubleArray = new Double[this.length];
+        for (int i = 0; i < this.length; i++) {
+            doubleArray[i] = storage[i];
         }
-        return result;
+        StreamStubImpl stream = new StreamStubImpl(doubleArray, this.length, this.closeHandlers, false, false);
+        return (Stream<Double>) (Object) stream;
     }
 }

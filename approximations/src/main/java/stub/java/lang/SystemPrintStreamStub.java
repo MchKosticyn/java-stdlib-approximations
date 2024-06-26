@@ -8,13 +8,12 @@ import java.lang.CharSequence;
 import java.lang.LinkageError;
 import java.lang.Object;
 import java.lang.String;
-import java.lang.Void;
 import java.util.Locale;
 
-public final class System_PrintStream extends PrintStream {
+public final class SystemPrintStreamStub extends PrintStream {
 
-    @SuppressWarnings({"DataFlowIssue", "unused"})
-    private System_PrintStream(Void a, Void b) {
+    @SuppressWarnings("DataFlowIssue")
+    private SystemPrintStreamStub() {
         super((OutputStream) null);
     }
 

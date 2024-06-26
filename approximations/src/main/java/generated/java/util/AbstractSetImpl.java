@@ -1,6 +1,6 @@
 package generated.java.util;
 
-import generated.java.util.stream.StreamImpl;
+import generated.java.util.stream.StreamStubImpl;
 import generated.runtime.LibSLGlobals;
 
 import java.io.Serializable;
@@ -66,7 +66,7 @@ public class AbstractSetImpl implements Set<Object>, Cloneable, Serializable {
         LibSLRuntime.error("Private constructor call");
     }
 
-    public void _checkForComodification(int expectedModCount) {
+    public void _checkForModification(int expectedModCount) {
         if (this.modCount != expectedModCount) {
             throw new ConcurrentModificationException();
         }
@@ -98,7 +98,7 @@ public class AbstractSetImpl implements Set<Object>, Cloneable, Serializable {
             items[i] = key;
         }
 
-        return new StreamImpl(items, count, Engine.makeSymbolicList(), parallel, false);
+        return new StreamStubImpl(items, count, Engine.makeSymbolicList(), parallel, false);
     }
 
     public boolean add(Object obj) {
@@ -113,7 +113,7 @@ public class AbstractSetImpl implements Set<Object>, Cloneable, Serializable {
 
     public void clear() {
         this.storage = new LibSLRuntime.Map<>(new LibSLRuntime.HashMapContainer<>());
-        this.modCount += 1;
+        this.modCount++;
     }
 
     public Object clone() throws CloneNotSupportedException {
@@ -143,7 +143,7 @@ public class AbstractSetImpl implements Set<Object>, Cloneable, Serializable {
     public boolean remove(Object obj) {
         if (this.storage.hasKey(obj)) {
             this.storage.remove(obj);
-            this.modCount += 1;
+            this.modCount++;
             return true;
         }
 
@@ -158,7 +158,7 @@ public class AbstractSetImpl implements Set<Object>, Cloneable, Serializable {
         Object[] keysStorageArray = new Object[this.storage.size()];
         LibSLRuntime.Map<Object, Object> unseenKeys = this.storage.duplicate();
         int size = this.storage.size();
-        for (int i = 0; i < size; i += 1) {
+        for (int i = 0; i < size; i++) {
             Object key = unseenKeys.anyKey();
             unseenKeys.remove(key);
             keysStorageArray[i] = key;
@@ -182,8 +182,8 @@ public class AbstractSetImpl implements Set<Object>, Cloneable, Serializable {
             return false;
 
         boolean result = LibSLRuntime.equals(this.storage, otherStorage);
-        otherSet._checkForComodification(otherExpectedModCount);
-        this._checkForComodification(expectedModCount);
+        otherSet._checkForModification(otherExpectedModCount);
+        this._checkForModification(expectedModCount);
 
         return result;
     }
@@ -219,8 +219,8 @@ public class AbstractSetImpl implements Set<Object>, Cloneable, Serializable {
                 i++;
             }
         }
-        _checkForComodification(expectedModCount);
-        this.modCount += 1;
+        _checkForModification(expectedModCount);
+        this.modCount++;
         return lengthBeforeRemoving != this.storage.size();
     }
 
@@ -230,12 +230,12 @@ public class AbstractSetImpl implements Set<Object>, Cloneable, Serializable {
         Object[] result = new Object[len];
         int expectedModCount = this.modCount;
         LibSLRuntime.Map<Object, Object> unseenKeys = this.storage.duplicate();
-        for (int i = 0; i < len; i += 1) {
+        for (int i = 0; i < len; i++) {
             Object key = unseenKeys.anyKey();
             unseenKeys.remove(key);
             result[i] = key;
         }
-        _checkForComodification(expectedModCount);
+        _checkForModification(expectedModCount);
 
         return result;
     }
@@ -250,7 +250,7 @@ public class AbstractSetImpl implements Set<Object>, Cloneable, Serializable {
         if (aLen < len) {
             array = new Object[len];
         }
-        for (int i = 0; i < len; i += 1) {
+        for (int i = 0; i < len; i++) {
             Object key = unseenKeys.anyKey();
             unseenKeys.remove(key);
             array[i] = key;
@@ -258,7 +258,7 @@ public class AbstractSetImpl implements Set<Object>, Cloneable, Serializable {
         if (aLen > len) {
             array[len] = null;
         }
-        _checkForComodification(expectedModCount);
+        _checkForModification(expectedModCount);
 
         return array;
     }
@@ -273,12 +273,12 @@ public class AbstractSetImpl implements Set<Object>, Cloneable, Serializable {
         Object[] result = new Object[len];
         int expectedModCount = this.modCount;
         LibSLRuntime.Map<Object, Object> unseenKeys = this.storage.duplicate();
-        for (int i = 0; i < len; i += 1) {
+        for (int i = 0; i < len; i++) {
             Object key = unseenKeys.anyKey();
             unseenKeys.remove(key);
             result[i] = key;
         }
-        _checkForComodification(expectedModCount);
+        _checkForModification(expectedModCount);
         return result;
     }
 
@@ -309,10 +309,10 @@ public class AbstractSetImpl implements Set<Object>, Cloneable, Serializable {
             if (!c.contains(key)) {
                 this.storage.remove(key);
             }
-            i += 1;
+            i++;
         }
         if (lengthBeforeAdd != this.storage.size()) {
-            this.modCount += 1;
+            this.modCount++;
             return true;
         }
 
@@ -333,11 +333,11 @@ public class AbstractSetImpl implements Set<Object>, Cloneable, Serializable {
             if (filter.test(key)) {
                 this.storage.remove(key);
             }
-            i += 1;
+            i++;
         }
-        _checkForComodification(expectedModCount);
+        _checkForModification(expectedModCount);
         if (lengthBeforeAdd != this.storage.size()) {
-            this.modCount += 1;
+            this.modCount++;
             return true;
         }
 
@@ -356,9 +356,9 @@ public class AbstractSetImpl implements Set<Object>, Cloneable, Serializable {
             Object key = unseenKeys.anyKey();
             unseenKeys.remove(key);
             userAction.accept(key);
-            i += 1;
+            i++;
         }
-        _checkForComodification(expectedModCount);
+        _checkForModification(expectedModCount);
     }
 
     public Stream<Object> stream() {

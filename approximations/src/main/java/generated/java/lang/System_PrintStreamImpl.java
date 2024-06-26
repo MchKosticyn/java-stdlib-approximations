@@ -12,8 +12,9 @@ import java.util.Locale;
 import generated.libsl.utils.VoidOutputStreamImpl;
 import org.jacodb.approximation.annotation.Approximate;
 import org.jetbrains.annotations.NotNull;
+import stub.java.lang.SystemPrintStreamStub;
 
-@Approximate(stub.java.lang.System_PrintStream.class)
+@Approximate(SystemPrintStreamStub.class)
 public final class System_PrintStreamImpl extends PrintStream {
 
     public boolean closed;

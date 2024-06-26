@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
-public final class ArrayList_Spliterator implements Spliterator<Object> {
+public final class SpliteratorStub implements Spliterator<Object> {
 
     @SuppressWarnings("unused")
-    private ArrayList_Spliterator(ArrayList<Object> _this, int origin, int fence, int expectedModCount) {
+    private SpliteratorStub(ArrayList<Object> _this, int origin, int fence, int expectedModCount) {
         throw new LinkageError();
     }
 

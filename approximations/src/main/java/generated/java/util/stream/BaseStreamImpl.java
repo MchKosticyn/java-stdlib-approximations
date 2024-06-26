@@ -1,15 +1,14 @@
 package generated.java.util.stream;
 
+import generated.runtime.LibSLGlobals;
 import org.jacodb.approximation.annotation.Approximate;
 import org.jetbrains.annotations.NotNull;
+import org.usvm.api.Engine;
 import org.usvm.api.SymbolicList;
+import stub.java.util.stream.BaseStreamStub;
 
-import java.util.Iterator;
-import java.util.Spliterator;
-import java.util.stream.Stream;
-
-@Approximate(stub.java.util.stream.BaseStream.class)
-public class BaseStreamImpl implements java.util.stream.BaseStream<Object, Stream<Object>> {
+@Approximate(BaseStreamStub.class)
+public class BaseStreamImpl {
 
     public transient int length;
 
@@ -19,61 +18,69 @@ public class BaseStreamImpl implements java.util.stream.BaseStream<Object, Strea
 
     public boolean linkedOrConsumed;
 
+    public int spliteratorCharacteristics =
+        LibSLGlobals.SPLITERATOR_ORDERED
+            | LibSLGlobals.SPLITERATOR_IMMUTABLE
+            | LibSLGlobals.SPLITERATOR_SIZED
+            | LibSLGlobals.SPLITERATOR_SUBSIZED;
+
     public BaseStreamImpl(
         int length,
-        SymbolicList<Runnable> handlers,
+        SymbolicList<Runnable> closeHandlers,
         boolean isParallel,
         boolean linkedOrConsumed
     ) {
         this.length = length;
-        this.closeHandlers = handlers;
+        this.closeHandlers = closeHandlers;
         this.isParallel = isParallel;
         this.linkedOrConsumed = linkedOrConsumed;
     }
 
-    @NotNull
-    @Override
-    public Iterator<Object> iterator() {
-        return null;
+    public void evaluate() {
+        if (this.linkedOrConsumed)
+            throw new IllegalStateException();
+
+        this.linkedOrConsumed = true;
     }
 
-    @NotNull
-    @Override
-    public Spliterator<Object> spliterator() {
-        return null;
-    }
-
-    @Override
     public boolean isParallel() {
-        return false;
+        return this.isParallel;
     }
 
     @NotNull
-    @Override
-    public Stream<Object> sequential() {
-        return Stream.empty();
+    public BaseStreamImpl sequential() {
+        this.isParallel = false;
+        return this;
     }
 
     @NotNull
-    @Override
-    public Stream<Object> parallel() {
-        return Stream.empty();
+    public BaseStreamImpl parallel() {
+        this.isParallel = true;
+        return this;
+    }
+
+    public long count() {
+        evaluate();
+        return this.length;
     }
 
     @NotNull
-    @Override
-    public Stream<Object> unordered() {
-        return Stream.empty();
+    public BaseStreamImpl onClose(@NotNull Runnable closeHandler) {
+        if (this.linkedOrConsumed)
+            throw new IllegalStateException();
+
+        int listLength = this.closeHandlers.size();
+        this.closeHandlers.insert(listLength, closeHandler);
+        return this;
     }
 
-    @NotNull
-    @Override
-    public Stream<Object> onClose(@NotNull Runnable closeHandler) {
-        return Stream.empty();
-    }
-
-    @Override
     public void close() {
-
+        int listLength = this.closeHandlers.size();
+        for (int i = 0; i < listLength; i++) {
+            Runnable currentHandler = this.closeHandlers.get(i);
+            currentHandler.run();
+        }
+        this.closeHandlers = Engine.makeSymbolicList();
+        this.linkedOrConsumed = true;
     }
 }

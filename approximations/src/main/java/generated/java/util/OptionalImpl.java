@@ -11,7 +11,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import generated.java.util.stream.StreamImpl;
+import generated.java.util.stream.StreamStubImpl;
 import org.jacodb.approximation.annotation.Approximate;
 import org.usvm.api.Engine;
 import runtime.LibSLRuntime;
@@ -205,7 +205,7 @@ public final class OptionalImpl {
             items = new Object[1];
             items[0] = this.value;
         }
-        return new StreamImpl(items, items.length, Engine.makeSymbolicList(), false, false);
+        return new StreamStubImpl(items, items.length, Engine.makeSymbolicList(), false, false);
     }
 
     public String toString() {

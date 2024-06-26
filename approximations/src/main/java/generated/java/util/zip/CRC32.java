@@ -68,7 +68,7 @@ public class CRC32 implements Checksum {
         this.crc = 0;
     }
 
-    @SuppressWarnings("ConstantValue")
+    @SuppressWarnings({"ConstantValue", "PatternVariableCanBeUsed"})
     public void update(ByteBuffer buffer) {
         int pos = buffer.position();
         int limit = buffer.limit();
@@ -79,7 +79,8 @@ public class CRC32 implements Checksum {
         if (rem <= 0)
             return;
 
-        if (buffer instanceof DirectBuffer directBuffer) {
+        if (buffer instanceof DirectBuffer) {
+            DirectBuffer directBuffer = (DirectBuffer) buffer;
             long address = directBuffer.address();
             this.crc = _updateByteBuffer(address);
             buffer.position(limit);

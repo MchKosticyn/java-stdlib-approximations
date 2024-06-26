@@ -14,10 +14,7 @@ import java.util.function.LongConsumer;
 import runtime.LibSLRuntime;
 
 @SuppressWarnings({"all", "unchecked"})
-public final class Spliterators_LongArraySpliterator implements LibSLRuntime.HasAutomaton, Spliterator.OfLong {
-    private Spliterators_LongArraySpliterator(Void a, Void b) {
-        super();
-    }
+public final class Spliterators_LongArraySpliterator implements Spliterator.OfLong {
 
     public Spliterators_LongArraySpliterator(long[] arr, int additionalCharacteristics) {
         throw new LinkageError();

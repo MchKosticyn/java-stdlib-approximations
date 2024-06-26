@@ -14,10 +14,7 @@ import java.util.function.DoubleConsumer;
 import runtime.LibSLRuntime;
 
 @SuppressWarnings({"all", "unchecked"})
-public final class Spliterators_DoubleArraySpliterator implements LibSLRuntime.HasAutomaton, Spliterator.OfDouble {
-    private Spliterators_DoubleArraySpliterator(Void a, Void b) {
-        super();
-    }
+public final class Spliterators_DoubleArraySpliterator implements Spliterator.OfDouble {
 
     public Spliterators_DoubleArraySpliterator(double[] arr, int additionalCharacteristics) {
         throw new LinkageError();

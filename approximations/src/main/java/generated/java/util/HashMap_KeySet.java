@@ -10,7 +10,7 @@ import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import generated.java.util.stream.StreamImpl;
+import generated.java.util.stream.StreamStubImpl;
 import org.jacodb.approximation.annotation.Approximate;
 import org.jetbrains.annotations.NotNull;
 import org.usvm.api.Engine;
@@ -120,7 +120,7 @@ public final class HashMap_KeySet extends AbstractSet<Object> {
             userAction.accept(curKey);
             unseen.remove(curKey);
         }
-        this.parent._checkForComodification(expectedModCount);
+        this.parent._checkForModification(expectedModCount);
     }
 
     public int hashCode() {
@@ -138,13 +138,13 @@ public final class HashMap_KeySet extends AbstractSet<Object> {
 
     public Stream<Object> parallelStream() {
         Object[] items = _mapToKeysArray();
-        return new StreamImpl(_mapToKeysArray(), items.length, Engine.makeSymbolicList(), true, false);
+        return new StreamStubImpl(_mapToKeysArray(), items.length, Engine.makeSymbolicList(), true, false);
     }
 
     public boolean remove(Object key) {
         if (this.storage.hasKey(key)) {
             this.storage.remove(key);
-            this.parent.modCount += 1;
+            this.parent.modCount++;
             return true;
         }
 
@@ -164,7 +164,7 @@ public final class HashMap_KeySet extends AbstractSet<Object> {
             for (Object oKey : c) {
                 if (this.storage.hasKey(oKey)) {
                     this.storage.remove(oKey);
-                    this.parent.modCount += 1;
+                    this.parent.modCount++;
                 }
             }
 
@@ -172,11 +172,11 @@ public final class HashMap_KeySet extends AbstractSet<Object> {
         }
 
         LibSLRuntime.Map<Object, Map.Entry<Object, Object>> unseen = this.storage.duplicate();
-        for (int i = 0; i < startStorageSize; i += 1) {
+        for (int i = 0; i < startStorageSize; i++) {
             Object curKey = unseen.anyKey();
             if (c.contains(curKey)) {
                 this.storage.remove(curKey);
-                this.parent.modCount += 1;
+                this.parent.modCount++;
             }
             unseen.remove(curKey);
         }
@@ -194,11 +194,11 @@ public final class HashMap_KeySet extends AbstractSet<Object> {
             return false;
 
         LibSLRuntime.Map<Object, Map.Entry<Object, Object>> unseen = this.storage.duplicate();
-        for (int i = 0; i < startStorageSize; i += 1) {
+        for (int i = 0; i < startStorageSize; i++) {
             Object curKey = unseen.anyKey();
             if (filter.test(curKey)) {
                 this.storage.remove(curKey);
-                this.parent.modCount += 1;
+                this.parent.modCount++;
             }
             unseen.remove(curKey);
         }
@@ -218,11 +218,11 @@ public final class HashMap_KeySet extends AbstractSet<Object> {
             return false;
 
         LibSLRuntime.Map<Object, Map.Entry<Object, Object>> unseen = this.storage.duplicate();
-        for (int i = 0; i < startStorageSize; i += 1) {
+        for (int i = 0; i < startStorageSize; i++) {
             Object curKey = unseen.anyKey();
             if (!c.contains(curKey)) {
                 this.storage.remove(curKey);
-                this.parent.modCount += 1;
+                this.parent.modCount++;
             }
             unseen.remove(curKey);
         }
@@ -240,7 +240,7 @@ public final class HashMap_KeySet extends AbstractSet<Object> {
 
     public Stream<Object> stream() {
         Object[] items = _mapToKeysArray();
-        return new StreamImpl(items, items.length, Engine.makeSymbolicList(), false, false);
+        return new StreamStubImpl(items, items.length, Engine.makeSymbolicList(), false, false);
     }
 
     @NotNull
@@ -251,7 +251,7 @@ public final class HashMap_KeySet extends AbstractSet<Object> {
             return result;
 
         LibSLRuntime.Map<Object, Map.Entry<Object, Object>> unseen = this.storage.duplicate();
-        for (int i = 0; i < len; i += 1) {
+        for (int i = 0; i < len; i++) {
             Object curKey = unseen.anyKey();
             result[i] = curKey;
             unseen.remove(curKey);
@@ -268,7 +268,7 @@ public final class HashMap_KeySet extends AbstractSet<Object> {
             return result;
 
         LibSLRuntime.Map<Object, Map.Entry<Object, Object>> unseen = this.storage.duplicate();
-        for (int i = 0; i < len; i += 1) {
+        for (int i = 0; i < len; i++) {
             Object curKey = unseen.anyKey();
             result[i] = curKey;
             unseen.remove(curKey);
@@ -289,7 +289,7 @@ public final class HashMap_KeySet extends AbstractSet<Object> {
             return array;
 
         LibSLRuntime.Map<Object, Map.Entry<Object, Object>> unseen = this.storage.duplicate();
-        for (int i = 0; i < len; i += 1) {
+        for (int i = 0; i < len; i++) {
             Object curKey = unseen.anyKey();
             array[i] = curKey;
             unseen.remove(curKey);
@@ -309,7 +309,7 @@ public final class HashMap_KeySet extends AbstractSet<Object> {
 
         String result = "[";
         LibSLRuntime.Map<Object, Map.Entry<Object, Object>> unseen = this.storage.duplicate();
-        for (int i = 0; i < size; i += 1) {
+        for (int i = 0; i < size; i++) {
             Object key = unseen.anyKey();
             result = result.concat(LibSLRuntime.toString(key));
             if (i != size - 1) {

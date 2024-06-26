@@ -2,18 +2,10 @@ package stub.java.util;
 
 import java.lang.LinkageError;
 import java.lang.Object;
-import java.lang.SuppressWarnings;
-import java.lang.Void;
 import java.util.ListIterator;
 import java.util.function.Consumer;
-import runtime.LibSLRuntime;
 
-@SuppressWarnings({"all", "unchecked"})
-public final class ArrayList_ListItr implements ListIterator {
-
-    private ArrayList_ListItr(Void a, Void b) {
-        super();
-    }
+public final class SubListIteratorStub implements ListIterator<Object> {
 
     public boolean hasPrevious() {
         throw new LinkageError();

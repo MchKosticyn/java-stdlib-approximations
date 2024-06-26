@@ -2,32 +2,27 @@ package generated.java.util;
 
 import java.lang.Object;
 import java.lang.String;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.RandomAccess;
-import java.util.Spliterator;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
-import generated.java.util.stream.StreamImpl;
+import generated.java.util.stream.StreamStubImpl;
 import org.jacodb.approximation.annotation.Approximate;
 import org.jetbrains.annotations.NotNull;
 import org.usvm.api.Engine;
 import org.usvm.api.SymbolicList;
 import runtime.LibSLRuntime;
+import stub.java.util.SubListStub;
 
-@Approximate(stub.java.util.ArrayList_SubList.class)
-public final class ArrayList_SubListImpl implements List<Object>, RandomAccess {
+@Approximate(SubListStub.class)
+public final class SubListStubImpl extends AbstractList<Object> implements List<Object>, RandomAccess {
 
     public AbstractListImpl root;
 
-    public ArrayList_SubListImpl parentList;
+    public SubListStubImpl parentList;
 
     public int offset;
 
@@ -35,7 +30,7 @@ public final class ArrayList_SubListImpl implements List<Object>, RandomAccess {
 
     public int modCount;
 
-    public ArrayList_SubListImpl(AbstractListImpl root, ArrayList_SubListImpl parent, int offset, int length, int modCount) {
+    public SubListStubImpl(AbstractListImpl root, SubListStubImpl parent, int offset, int length, int modCount) {
         Engine.assume(root != null);
         this.root = root;
         this.parentList = parent;
@@ -45,12 +40,12 @@ public final class ArrayList_SubListImpl implements List<Object>, RandomAccess {
     }
 
     @SuppressWarnings("unused")
-    public ArrayList_SubListImpl(AbstractListImpl root, int fromIndex, int toIndex) {
+    public SubListStubImpl(AbstractListImpl root, int fromIndex, int toIndex) {
         this(root, null, fromIndex, toIndex - fromIndex, 0);
     }
 
     @SuppressWarnings("unused")
-    private ArrayList_SubListImpl(ArrayList_SubListImpl parent, int fromIndex, int toIndex) {
+    private SubListStubImpl(SubListStubImpl parent, int fromIndex, int toIndex) {
         this(null, parent, fromIndex, toIndex - fromIndex, 0);
     }
 
@@ -62,7 +57,7 @@ public final class ArrayList_SubListImpl implements List<Object>, RandomAccess {
         if (collectionSize == 0)
             return false;
 
-        this.root._checkForComodification(this.modCount);
+        this.root._checkForModification(this.modCount);
         this.root._addAllElements(effectiveIndex, c);
         _updateSizeAndModCount(collectionSize);
         return true;
@@ -72,7 +67,7 @@ public final class ArrayList_SubListImpl implements List<Object>, RandomAccess {
         Engine.assume(root != null);
         this.length += sizeChange;
         this.modCount = this.root.modCount;
-        ArrayList_SubListImpl aList = this.parentList;
+        SubListStubImpl aList = this.parentList;
         while (aList != null) {
             aList.length += sizeChange;
             aList.modCount = this.modCount;
@@ -82,7 +77,7 @@ public final class ArrayList_SubListImpl implements List<Object>, RandomAccess {
 
     private int _indexOfElement(Object o) {
         Engine.assume(root != null);
-        this.root._checkForComodification(this.modCount);
+        this.root._checkForModification(this.modCount);
         SymbolicList<Object> parentStorage = this.root.storage;
         int index = LibSLRuntime.ListActions.find(parentStorage, o, this.offset, this.offset + this.length);
         if (index != -1) {
@@ -94,7 +89,7 @@ public final class ArrayList_SubListImpl implements List<Object>, RandomAccess {
 
     private Stream<Object> _makeStream(boolean parallel) {
         Engine.assume(root != null);
-        this.root._checkForComodification(this.modCount);
+        this.root._checkForModification(this.modCount);
         SymbolicList<Object> parentStorage = this.root.storage;
         int count = this.length;
         Object[] items = new Object[count];
@@ -102,12 +97,12 @@ public final class ArrayList_SubListImpl implements List<Object>, RandomAccess {
             items[i] = parentStorage.get(this.offset + i);
         }
 
-        return new StreamImpl(items, count, Engine.makeSymbolicList(), parallel, false);
+        return new StreamStubImpl(items, count, Engine.makeSymbolicList(), parallel, false);
     }
 
     private boolean _batchRemove(Collection<?> c, boolean complement) {
         Engine.assume(root != null);
-        this.root._checkForComodification(this.modCount);
+        this.root._checkForModification(this.modCount);
         if (this.length != 0) {
             int oldRootLength = this.root.storage.size();
             if (this.root._batchRemove(c, complement, this.offset, this.offset + this.length)) {
@@ -122,7 +117,7 @@ public final class ArrayList_SubListImpl implements List<Object>, RandomAccess {
 
     public boolean add(Object e) {
         Engine.assume(root != null);
-        this.root._checkForComodification(this.modCount);
+        this.root._checkForModification(this.modCount);
         int effectiveIndex = this.offset + this.length;
         this.root._checkedAddElement(effectiveIndex, e);
         _updateSizeAndModCount(1);
@@ -131,7 +126,7 @@ public final class ArrayList_SubListImpl implements List<Object>, RandomAccess {
 
     public void add(int index, Object element) {
         Engine.assume(root != null);
-        this.root._checkForComodification(this.modCount);
+        this.root._checkForModification(this.modCount);
         int effectiveIndex = this.offset + index;
         this.root._checkedAddElement(effectiveIndex, element);
         _updateSizeAndModCount(1);
@@ -147,7 +142,7 @@ public final class ArrayList_SubListImpl implements List<Object>, RandomAccess {
 
     public void clear() {
         Engine.assume(root != null);
-        this.root._checkForComodification(this.modCount);
+        this.root._checkForModification(this.modCount);
         int size = this.length;
         if (size != 0) {
             Engine.assume(size > 0);
@@ -173,8 +168,8 @@ public final class ArrayList_SubListImpl implements List<Object>, RandomAccess {
         Engine.assume(root != null);
         SymbolicList<Object> rootStorage = this.root.storage;
         int end = this.offset + this.length;
-        if ((c != null && c.getClass() == stub.java.util.ArrayList_SubList.class)) {
-            ArrayList_SubListImpl otherSubList = (ArrayList_SubListImpl) c;
+        if ((c != null && c.getClass() == SubListStub.class)) {
+            SubListStubImpl otherSubList = (SubListStubImpl) c;
             AbstractListImpl otherRoot = otherSubList.root;
             Engine.assume(otherRoot != null);
             SymbolicList<Object> otherStorage = otherRoot.storage;
@@ -207,14 +202,14 @@ public final class ArrayList_SubListImpl implements List<Object>, RandomAccess {
         if (o == this)
             return true;
 
-        if (o != null && o.getClass() == stub.java.util.ArrayList_SubList.class) {
+        if (o != null && o.getClass() == SubListStub.class) {
             Engine.assume(root != null);
-            ArrayList_SubListImpl other = (ArrayList_SubListImpl) o;
+            SubListStubImpl other = (SubListStubImpl) o;
             int otherLength = other.length;
             Engine.assume(otherLength >= 0);
             if (this.length == otherLength) {
                 boolean result = this.root._equalsRange(other, this.offset, this.offset + this.length);
-                this.root._checkForComodification(this.modCount);
+                this.root._checkForModification(this.modCount);
                 return result;
             }
         }
@@ -236,14 +231,14 @@ public final class ArrayList_SubListImpl implements List<Object>, RandomAccess {
                 _action.accept(item);
                 i++;
             }
-            this.root._checkForComodification(expectedModCount);
+            this.root._checkForModification(expectedModCount);
         }
     }
 
     public Object get(int index) {
         Engine.assume(root != null);
         this.root._checkValidIndex(index, this.length);
-        this.root._checkForComodification(this.modCount);
+        this.root._checkForModification(this.modCount);
         int effectiveIndex = this.offset + index;
 
         return this.root.storage.get(effectiveIndex);
@@ -260,7 +255,7 @@ public final class ArrayList_SubListImpl implements List<Object>, RandomAccess {
                 Object item = rootStorage.get(i);
                 result = (31 * result) + LibSLRuntime.hashCode(item);
             }
-            this.root._checkForComodification(this.modCount);
+            this.root._checkForModification(this.modCount);
         }
         return result;
     }
@@ -275,12 +270,12 @@ public final class ArrayList_SubListImpl implements List<Object>, RandomAccess {
 
     @NotNull
     public Iterator<Object> iterator() {
-        return new ArrayList_SubList$ListIterator(this.root, this, 0, this.modCount, this.offset, this.length, -1);
+        return new SubListIteratorStubImpl(this.root, this, 0, this.modCount, this.offset, this.length, -1);
     }
 
     public int lastIndexOf(Object o) {
         Engine.assume(root != null);
-        this.root._checkForComodification(this.modCount);
+        this.root._checkForModification(this.modCount);
         if (this.length == 0)
             return -1;
 
@@ -301,12 +296,12 @@ public final class ArrayList_SubListImpl implements List<Object>, RandomAccess {
 
     @NotNull
     public ListIterator<Object> listIterator() {
-        return new ArrayList_SubList$ListIterator(this.root, this, 0, this.modCount, this.offset, this.length, -1);
+        return new SubListIteratorStubImpl(this.root, this, 0, this.modCount, this.offset, this.length, -1);
     }
 
     @NotNull
     public ListIterator<Object> listIterator(int index) {
-        return new ArrayList_SubList$ListIterator(this.root, this, index, this.modCount, this.offset, this.length, -1);
+        return new SubListIteratorStubImpl(this.root, this, index, this.modCount, this.offset, this.length, -1);
     }
 
     public Stream<Object> parallelStream() {
@@ -319,7 +314,7 @@ public final class ArrayList_SubListImpl implements List<Object>, RandomAccess {
         SymbolicList<Object> rootStorage = this.root.storage;
         int index = LibSLRuntime.ListActions.find(rootStorage, o, this.offset, end);
         if (index != -1) {
-            this.root._checkForComodification(this.modCount);
+            this.root._checkForModification(this.modCount);
             this.root._checkedDeleteElement(index);
             _updateSizeAndModCount(-1);
             return true;
@@ -330,7 +325,7 @@ public final class ArrayList_SubListImpl implements List<Object>, RandomAccess {
     public Object remove(int index) {
         Engine.assume(root != null);
         this.root._checkValidIndex(index, this.length);
-        this.root._checkForComodification(this.modCount);
+        this.root._checkForModification(this.modCount);
         int effectiveIndex = this.offset + index;
         Object result = this.root._checkedDeleteElement(effectiveIndex);
         _updateSizeAndModCount(-1);
@@ -343,7 +338,7 @@ public final class ArrayList_SubListImpl implements List<Object>, RandomAccess {
 
     public boolean removeIf(Predicate filter) {
         Engine.assume(root != null);
-        this.root._checkForComodification(this.modCount);
+        this.root._checkForModification(this.modCount);
         int size = this.length;
         if (size != 0) {
             int oldRootLength = this.root.storage.size();
@@ -369,7 +364,7 @@ public final class ArrayList_SubListImpl implements List<Object>, RandomAccess {
     public Object set(int index, Object element) {
         Engine.assume(root != null);
         this.root._checkValidIndex(index, this.length);
-        this.root._checkForComodification(this.modCount);
+        this.root._checkForModification(this.modCount);
         SymbolicList<Object> parentStorage = this.root.storage;
         int effectiveIndex = this.offset + index;
         Object oldValue = parentStorage.get(effectiveIndex);
@@ -379,7 +374,7 @@ public final class ArrayList_SubListImpl implements List<Object>, RandomAccess {
 
     public int size() {
         Engine.assume(root != null);
-        this.root._checkForComodification(this.modCount);
+        this.root._checkForModification(this.modCount);
         return this.length;
     }
     public void sort(Comparator<? super Object> c) {
@@ -388,7 +383,7 @@ public final class ArrayList_SubListImpl implements List<Object>, RandomAccess {
         this.modCount = this.root.modCount;
     }
     public Spliterator<Object> spliterator() {
-        return new ArrayList_SubList$Spliterator(this.root, this, 0, -1, 0);
+        return new SubListSpliteratorStubImpl(this.root, this, 0, -1, 0);
     }
 
     public Stream<Object> stream() {
@@ -399,13 +394,13 @@ public final class ArrayList_SubListImpl implements List<Object>, RandomAccess {
     public List<Object> subList(int fromIndex, int toIndex) {
         Engine.assume(root != null);
         this.root._subListRangeCheck(fromIndex, toIndex, this.length);
-        return new ArrayList_SubListImpl(this.root, this, this.offset + fromIndex, toIndex - fromIndex, this.modCount);
+        return new SubListStubImpl(this.root, this, this.offset + fromIndex, toIndex - fromIndex, this.modCount);
     }
 
     @NotNull
     public Object[] toArray() {
         Engine.assume(root != null);
-        this.root._checkForComodification(this.modCount);
+        this.root._checkForModification(this.modCount);
         Object[] result = new Object[this.length];
         SymbolicList<Object> rootStorage = this.root.storage;
         int end = this.offset + this.length;
@@ -422,7 +417,7 @@ public final class ArrayList_SubListImpl implements List<Object>, RandomAccess {
     public Object[] toArray(IntFunction generator) {
         Object[] unused = ((Object[]) generator.apply(0));
         Engine.assume(root != null);
-        this.root._checkForComodification(this.modCount);
+        this.root._checkForModification(this.modCount);
         Object[] result = new Object[this.length];
         SymbolicList<Object> rootStorage = this.root.storage;
         int end = this.offset + this.length;
@@ -434,11 +429,11 @@ public final class ArrayList_SubListImpl implements List<Object>, RandomAccess {
         return result;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "DataFlowIssue"})
     @NotNull
     public Object[] toArray(Object[] array) {
         Engine.assume(root != null);
-        this.root._checkForComodification(this.modCount);
+        this.root._checkForModification(this.modCount);
         int aSize = array.length;
         if (aSize < this.length) {
             array = new Object[this.length];

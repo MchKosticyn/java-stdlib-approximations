@@ -3,14 +3,8 @@ package stub.libsl.utils;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.LinkageError;
-import java.lang.Void;
 
 public final class SymbolicInputStream extends InputStream {
-
-    @SuppressWarnings("unused")
-    private SymbolicInputStream(Void a, Void b) {
-        super();
-    }
 
     public int available() {
         throw new LinkageError();

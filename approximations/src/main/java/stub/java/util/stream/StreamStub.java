@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.LinkageError;
 import java.lang.Object;
 import java.lang.Runnable;
-import java.lang.Void;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Optional;
@@ -27,14 +26,9 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-public class StreamLSL implements Stream<Object> {
+public class StreamStub extends BaseStreamStub implements Stream<Object> {
 
-    @SuppressWarnings("unused")
-    private StreamLSL(Void a, Void b) {
-        super();
-    }
-
-    public Stream<Object> filter(Predicate predicate) {
+    public StreamStub filter(Predicate predicate) {
         throw new LinkageError();
     }
 
@@ -42,15 +36,15 @@ public class StreamLSL implements Stream<Object> {
         throw new LinkageError();
     }
 
-    public IntStream mapToInt(ToIntFunction mapper) {
+    public IntStreamStub mapToInt(ToIntFunction mapper) {
         throw new LinkageError();
     }
 
-    public LongStream mapToLong(ToLongFunction mapper) {
+    public LongStreamStub mapToLong(ToLongFunction mapper) {
         throw new LinkageError();
     }
 
-    public DoubleStream mapToDouble(ToDoubleFunction mapper) {
+    public DoubleStreamStub mapToDouble(ToDoubleFunction mapper) {
         throw new LinkageError();
     }
 
@@ -70,27 +64,27 @@ public class StreamLSL implements Stream<Object> {
         throw new LinkageError();
     }
 
-    public Stream<Object> distinct() {
+    public StreamStub distinct() {
         throw new LinkageError();
     }
 
-    public Stream<Object> sorted() {
+    public StreamStub sorted() {
         throw new LinkageError();
     }
 
-    public Stream<Object> sorted(Comparator<? super Object> comparator) {
+    public StreamStub sorted(Comparator<? super Object> comparator) {
         throw new LinkageError();
     }
 
-    public Stream<Object> peek(Consumer _action) {
+    public StreamStub peek(Consumer _action) {
         throw new LinkageError();
     }
 
-    public Stream<Object> limit(long maxSize) {
+    public StreamStub limit(long maxSize) {
         throw new LinkageError();
     }
 
-    public Stream<Object> skip(long n) {
+    public StreamStub skip(long n) {
         throw new LinkageError();
     }
 
@@ -188,22 +182,22 @@ public class StreamLSL implements Stream<Object> {
     }
 
     @NotNull
-    public Stream<Object> sequential() {
+    public StreamStub sequential() {
         throw new LinkageError();
     }
 
     @NotNull
-    public Stream<Object> parallel() {
+    public StreamStub parallel() {
         throw new LinkageError();
     }
 
     @NotNull
-    public Stream<Object> unordered() {
+    public StreamStub unordered() {
         throw new LinkageError();
     }
 
     @NotNull
-    public Stream<Object> onClose(@NotNull Runnable unused) {
+    public StreamStub onClose(@NotNull Runnable unused) {
         throw new LinkageError();
     }
 
@@ -211,11 +205,11 @@ public class StreamLSL implements Stream<Object> {
         throw new LinkageError();
     }
 
-    public Stream<Object> dropWhile(Predicate predicate) {
+    public StreamStub dropWhile(Predicate predicate) {
         throw new LinkageError();
     }
 
-    public Stream<Object> takeWhile(Predicate predicate) {
+    public StreamStub takeWhile(Predicate predicate) {
         throw new LinkageError();
     }
 }

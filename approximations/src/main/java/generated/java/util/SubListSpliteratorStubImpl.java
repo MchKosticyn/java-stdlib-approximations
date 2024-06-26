@@ -9,11 +9,14 @@ import java.util.function.Consumer;
 import org.jacodb.approximation.annotation.Approximate;
 import org.usvm.api.Engine;
 import org.usvm.api.SymbolicList;
+import stub.java.util.SubListSpliteratorStub;
 
-@Approximate(stub.java.util.ArrayList_Spliterator.class)
-public final class ArrayList_SpliteratorImpl implements Spliterator<Object> {
+@Approximate(SubListSpliteratorStub.class)
+public final class SubListSpliteratorStubImpl implements Spliterator<Object> {
 
-    public AbstractListImpl parent;
+    public AbstractListImpl root;
+
+    public SubListStubImpl parent;
 
     public int index;
 
@@ -21,8 +24,16 @@ public final class ArrayList_SpliteratorImpl implements Spliterator<Object> {
 
     public int expectedModCount;
 
-    public ArrayList_SpliteratorImpl(AbstractListImpl parent, int index, int fence, int expectedModCount) {
-        Engine.assume(this.parent != null);
+    public SubListSpliteratorStubImpl(
+        AbstractListImpl root,
+        SubListStubImpl parent,
+        int index,
+        int fence,
+        int expectedModCount
+    ) {
+        Engine.assume(root != null);
+        Engine.assume(parent != null);
+        this.root = root;
         this.parent = parent;
         this.index = index;
         this.fence = fence;
@@ -33,11 +44,10 @@ public final class ArrayList_SpliteratorImpl implements Spliterator<Object> {
         if (this.fence == -1) {
             Engine.assume(this.parent != null);
             this.expectedModCount = this.parent.modCount;
-            int newFence = this.parent.storage.size();
+            int newFence = this.parent.length;
             this.fence = newFence;
             return newFence;
         }
-
         return this.fence;
     }
 
@@ -50,23 +60,24 @@ public final class ArrayList_SpliteratorImpl implements Spliterator<Object> {
     }
 
     public void forEachRemaining(Consumer<Object> _action) {
+        Engine.assume(this.root != null);
         Engine.assume(this.parent != null);
         if (_action == null) {
             throw new NullPointerException();
         }
-        SymbolicList<Object> a = this.parent.storage;
+        SymbolicList<Object> a = this.root.storage;
         if (a == null) {
             throw new ConcurrentModificationException();
         }
         int hi = this.fence;
         int mc = this.expectedModCount;
         if (hi == -1) {
-            hi = a.size();
+            hi = this.parent.length;
             mc = this.parent.modCount;
         }
         int i = this.index;
         this.index = hi;
-        if ((i < 0) || (hi > a.size())) {
+        if ((i < 0) || (hi > this.parent.length)) {
             throw new ConcurrentModificationException();
         }
         for (int j = i; j < hi; j++) {
@@ -79,9 +90,8 @@ public final class ArrayList_SpliteratorImpl implements Spliterator<Object> {
     }
 
     public long getExactSizeIfKnown() {
-        return estimateSize();
+        return _getFence() - this.index;
     }
-
     public boolean tryAdvance(Consumer<Object> _action) {
         if (_action == null) {
             throw new NullPointerException();
@@ -89,12 +99,12 @@ public final class ArrayList_SpliteratorImpl implements Spliterator<Object> {
         int hi = _getFence();
         int i = this.index;
         if (i < hi) {
-            Engine.assume(this.parent != null);
+            Engine.assume(this.root != null);
             this.index = i + 1;
-            SymbolicList<Object> parentStorage = this.parent.storage;
-            Object item = parentStorage.get(i);
+            SymbolicList<Object> rootStorage = this.root.storage;
+            Object item = rootStorage.get(i);
             _action.accept(item);
-            if (this.parent.modCount != this.expectedModCount) {
+            if (this.root.modCount != this.expectedModCount) {
                 throw new ConcurrentModificationException();
             }
             return true;
@@ -110,7 +120,6 @@ public final class ArrayList_SpliteratorImpl implements Spliterator<Object> {
         this.index = mid;
         if (lo >= mid)
             return null;
-
-        return new ArrayList_SpliteratorImpl(this.parent, lo, mid, this.expectedModCount);
+        return new SubListSpliteratorStubImpl(this.root, this.parent, lo, mid, this.expectedModCount);
     }
 }

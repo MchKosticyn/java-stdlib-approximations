@@ -11,7 +11,7 @@ import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import generated.java.util.stream.StreamImpl;
+import generated.java.util.stream.StreamStubImpl;
 import org.jacodb.approximation.annotation.Approximate;
 import org.jetbrains.annotations.NotNull;
 import org.usvm.api.Engine;
@@ -147,7 +147,7 @@ public final class HashMap_EntrySet extends AbstractSet<Map.Entry<Object, Object
             userAction.accept(entry);
             unseen.remove(key);
         }
-        this.parent._checkForComodification(expectedModCount);
+        this.parent._checkForModification(expectedModCount);
     }
 
     public int hashCode() {
@@ -166,7 +166,7 @@ public final class HashMap_EntrySet extends AbstractSet<Map.Entry<Object, Object
     @SuppressWarnings({"unchecked", "rawtypes"})
     public Stream parallelStream() {
         Object[] items = _mapToEntryArray();
-        return new StreamImpl(items, items.length, Engine.makeSymbolicList(), true, false);
+        return new StreamStubImpl(items, items.length, Engine.makeSymbolicList(), true, false);
     }
 
     @SuppressWarnings("unchecked")
@@ -285,7 +285,7 @@ public final class HashMap_EntrySet extends AbstractSet<Map.Entry<Object, Object
     @SuppressWarnings({"unchecked", "rawtypes"})
     public Stream stream() {
         Object[] items = _mapToEntryArray();
-        return new StreamImpl(items, items.length, Engine.makeSymbolicList(), false, false);
+        return new StreamStubImpl(items, items.length, Engine.makeSymbolicList(), false, false);
     }
 
     @NotNull

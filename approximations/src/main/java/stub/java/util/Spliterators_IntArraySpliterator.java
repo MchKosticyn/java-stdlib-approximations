@@ -14,10 +14,7 @@ import java.util.function.IntConsumer;
 import runtime.LibSLRuntime;
 
 @SuppressWarnings({"all", "unchecked"})
-public final class Spliterators_IntArraySpliterator implements LibSLRuntime.HasAutomaton, Spliterator.OfInt {
-    private Spliterators_IntArraySpliterator(Void a, Void b) {
-        super();
-    }
+public final class Spliterators_IntArraySpliterator implements Spliterator.OfInt {
 
     public Spliterators_IntArraySpliterator(int[] arr, int additionalCharacteristics) {
         throw new LinkageError();

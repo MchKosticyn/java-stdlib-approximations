@@ -10,7 +10,7 @@ import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import generated.java.util.stream.StreamImpl;
+import generated.java.util.stream.StreamStubImpl;
 import org.jacodb.approximation.annotation.Approximate;
 import org.jetbrains.annotations.NotNull;
 import org.usvm.api.Engine;
@@ -136,7 +136,7 @@ public class HashMap_Values extends AbstractCollection<Object> {
             userAction.accept(entry.getValue());
             unseen.remove(key);
         }
-        this.parent._checkForComodification(expectedModCount);
+        this.parent._checkForModification(expectedModCount);
     }
 
     public boolean isEmpty() {
@@ -150,7 +150,7 @@ public class HashMap_Values extends AbstractCollection<Object> {
 
     public Stream<Object> parallelStream() {
         Object[] items = _mapToValuesArray();
-        return new StreamImpl(items, items.length, Engine.makeSymbolicList(), true, false);
+        return new StreamStubImpl(items, items.length, Engine.makeSymbolicList(), true, false);
     }
 
     public boolean remove(Object value) {
@@ -256,7 +256,7 @@ public class HashMap_Values extends AbstractCollection<Object> {
 
     public Stream<Object> stream() {
         Object[] items = _mapToValuesArray();
-        return new StreamImpl(items, items.length, Engine.makeSymbolicList(), false, false);
+        return new StreamStubImpl(items, items.length, Engine.makeSymbolicList(), false, false);
     }
 
     @NotNull

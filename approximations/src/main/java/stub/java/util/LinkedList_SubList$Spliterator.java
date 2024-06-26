@@ -12,10 +12,7 @@ import java.util.function.Consumer;
 import runtime.LibSLRuntime;
 
 @SuppressWarnings({"all", "unchecked"})
-public final class LinkedList_SubList$Spliterator implements LibSLRuntime.HasAutomaton, Spliterator {
-    private LinkedList_SubList$Spliterator(Void a, Void b) {
-        super();
-    }
+public final class LinkedList_SubList$Spliterator implements Spliterator {
 
     public int characteristics() {
         throw new LinkageError();

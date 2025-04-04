@@ -18,7 +18,6 @@ public class PathVariableMethodArgumentResolverImpl {
         if (!request.getContextPath().contains(String.format("{%s}", parameter.getParameterName())))
             return null;
 
-        return PinnedValueStorage.getPinnedValue(PinnedValueSource.REQUEST_PATH_VARIABLE, name, String.class);
+        return ResolverUtils.getNonEmptySymbolicString(PinnedValueSource.REQUEST_PATH_VARIABLE, name);
     }
 }
-

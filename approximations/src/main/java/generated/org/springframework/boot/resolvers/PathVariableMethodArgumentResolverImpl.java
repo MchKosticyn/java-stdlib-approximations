@@ -12,11 +12,15 @@ import org.springframework.web.servlet.mvc.method.annotation.PathVariableMethodA
 public class PathVariableMethodArgumentResolverImpl {
     @Nullable
     protected Object resolveName(String name, MethodParameter parameter, NativeWebRequest request) throws Exception {
-        if (parameter.getParameterName() == null)
-            return null;
+        if (parameter.getParameterName() == null) {
+            return ResolverUtils.createNullPinned(PinnedValueSource.REQUEST_PATH_VARIABLE, name, String.class);
+        }
+            
 
-        if (!request.getContextPath().contains(String.format("{%s}", parameter.getParameterName())))
-            return null;
+        if (!request.getContextPath().contains(String.format("{%s}", parameter.getParameterName()))) {
+            return ResolverUtils.createNullPinned(PinnedValueSource.REQUEST_PATH_VARIABLE, name, String.class);
+        }
+            
 
         return ResolverUtils.getNonEmptySymbolicString(PinnedValueSource.REQUEST_PATH_VARIABLE, name);
     }

@@ -15,12 +15,10 @@ public class PathVariableMethodArgumentResolverImpl {
         if (parameter.getParameterName() == null) {
             return ResolverUtils.createNullPinned(PinnedValueSource.REQUEST_PATH_VARIABLE, name, String.class);
         }
-            
 
         if (!request.getContextPath().contains(String.format("{%s}", parameter.getParameterName()))) {
             return ResolverUtils.createNullPinned(PinnedValueSource.REQUEST_PATH_VARIABLE, name, String.class);
         }
-            
 
         return ResolverUtils.getNonEmptySymbolicString(PinnedValueSource.REQUEST_PATH_VARIABLE, name);
     }

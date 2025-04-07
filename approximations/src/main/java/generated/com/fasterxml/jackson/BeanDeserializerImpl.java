@@ -100,8 +100,6 @@ public class BeanDeserializerImpl extends BeanDeserializer {
         for (SettableBeanProperty property : _beanProperties) {
             if (_isJsonPrimitive(property.getType())) {
                 Object value = SymbolicValueFactory.createSymbolic(property.getType().getRawClass(), true);
-                if (property.getType().getRawClass().getName().contains("Integer"))
-                    value = 12345;
                 property.set(bean, value);
             }
             else

@@ -8,8 +8,6 @@ import org.jacodb.approximation.annotation.Approximate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.CachedIntrospectionResults;
 import org.springframework.core.CollectionFactory;
-import org.springframework.core.convert.TypeDescriptor;
-import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.PatternMatchUtils;
 import org.springframework.util.ReflectionUtils;
@@ -22,7 +20,6 @@ import java.lang.invoke.MethodType;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,7 +32,7 @@ import java.util.Set;
 public class ServletRequestDataBinderImpl extends ServletRequestDataBinder {
 
     private static final String FIELD_SEPARATOR = ".";
-    private static final int MAX_ARRAY_INDEX = 2;
+    private static final int MAX_ARRAY_INDEX = 5;
     private static final int MAX_DEPTH = 5;
 
     public ServletRequestDataBinderImpl(Object target) {

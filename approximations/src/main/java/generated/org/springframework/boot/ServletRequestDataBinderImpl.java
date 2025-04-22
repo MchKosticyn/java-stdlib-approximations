@@ -182,6 +182,7 @@ public class ServletRequestDataBinderImpl extends ServletRequestDataBinder {
         LibSLRuntime.ArrayActions.copy(array, 0, newArray, 0, currentSize);
 
         boolean shouldInitialize = !ResolverUtils.isPrimitive(componentType);
+
         if (shouldInitialize) {
             for (int i = currentSize; i < newSize; i++) {
                 Array.set(newArray, i, newValue(elementType));
@@ -203,9 +204,17 @@ public class ServletRequestDataBinderImpl extends ServletRequestDataBinder {
         if (currentSize >= length)
             return;
 
-        for (int i = collection.size(); i < length + 1; i++) {
-            collection.add(newValue(elementType));
-        }
+        boolean shouldInitialize = !ResolverUtils.isPrimitive(elementType.getClazz());
+
+
+            for (int i = collection.size(); i < length + 1; i++) {
+                if (shouldInitialize) {
+                    collection.add(newValue(elementType));
+                } else {
+                    collection.add(null);
+                }
+            }
+
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -275,8 +284,6 @@ public class ServletRequestDataBinderImpl extends ServletRequestDataBinder {
 
     private boolean canGrowArray(Field field) {
         try {
-            SpringApplicationImpl._println("Trying luck for field " + field.getName());
-
             Class<?> introspectionClass = CachedIntrospectionResults.class;
 
             CachedIntrospectionResults introspection =

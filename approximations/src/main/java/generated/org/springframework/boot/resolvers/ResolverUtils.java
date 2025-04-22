@@ -23,9 +23,15 @@ public class ResolverUtils {
 
     public static Boolean isPrimitive(Class<?> clazz) {
         List<Class<?>> primitives = Arrays.asList(
-                String.class,
-                Integer.class,
                 Boolean.class,
+                Byte.class,
+                Short.class,
+                Character.class,
+                Integer.class,
+                Long.class,
+                Float.class,
+                Double.class,
+                String.class,
                 LocalDate.class
         );
         return primitives.contains(clazz) || clazz.isPrimitive();

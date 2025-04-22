@@ -203,15 +203,13 @@ public class ServletRequestDataBinderImpl extends ServletRequestDataBinder {
 
         boolean shouldInitialize = !ResolverUtils.isPrimitive(elementType.getClazz());
 
-
-            for (int i = collection.size(); i < length + 1; i++) {
-                if (shouldInitialize) {
-                    collection.add(newValue(elementType));
-                } else {
-                    collection.add(null);
-                }
+        for (int i = collection.size(); i < length + 1; i++) {
+            if (shouldInitialize) {
+                collection.add(newValue(elementType));
+            } else {
+                collection.add(null);
             }
-
+        }
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

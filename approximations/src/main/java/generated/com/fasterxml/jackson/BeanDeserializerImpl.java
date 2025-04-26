@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.deser.BeanDeserializer;
 import com.fasterxml.jackson.databind.deser.BeanDeserializerBase;
 import com.fasterxml.jackson.databind.deser.SettableBeanProperty;
+import com.fasterxml.jackson.databind.deser.ValueInstantiator;
+import com.fasterxml.jackson.databind.deser.std.ContainerDeserializerBase;
 import com.fasterxml.jackson.databind.deser.std.ObjectArrayDeserializer;
 import generated.org.springframework.boot.SpringApplicationImpl;
 import generated.org.springframework.boot.SymbolicValueFactory;
@@ -19,6 +21,8 @@ import org.usvm.api.Engine;
 
 import java.io.IOException;
 import java.io.Serial;
+import java.lang.invoke.MethodType;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -36,15 +40,15 @@ public class BeanDeserializerImpl extends BeanDeserializer {
         super(src);
     }
 
-    public final static int MAX_DEPTH = 1;
-    public final static int MAX_LENGTH = 1;
+    public final static int MAX_DEPTH = 3;
+    public final static int MAX_LENGTH = 3;
 
     private boolean isPrimitive(JavaType type) {
         return ResolverUtils.isPrimitiveOrWrapper(type.getRawClass());
     }
 
     private boolean isCollection(JavaType type) {
-        return type.isArrayType() || type.isArrayType();
+        return type.isArrayType() || type.isCollectionLikeType();
     }
 
     private void _writeToState(Object root) {
@@ -56,6 +60,18 @@ public class BeanDeserializerImpl extends BeanDeserializer {
         return true;
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T> Class<T> wrap(Class<T> c) {
+        return (Class<T>) MethodType.methodType(c).wrap().returnType();
+    }
+
+    public static List<Object> getPrimitive(JavaType type) {
+        Class<?> boxed = wrap(type.getRawClass());
+        Object result = Engine.makeSymbolic(boxed);
+        Engine.assume(result != null);
+        return Arrays.asList(result, result);
+    }
+
     public Object deserialize(JsonParser p, DeserializationContext ctxt) throws IOException
     {
         if (_concreteDeserialization())
@@ -63,10 +79,8 @@ public class BeanDeserializerImpl extends BeanDeserializer {
 
         Class<?> clazz = _valueInstantiator.getValueClass();
 
-        Object result;
-
         if (ResolverUtils.isPrimitiveOrWrapper(clazz)) {
-            result = SymbolicValueFactory.createSymbolic(clazz, true);
+            Object result = SymbolicValueFactory.createSymbolic(clazz, true);
             _writeToState(result);
             return result;
         }
@@ -74,7 +88,11 @@ public class BeanDeserializerImpl extends BeanDeserializer {
         return deserializeFromObject(p, ctxt);
     }
 
-    public List<Object> symbolicDeserialize(JsonParser p, DeserializationContext ctxt, int depth) throws IOException {
+    public List<Object> generateSymbolicBean(
+            JsonParser p,
+            DeserializationContext ctxt,
+            int depth
+    ) throws IOException {
         if (depth > MAX_DEPTH)
             return Arrays.asList(null, null);
 
@@ -109,10 +127,9 @@ public class BeanDeserializerImpl extends BeanDeserializer {
         }
 
         if (bean == null) {
-            SpringApplicationImpl._println(String.format("Warning! Could not instantiate bean of type %s. %b %b",
-                    _valueInstantiator.getValueClass().toString(),
-                    _valueInstantiator.canCreateUsingDefault(),
-                    _valueInstantiator.canCreateFromObjectWith()
+            SpringApplicationImpl._println(String.format(
+                    "Warning! Could not instantiate bean of type %s",
+                    _valueInstantiator.getValueClass().toString()
             ));
             Engine.assume(false);
         }
@@ -136,31 +153,37 @@ public class BeanDeserializerImpl extends BeanDeserializer {
             DeserializationContext ctxt,
             int depth
     ) throws IOException {
-
-        if (isPrimitive(property.getType())) {
-            Object value = SymbolicValueFactory.createSymbolic(property.getType().getRawClass(), false);
-            Engine.assume(value != null);
-            return Arrays.asList(value, value);
-        }
-
         JsonDeserializer<Object> valueDeserializer = property.getValueDeserializer();
         JavaType propertyType = property.getType();
+        return generateSymbolic(propertyType, valueDeserializer, p, ctxt, depth);
+    }
 
-        if (isCollection(propertyType)) {
-            return generateSymbolicCollectionPropertyValue(propertyType, valueDeserializer, p, ctxt, depth);
-        }
+    private List<Object> generateSymbolic(
+            JavaType type,
+            JsonDeserializer<Object> deserializer,
+            JsonParser p,
+            DeserializationContext ctxt,
+            int depth
+    ) throws IOException {
+        if (isPrimitive(type))
+            return getPrimitive(type);
 
-        if (valueDeserializer instanceof BeanDeserializer) {
-            return ((BeanDeserializerImpl)valueDeserializer).symbolicDeserialize(p, ctxt, depth + 1);
-        }
+        if (deserializer instanceof BeanDeserializer)
+           return ((BeanDeserializerImpl)deserializer).generateSymbolicBean(p, ctxt, depth + 1);
 
-        SpringApplicationImpl._println("Warning! Generating symbolic JSON property value did not hit any case");
+        if (isCollection(type))
+            return generateSymbolicCollection(type, deserializer, p, ctxt, depth);
 
+        SpringApplicationImpl._println(String.format("Warning! Generating symbolic JSON property value did not hit any case (type: %s) (deser: %s)",
+                type,
+                deserializer
+        ));
         return Arrays.asList(null, null);
     }
 
-    private List<Object> generateSymbolicCollectionPropertyValue(
-            JavaType propertyType,
+    @SuppressWarnings("unchecked")
+    private List<Object> generateSymbolicCollection(
+            JavaType type,
             JsonDeserializer<Object> deserializer,
             JsonParser p,
             DeserializationContext ctxt,
@@ -168,23 +191,23 @@ public class BeanDeserializerImpl extends BeanDeserializer {
     ) throws IOException {
         int length = MAX_LENGTH;
 
-        if (propertyType.isArrayType()) {
-            JavaType componentType = propertyType.getContentType();
-            Object[] array = new Object[length];
-            Object[] arrayCopy = new Object[length];
+        if (type.isArrayType()) {
+            JavaType componentType = type.getContentType();
+            Object array = Array.newInstance(componentType.getRawClass(), length);
+            Object arrayCopy = Array.newInstance(componentType.getRawClass(), length);
 
             if (isPrimitive(componentType)) {
                 // Array of primitives, allocate and fill now
-                Object value = SymbolicValueFactory.createSymbolic(propertyType.getRawClass(), false);
-                Engine.assume(value != null);
+                List<Object> valueAndCopy;
 
                 for (int i = 0; i < length; i++) {
-                    array[i] = value;
-                    arrayCopy[i] = value;
+                    valueAndCopy = getPrimitive(componentType);
+                    Array.set(array, i, valueAndCopy.get(0));
+                    Array.set(arrayCopy, i, valueAndCopy.get(1));
                 }
             } else {
                 // Array of non-primitive, go into inner deserializer
-                List<Object> valueAndCopy = Arrays.asList(null, null);
+                List<Object> valueAndCopy;
 
                 if (!(deserializer instanceof ObjectArrayDeserializer)) {
                     SpringApplicationImpl._println("Warning! Object array deserializer was not of an ObjectArrayDeserializer class!");
@@ -194,23 +217,40 @@ public class BeanDeserializerImpl extends BeanDeserializer {
                 ObjectArrayDeserializer objectArrayDeserializer = (ObjectArrayDeserializer)deserializer;
                 JsonDeserializer<Object> contentDeserializer = objectArrayDeserializer.getContentDeserializer();
 
-                if (isCollection(componentType)) {
-                    for (int i = 0; i < length; i++) {
-                        valueAndCopy = generateSymbolicCollectionPropertyValue(componentType, contentDeserializer, p, ctxt, depth + 1);
-                        array[i] = valueAndCopy.get(0);
-                        arrayCopy[i] = valueAndCopy.get(1);
-                    }
-                    return Arrays.asList(array, arrayCopy);
-                }
-
                 for (int i = 0; i < length; i++) {
-                    valueAndCopy = ((BeanDeserializerImpl)contentDeserializer).symbolicDeserialize(p, ctxt, depth +1);
-                    array[i] = valueAndCopy.get(0);
-                    arrayCopy[i] = valueAndCopy.get(1);
+                    valueAndCopy = generateSymbolic(componentType, contentDeserializer, p, ctxt, depth);
+                    Array.set(array, i, valueAndCopy.get(0));
+                    Array.set(arrayCopy, i, valueAndCopy.get(1));
                 }
-                return Arrays.asList(array, arrayCopy);
             }
+            return Arrays.asList(array, arrayCopy);
         }
+
+        // Case for collections
+        if (deserializer instanceof ContainerDeserializerBase<?>) {
+            ContainerDeserializerBase<?> collectionDeserializer = (ContainerDeserializerBase<?>) deserializer;
+            ValueInstantiator instantiator = collectionDeserializer.getValueInstantiator();
+            JsonDeserializer<Object> contentDeserializer = collectionDeserializer.getContentDeserializer();
+            Collection<Object> collection = (Collection<Object>) instantiator.createUsingDefault(ctxt);
+            Collection<Object> collectionCopy = (Collection<Object>)instantiator.createUsingDefault(ctxt);
+
+            JavaType componentType = type.getContentType();
+            List<Object> valueAndCopy;
+
+            for (int i = 0; i < length; i++) {
+                valueAndCopy = generateSymbolic(componentType, contentDeserializer, p, ctxt, depth);
+                collection.add(valueAndCopy.get(0));
+                collectionCopy.add(valueAndCopy.get(1));
+            }
+
+            return Arrays.asList(collection, collectionCopy);
+        }
+
+        SpringApplicationImpl._println(String.format(
+                "Warning! Generating symbolic JSON collection did not hit any case (type: %s) (deserializer: %s)",
+                type,
+                deserializer
+        ));
 
         return Arrays.asList(null, null);
     }
@@ -219,7 +259,7 @@ public class BeanDeserializerImpl extends BeanDeserializer {
         if (_concreteDeserialization())
             return deserializeFromObjectReal(p, ctxt);
 
-        List<Object> beanAndCopy = symbolicDeserialize(p, ctxt, 0);
+        List<Object> beanAndCopy = generateSymbolicBean(p, ctxt, 0);
         _writeToState(beanAndCopy.get(1));
         return beanAndCopy.get(0);
     }

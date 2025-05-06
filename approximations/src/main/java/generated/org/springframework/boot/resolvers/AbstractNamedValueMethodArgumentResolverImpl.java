@@ -40,23 +40,23 @@ public abstract class AbstractNamedValueMethodArgumentResolverImpl extends Abstr
         // TODO: Other annotations #AA
         PathVariable pathAnnotation = parameter.getParameterAnnotation(PathVariable.class);
         if (pathAnnotation != null)
-            return List.of(pathAnnotation.name(), REQUEST_PATH);
+            return List.of(pathAnnotation.name(), REQUEST_PATH, pathAnnotation.required());
 
         RequestParam paramAnnotation = parameter.getParameterAnnotation(RequestParam.class);
         if (paramAnnotation != null)
-            return List.of(paramAnnotation.name(), REQUEST_PARAM);
+            return List.of(paramAnnotation.name(), REQUEST_PARAM, paramAnnotation.required());
 
         RequestHeader headerAnnotation = parameter.getParameterAnnotation(RequestHeader.class);
         if (headerAnnotation != null)
-            return List.of(headerAnnotation.name(), REQUEST_HEADER);
+            return List.of(headerAnnotation.name(), REQUEST_HEADER, headerAnnotation.required());
 
         MatrixVariable matrixAnnotation = parameter.getParameterAnnotation(MatrixVariable.class);
         if (matrixAnnotation != null)
-            return List.of(matrixAnnotation.name(), REQUEST_MATRIX);
+            return List.of(matrixAnnotation.name(), REQUEST_MATRIX, matrixAnnotation.required());
 
         CookieValue cookieAnnotation = parameter.getParameterAnnotation(CookieValue.class);
         if (cookieAnnotation != null)
-            return List.of(cookieAnnotation.name(), REQUEST_COOKIE);
+            return List.of(cookieAnnotation.name(), REQUEST_COOKIE, cookieAnnotation.required());
 
         SpringApplicationImpl._println("Warning! Unknown annotation! All annotations:");
         for (Annotation annotation : annotations) {
@@ -77,8 +77,11 @@ public abstract class AbstractNamedValueMethodArgumentResolverImpl extends Abstr
         List<Object> key = getPinnedKeyOfParameter(parameter);
         String name = (String)key.get(0);
         PinnedValueSource source = (PinnedValueSource)key.get(1);
+        boolean required = (boolean)key.get(2);
         Class<?> type = parameter.getParameterType();
-        Object value = SymbolicValueFactory.createSymbolic(type, false);
+
+        boolean nullable = !required || type.isPrimitive();
+        Object value = SymbolicValueFactory.createSymbolic(type, nullable);
 
         if (type == String.class) {
             String stringValue = (String)value;

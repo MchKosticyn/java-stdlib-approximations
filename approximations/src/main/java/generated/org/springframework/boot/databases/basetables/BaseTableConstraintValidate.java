@@ -1,16 +1,16 @@
 package generated.org.springframework.boot.databases.basetables;
 
-import generated.org.springframework.boot.databases.iterators.basetables.BaseTableCommonValidateIterator;
+import generated.org.springframework.boot.databases.iterators.basetables.BaseTableConstraintValidateIterator;
 import jakarta.validation.ConstraintValidator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 
-public class BaseTableCommonValidate<V> extends AChainedBaseTable<V> {
+public class BaseTableConstraintValidate<V> extends AChainedBaseTable<V> {
 
     public ConstraintValidator<?, ?>[][] validators;
 
-    public BaseTableCommonValidate(
+    public BaseTableConstraintValidate(
             ABaseTable<V> table,
             ConstraintValidator<?, ?>[][] validators
     ) {
@@ -26,13 +26,17 @@ public class BaseTableCommonValidate<V> extends AChainedBaseTable<V> {
     @Override
     public int size() {
         int count = 0;
-        for (Object[] ignored : this) count++;
+        Iterator<Object[]> iter = iterator();
+        while (iter.hasNext()) {
+            Object[] ignored = iter.next();
+            count++;
+        }
         return count;
     }
 
     @NotNull
     @Override
     public Iterator<Object[]> iterator() {
-        return new BaseTableCommonValidateIterator<>(this);
+        return new BaseTableConstraintValidateIterator<>(this);
     }
 }

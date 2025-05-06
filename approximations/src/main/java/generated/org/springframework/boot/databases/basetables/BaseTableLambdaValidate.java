@@ -1,16 +1,16 @@
 package generated.org.springframework.boot.databases.basetables;
 
-import generated.org.springframework.boot.databases.iterators.basetables.BaseTableValidateIterator;
+import generated.org.springframework.boot.databases.iterators.basetables.BaseTableLambdaValidateIterator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.function.Function;
 
-public class BaseTableValidate<V> extends AChainedBaseTable<V> {
+public class BaseTableLambdaValidate<V> extends AChainedBaseTable<V> {
 
     public Function<Object, Boolean>[] validators;
 
-    public BaseTableValidate(ABaseTable<V> table, Function<Object, Boolean>[] validators) {
+    public BaseTableLambdaValidate(ABaseTable<V> table, Function<Object, Boolean>[] validators) {
         this.table = table;
         this.validators = validators;
     }
@@ -23,13 +23,17 @@ public class BaseTableValidate<V> extends AChainedBaseTable<V> {
     @Override
     public int size() {
         int count = 0;
-        for (Object[] ignored : this) count++;
+        Iterator<Object[]> iter = iterator();
+        while (iter.hasNext()) {
+            Object[] ignored = iter.next();
+            count++;
+        }
         return count;
     }
 
     @NotNull
     @Override
     public Iterator<Object[]> iterator() {
-        return new BaseTableValidateIterator<>(this);
+        return new BaseTableLambdaValidateIterator<>(this);
     }
 }

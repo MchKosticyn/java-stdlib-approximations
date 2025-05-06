@@ -18,7 +18,7 @@ public class BaseTableManager<V> extends ABaseTable<V> implements ITableManager 
     ) {
         BaseTable<V> base = new BaseTable<>(idIndex, columnTypes);
 
-        this.tablesChain = new BaseTableCommonValidate<>(base, validators);
+        this.tablesChain = new BaseTableConstraintValidate<>(base, validators);
     }
 
     @Override

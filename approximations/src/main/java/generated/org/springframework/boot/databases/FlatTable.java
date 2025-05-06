@@ -29,8 +29,11 @@ public class FlatTable<T> implements ITable<T> {
         if (size != -1) return size;
 
         int count = 0;
-        for (ITable<T> tbl : tables) count += tbl.size();
-
+        Iterator<ITable<T>> iter = tables.iterator();
+        while (iter.hasNext()) {
+            ITable<T> tbl = iter.next();
+            count += tbl.size();
+        }
         size = count;
         return count;
     }

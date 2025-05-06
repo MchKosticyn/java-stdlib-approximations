@@ -4,6 +4,7 @@ import generated.org.springframework.boot.databases.basetables.BaseTableManager;
 import generated.org.springframework.boot.databases.basetables.NoIdTableManager;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -59,18 +60,26 @@ public class SaveUpdDelManyManager<T, V1, V2> {
     }
 
     public void saveUpdWithoutRelationTable(Collection<T> objects, int rel_pos) {
-        for (T t : objects) {
+        Iterator<T> iter = objects.iterator();
+        while (iter.hasNext()) {
+            T t = iter.next();
             saveUpd.accept(t, context);
             manager.changeSingleFieldByIdEnsure(getTId.apply(t), rel_pos, parentId);
         }
     }
 
     public void delWithoutRelationTable(Collection<T> objects) {
-        for (T t : objects) delete.accept(t, context);
+        Iterator<T> iter = objects.iterator();
+        while (iter.hasNext()) {
+            T t = iter.next();
+            delete.accept(t, context);
+        }
     }
 
     public void saveUpd(Collection<T> objects, NoIdTableManager relationTable) {
-        for (T t : objects) {
+        Iterator<T> iter = objects.iterator();
+        while (iter.hasNext()) {
+            T t = iter.next();
             saveUpd.accept(t, context);
 
             // saved relation in additional table
@@ -82,7 +91,9 @@ public class SaveUpdDelManyManager<T, V1, V2> {
     }
 
     public void delete(Collection<T> objects, NoIdTableManager relationTable) {
-        for (T t : objects) {
+        Iterator<T> iter = objects.iterator();
+        while (iter.hasNext()) {
+            T t = iter.next();
             delete.accept(t, context);
 
             Object[] relRow = new Object[2];

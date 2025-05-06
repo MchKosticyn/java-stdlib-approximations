@@ -1,6 +1,6 @@
 package generated.org.springframework.boot.databases.iterators.basetables;
 
-import generated.org.springframework.boot.databases.basetables.BaseTableCommonValidate;
+import generated.org.springframework.boot.databases.basetables.BaseTableConstraintValidate;
 import generated.org.springframework.boot.databases.validation.ConstraintValidatorContextImpl;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -8,15 +8,15 @@ import org.usvm.api.Engine;
 
 import java.util.Iterator;
 
-public class BaseTableCommonValidateIterator<V> implements Iterator<Object[]> {
+public class BaseTableConstraintValidateIterator<V> implements Iterator<Object[]> {
 
-    public BaseTableCommonValidate<V> table;
+    public BaseTableConstraintValidate<V> table;
     public Iterator<Object[]> tblIter;
     public ConstraintValidator<?, ?>[][] validators;
 
     public ConstraintValidatorContext ctx;
 
-    public BaseTableCommonValidateIterator(BaseTableCommonValidate<V> table) {
+    public BaseTableConstraintValidateIterator(BaseTableConstraintValidate<V> table) {
         this.table = table;
         this.tblIter = table.table.iterator();
         this.validators = table.validators;

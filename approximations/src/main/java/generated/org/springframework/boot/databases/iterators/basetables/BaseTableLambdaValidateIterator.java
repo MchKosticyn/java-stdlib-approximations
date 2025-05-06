@@ -1,18 +1,18 @@
 package generated.org.springframework.boot.databases.iterators.basetables;
 
-import generated.org.springframework.boot.databases.basetables.BaseTableValidate;
+import generated.org.springframework.boot.databases.basetables.BaseTableLambdaValidate;
 import org.usvm.api.Engine;
 
 import java.util.Iterator;
 import java.util.function.Function;
 
-public class BaseTableValidateIterator<V> implements Iterator<Object[]> {
+public class BaseTableLambdaValidateIterator<V> implements Iterator<Object[]> {
 
-    public BaseTableValidate<V> table;
+    public BaseTableLambdaValidate<V> table;
     public Iterator<Object[]> tblIter;
     public Function<Object, Boolean>[] validators;
 
-    public BaseTableValidateIterator(BaseTableValidate<V> table) {
+    public BaseTableLambdaValidateIterator(BaseTableLambdaValidate<V> table) {
         this.table = table;
         this.tblIter = table.table.iterator();
         this.validators = table.validators;

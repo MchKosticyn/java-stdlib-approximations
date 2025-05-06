@@ -8,7 +8,11 @@ import org.usvm.api.Engine;
 import org.usvm.api.SymbolicList;
 
 import java.lang.reflect.Array;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 public class ListWrapper<T> implements List<T>, IWrapper<T> {
 
@@ -181,7 +185,11 @@ public class ListWrapper<T> implements List<T>, IWrapper<T> {
         ensureInitialized();
 
         int count = 0;
-        for (T ignored : this) count++;
+        Iterator<T> iter = iterator();
+        while (iter.hasNext()) {
+            T ignored = iter.next();
+            count++;
+        }
         return count;
     }
 
@@ -281,8 +289,11 @@ public class ListWrapper<T> implements List<T>, IWrapper<T> {
     public boolean containsAll(@NotNull Collection<?> c) {
         ensureInitialized();
 
-        for (Object o : c) if (!contains(o)) return false;
-
+        Iterator<?> iter = c.iterator();
+        while (iter.hasNext()) {
+            Object o = iter.next();
+            if (!contains(o)) return false;
+        }
         return true;
     }
 
@@ -292,7 +303,11 @@ public class ListWrapper<T> implements List<T>, IWrapper<T> {
 
         if (c.isEmpty()) return false;
 
-        for (T t : c) cache.insert(sizeOfCache++, t);
+        Iterator<? extends T> iter = c.iterator();
+        while (iter.hasNext()) {
+            T t = iter.next();
+            cache.insert(sizeOfCache++, t);
+        }
         modCount++;
 
         return true;
@@ -308,7 +323,11 @@ public class ListWrapper<T> implements List<T>, IWrapper<T> {
         if (sizeOfCol == 0) return false;
 
         cacheUntilIx(index - 1);
-        for (T t : c) cache.insert(index++, t);
+        Iterator<? extends T> iter = c.iterator();
+        while (iter.hasNext()) {
+            T t = iter.next();
+            cache.insert(index++, t);
+        }
 
         wrpStartIx += sizeOfCol;
         wrpEndIx += sizeOfCol;
@@ -326,7 +345,11 @@ public class ListWrapper<T> implements List<T>, IWrapper<T> {
         if (c.isEmpty()) return false;
 
         boolean isChanged = false;
-        for (Object o : c) isChanged |= remove(o);
+        Iterator<?> iter = c.iterator();
+        while (iter.hasNext()) {
+            Object o = iter.next();
+            isChanged |= remove(o);
+        }
 
         if (isChanged) modCount++;
 
@@ -343,7 +366,9 @@ public class ListWrapper<T> implements List<T>, IWrapper<T> {
         Engine.assume(newCache.size() == 0);
 
         cacheUntilIx(wrpEndIx);
-        for (T t : this) {
+        Iterator<T> iter = iterator();
+        while (iter.hasNext()) {
+            T t = iter.next();
             if (c.contains(t)) newCache.insert(newSize++, t);
         }
 

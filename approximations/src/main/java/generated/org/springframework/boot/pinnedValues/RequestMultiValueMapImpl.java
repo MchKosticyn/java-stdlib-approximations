@@ -12,6 +12,6 @@ public class RequestMultiValueMapImpl extends RequestMultiValueMap {
     }
 
     public String[] get(Object key) {
-        return PinnedValueStorage.getPinnedValue(source, (String)key, String.class);
+        return PinnedValueStorage.getPinnedValue(source, (String)key, String[].class);
     }
 }

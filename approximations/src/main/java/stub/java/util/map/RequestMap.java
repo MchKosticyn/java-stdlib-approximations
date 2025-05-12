@@ -11,12 +11,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class RequestMap implements Map<String, String> {
-    public PinnedValueSource sourcePrefix;
-
-    public RequestMap(PinnedValueSource sourcePrefix) {
-        this.sourcePrefix = sourcePrefix;
-    }
-
     public int size() { throw new LinkageError(); }
 
     public boolean isEmpty() { throw new LinkageError(); }
@@ -25,15 +19,10 @@ public class RequestMap implements Map<String, String> {
 
     public boolean containsValue(Object value) { throw new LinkageError(); }
 
-    public String get(Object key) {
-        return PinnedValueStorage.getPinnedValue(sourcePrefix, (String)key, String.class);
-    }
+    public String get(Object key) { throw new LinkageError(); }
 
     @Nullable
-    public String put(String key, String value) {
-        PinnedValueStorage.writePinnedValue(sourcePrefix, key, String.class);
-        return null;
-    }
+    public String put(String key, String value) { throw new LinkageError(); }
 
     public String remove(Object key) { throw new LinkageError(); }
 

@@ -2,6 +2,7 @@ package stub.java.util.map;
 
 
 import generated.org.springframework.boot.pinnedValues.PinnedValueSource;
+import generated.org.springframework.boot.pinnedValues.PinnedValueStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,12 +25,15 @@ public class RequestMap implements Map<String, String> {
 
     public boolean containsValue(Object value) { throw new LinkageError(); }
 
-    public String get(Object key) { throw new LinkageError(); }
-
-    public String set(String key, Object value) { throw new LinkageError(); }
+    public String get(Object key) {
+        return PinnedValueStorage.getPinnedValue(sourcePrefix, (String)key, String.class);
+    }
 
     @Nullable
-    public String put(String key, String value) { throw new LinkageError(); }
+    public String put(String key, String value) {
+        PinnedValueStorage.writePinnedValue(sourcePrefix, key, String.class);
+        return null;
+    }
 
     public String remove(Object key) { throw new LinkageError(); }
 

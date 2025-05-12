@@ -15,7 +15,7 @@ public class HttpHeadersImpl {
     private final RequestMap fakeHeaders = new RequestMap(PinnedValueSource.REQUEST_HEADER);
 
     public void set(String headerName, @Nullable String headerValue) {
-        fakeHeaders.set(headerName, headerValue);
+        fakeHeaders.put(headerName, headerValue);
     }
 
     @Nullable

@@ -1,5 +1,6 @@
 package generated.org.springframework.boot;
 
+import generated.org.springframework.boot.databases.wrappers.ListWrapper;
 import generated.org.springframework.boot.pinnedValues.PinnedValueSource;
 import generated.org.springframework.boot.pinnedValues.PinnedValueStorage;
 import jakarta.servlet.http.Cookie;
@@ -59,10 +60,16 @@ public class SpringApplicationImpl {
         }
     }
 
-    private static void _initValueFieldsSymbolic(Object obj) { }
+    private static String[] _getUsedTables() {
+        throw new LinkageError();
+    }
 
-    private static List<Class<?>> _classesWithFieldsValueAnnotation() {
-        return new ArrayList<>();
+    private static ListWrapper<?> _tableContentByName(String tableName) {
+        throw new LinkageError();
+    }
+
+    private static void _saveTableEntity(String tableName, Object entity) {
+        throw new LinkageError();
     }
 
     private static void _writeResponse(MockHttpServletResponse response) {
@@ -151,6 +158,19 @@ public class SpringApplicationImpl {
                 writePinnedValue(UNHANDLED_EXCEPTION_CLASS, e.getClass());
                 _internalLog("[USVM] analysis finished with exception", path);
             } finally {
+                String[] usedTables = _getUsedTables();
+                int usedTablesSize = usedTables.length;
+                _internalLog("[USVM] usedTables.length", Integer.toString(usedTablesSize));
+                for (int i = 0; i < usedTablesSize; i++) {
+                    String tableName = usedTables[i];
+                    ListWrapper<?> tableContent = _tableContentByName(tableName);
+                    int size = tableContent.size();
+                    _internalLog("[USVM] size", Integer.toString(size));
+                    for (int j = 0; j < tableContent.size(); j++) {
+                        Object entity = tableContent.get(j);
+                        _saveTableEntity(tableName, entity);
+                    }
+                }
                 PinnedValueStorage.preparePinnedValues();
                 _endAnalysis();
             }

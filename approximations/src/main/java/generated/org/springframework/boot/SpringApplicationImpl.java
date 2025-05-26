@@ -158,19 +158,6 @@ public class SpringApplicationImpl {
                 writePinnedValue(UNHANDLED_EXCEPTION_CLASS, e.getClass());
                 _internalLog("[USVM] analysis finished with exception", path);
             } finally {
-                String[] usedTables = _getUsedTables();
-                int usedTablesSize = usedTables.length;
-                _internalLog("[USVM] usedTables.length", Integer.toString(usedTablesSize));
-                for (int i = 0; i < usedTablesSize; i++) {
-                    String tableName = usedTables[i];
-                    ListWrapper<?> tableContent = _tableContentByName(tableName);
-                    int size = tableContent.size();
-                    _internalLog("[USVM] size", Integer.toString(size));
-                    for (int j = 0; j < tableContent.size(); j++) {
-                        Object entity = tableContent.get(j);
-                        _saveTableEntity(tableName, entity);
-                    }
-                }
                 PinnedValueStorage.preparePinnedValues();
                 _endAnalysis();
             }

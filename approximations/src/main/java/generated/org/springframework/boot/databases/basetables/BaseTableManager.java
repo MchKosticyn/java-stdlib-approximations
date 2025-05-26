@@ -31,7 +31,7 @@ public class BaseTableManager<T, V> extends ABaseTable<V> implements ITableManag
         BaseTableConstraintValidate<V> validated = new BaseTableConstraintValidate<>(base, validators);
 
         if (needTrack) {
-            BaseTableTrack<T, V> track = new BaseTableTrack<>(validated, tableName);
+            BaseTableTrack<T, V> track = new BaseTableTrack<>(validated, tableName, entityType);
             this.trackTable = track;
             this.tablesChain = track;
         }

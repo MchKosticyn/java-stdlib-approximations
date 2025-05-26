@@ -11,10 +11,12 @@ public class BaseTableTrack <T, V> extends AChainedBaseTable<V> {
 
     public Function<Object[], T> deserializer; // set later by generated code
     public String tableName;
+    public Class<T> classType;
 
-    public BaseTableTrack(ABaseTable<V> table, String tableName) {
+    public BaseTableTrack(ABaseTable<V> table, String tableName, Class<T> classType) {
         this.table = table;
         this.tableName = tableName;
+        this.classType = classType;
     }
 
     public void setDeserializer(Function<Object[], T> deserializer) {

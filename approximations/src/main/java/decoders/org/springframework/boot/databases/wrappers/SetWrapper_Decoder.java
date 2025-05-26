@@ -86,10 +86,10 @@ public final class SetWrapper_Decoder implements ObjectDecoder {
             for (JcField field : getAllFields(approximation)) {
                 if ("cache".equals(field.getName())) {
                     cached_SetWrapper_cache = f_cache = field;
-                    break;
+                    if (f_removed != null) break;
                 } else if ("removedCache".equals(field.getName())) {
                     cached_SetWrapper_removedCache = f_removed = field;
-                    break;
+                    if (f_cache != null) break;
                 }
             }
         }

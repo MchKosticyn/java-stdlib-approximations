@@ -162,8 +162,8 @@ public class ModelMap_Decoder implements ObjectDecoder {
             return; // ignore invalid container
 
         while (length > 0) {
-            T key = map.anyKey();
-            T newKey = key;
+            T mapKey = map.anyKey();
+            T key = mapKey;
             T value = map.get(key);
             if (value instanceof InternalMapEntry) {
                 value = ((InternalMapEntry<T, T>) value).getValue();
@@ -179,16 +179,16 @@ public class ModelMap_Decoder implements ObjectDecoder {
                     stringCtor = method;
                 }
                 ArrayList<T> args = new ArrayList<>();
-                newKey = decoder.invokeMethod(stringCtor, args);
+                key = decoder.invokeMethod(stringCtor, args);
             }
 
             List<T> args = new ArrayList<>();
             args.add(outputInstance);
-            args.add(newKey);
+            args.add(key);
             args.add(value);
             decoder.invokeMethod(m_addAttribute, args);
 
-            map.remove(key);
+            map.remove(mapKey);
             length--;
         }
     }

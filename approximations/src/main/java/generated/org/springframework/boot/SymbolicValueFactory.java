@@ -1,13 +1,49 @@
 package generated.org.springframework.boot;
 
+import generated.org.springframework.boot.pinnedValues.PinnedValueSource;
+import generated.org.springframework.boot.pinnedValues.PinnedValueStorage;
 import org.usvm.api.Engine;
 
 import java.lang.reflect.Modifier;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
 public class SymbolicValueFactory {
+
+    public static String createNonEmptySymbolicString(PinnedValueSource source, String name) {
+        String string = PinnedValueStorage.getPinnedValue(source, name, String.class);
+        Engine.assume(string != null);
+        Engine.assume(!string.isEmpty());
+        return string;
+    }
+
+    public static Object createValidSymbolic(Class<?> type, boolean nullable) {
+        Object result = SymbolicValueFactory.createSymbolic(type, nullable);
+        validateInputValue(result);
+        return result;
+    }
+
+    public static void validateInputValue(Object input) {
+        if (input instanceof LocalDate) {
+            LocalDate date = (LocalDate)input;
+            int month = date.getMonthValue();
+            Engine.assume(0 < month && month < 13);
+            int day = date.getDayOfMonth();
+            Engine.assume(0 < day && day < 32);
+        }
+
+        if (input instanceof LocalDateTime) {
+            LocalDateTime date = (LocalDateTime)input;
+            int month = date.getMonthValue();
+            Engine.assume(0 < month && month < 13);
+            int day = date.getDayOfMonth();
+            Engine.assume(0 < day && day < 32);
+            // TODO: Other time-related constraints #AA
+        }
+    }
 
     private static Object createSymbolicWithSameType(Class<?> type, boolean makeNullable) {
         if (makeNullable)

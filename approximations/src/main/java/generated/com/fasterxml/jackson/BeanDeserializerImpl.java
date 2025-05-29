@@ -61,7 +61,7 @@ public class BeanDeserializerImpl extends BeanDeserializer {
     }
 
     public static List<Object> getPrimitive(JavaType type) {
-        Object result = SymbolicValueFactory.createSymbolic(type.getRawClass(), false);
+        Object result = SymbolicValueFactory.createValidSymbolic(type.getRawClass(), false);
         return Arrays.asList(result, result);
     }
 
@@ -73,7 +73,7 @@ public class BeanDeserializerImpl extends BeanDeserializer {
         Class<?> clazz = _valueInstantiator.getValueClass();
 
         if (ResolverUtils.isPrimitiveOrWrapper(clazz)) {
-            Object result = SymbolicValueFactory.createSymbolic(clazz, true);
+            Object result = SymbolicValueFactory.createValidSymbolic(clazz, true);
             _writeToState(result);
             return result;
         }

@@ -163,6 +163,7 @@ public class ModelMap_Decoder implements ObjectDecoder {
 
         while (length > 0) {
             T key = map.anyKey();
+            T newKey = key;
             T value = map.get(key);
             if (value instanceof InternalMapEntry) {
                 value = ((InternalMapEntry<T, T>) value).getValue();
@@ -178,12 +179,12 @@ public class ModelMap_Decoder implements ObjectDecoder {
                     stringCtor = method;
                 }
                 ArrayList<T> args = new ArrayList<>();
-                key = decoder.invokeMethod(stringCtor, args);
+                newKey = decoder.invokeMethod(stringCtor, args);
             }
 
             List<T> args = new ArrayList<>();
             args.add(outputInstance);
-            args.add(key);
+            args.add(newKey);
             args.add(value);
             decoder.invokeMethod(m_addAttribute, args);
 

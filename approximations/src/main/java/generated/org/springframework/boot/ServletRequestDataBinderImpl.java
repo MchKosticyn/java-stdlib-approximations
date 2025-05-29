@@ -66,7 +66,9 @@ public class ServletRequestDataBinderImpl extends ServletRequestDataBinder {
     }
 
     private Object getInputData(String name, Class<?> clazz) {
-        return PinnedValueStorage.getPinnedValue(PinnedValueSource.REQUEST_PARAM, name, clazz);
+        Object input = PinnedValueStorage.getPinnedValue(PinnedValueSource.REQUEST_PARAM, name, clazz);
+        SymbolicValueFactory.validateInputValue(input);
+        return input;
     }
 
     private static void writeField(Object target, Field field, Object value) {
@@ -259,6 +261,9 @@ public class ServletRequestDataBinderImpl extends ServletRequestDataBinder {
         if (existing != null)
             return existing;
 
+        if (childType.isCollectionLike())
+            return null;
+
         if (childType.isPrimitiveOrWrapper())
             return null;
 
@@ -323,8 +328,7 @@ public class ServletRequestDataBinderImpl extends ServletRequestDataBinder {
             return value;
         }
 
-        boolean isArray = genericClass.isArray();
-        if (isArray || genericClass.isAssignableTo(Collection.class)) {
+        if (genericClass.isCollectionLike()) {
             int maxSize = MAX_ARRAY_INDEX;
 
             Object collection = target;
@@ -408,6 +412,10 @@ public class ServletRequestDataBinderImpl extends ServletRequestDataBinder {
                 return clazz.isArray();
 
             return Engine.typeIsArray(target);
+        }
+
+        public boolean isCollectionLike() {
+            return isArray() || isAssignableTo(Collection.class);
         }
 
         public GenericClass componentType(Object newTarget) {

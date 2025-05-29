@@ -10,6 +10,7 @@ public class NotBlankValidatorImpl {
     public boolean isValid(CharSequence charSequence, ConstraintValidatorContext constraintValidatorContext) {
         Engine.assume(charSequence != null);
         Engine.assume(!charSequence.isEmpty());
+        Engine.assume(charSequence.charAt(0) > ' ');
         return true;
     }
 }

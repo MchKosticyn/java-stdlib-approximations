@@ -1,5 +1,6 @@
 package generated.org.springframework.boot.resolvers;
 
+import generated.org.springframework.boot.SymbolicValueFactory;
 import generated.org.springframework.boot.pinnedValues.PinnedValueSource;
 import org.jacodb.approximation.annotation.Approximate;
 import org.springframework.core.MethodParameter;
@@ -19,6 +20,6 @@ public class PathVariableMethodArgumentResolverImpl {
         if (!path.contains(String.format("{%s}", parameterName)))
             return null;
 
-        return ResolverUtils.getNonEmptySymbolicString(PinnedValueSource.REQUEST_PATH_VARIABLE, name);
+        return SymbolicValueFactory.createNonEmptySymbolicString(PinnedValueSource.REQUEST_PATH_VARIABLE, name);
     }
 }

@@ -1,7 +1,7 @@
 package generated.org.springframework.boot.resolvers;
 
+import generated.org.springframework.boot.SymbolicValueFactory;
 import generated.org.springframework.boot.pinnedValues.PinnedValueSource;
-import generated.org.springframework.boot.pinnedValues.PinnedValueStorage;
 import org.jacodb.approximation.annotation.Approximate;
 import org.springframework.core.MethodParameter;
 import org.springframework.lang.Nullable;
@@ -12,6 +12,6 @@ import org.springframework.web.method.annotation.RequestParamMethodArgumentResol
 public class RequestParamMethodArgumentResolverImpl {
     @Nullable
     protected Object resolveName(String name, MethodParameter parameter, NativeWebRequest request) throws Exception {
-        return ResolverUtils.getNonEmptySymbolicString(PinnedValueSource.REQUEST_PARAM, name);
+        return SymbolicValueFactory.createNonEmptySymbolicString(PinnedValueSource.REQUEST_PARAM, name);
     }
 }

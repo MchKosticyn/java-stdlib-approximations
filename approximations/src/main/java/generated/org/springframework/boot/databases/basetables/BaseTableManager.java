@@ -1,7 +1,5 @@
 package generated.org.springframework.boot.databases.basetables;
 
-import generated.org.springframework.boot.databases.MappedTable;
-import generated.org.springframework.boot.databases.wrappers.ListWrapper;
 import jakarta.validation.ConstraintValidator;
 import org.jetbrains.annotations.NotNull;
 import org.usvm.api.Engine;
@@ -14,21 +12,31 @@ public class BaseTableManager<T, V> extends ABaseTable<V> implements ITableManag
     public BaseTableTrack<T, V> trackTable; // nullable
     public ABaseTable<V> tablesChain;
 
+    public Class<V> idColType;
+    public boolean isAutoGenerateId;
+
     public String tableName;
     public Class<T> entityType;
 
+    @SuppressWarnings("unchecked")
     public BaseTableManager(
             int idIndex,
             Class<T> entityType,
             Class<?>[] columnTypes,
             ConstraintValidator<?, ?>[][] validators,
             String tableName,
+            boolean isAutoGenerateId, // GeneratedValue annotation set in data-class
             boolean needTrack // true if SpringBootTests option set in WebBench
     ) {
         this.tableName = tableName;
+        this.idColType = (Class<V>) columnTypes[idIndex];
+        this.isAutoGenerateId = isAutoGenerateId;
 
         BaseTable<V> base = new BaseTable<>(idIndex, columnTypes);
-        BaseTableConstraintValidate<V> validated = new BaseTableConstraintValidate<>(base, validators);
+
+        BaseTableLambdaValidate<V> validatedIdDefaultValues = new BaseTableLambdaValidate<>(base);
+
+        BaseTableConstraintValidate<V> validated = new BaseTableConstraintValidate<>(validatedIdDefaultValues, validators);
 
         if (needTrack) {
             BaseTableTrack<T, V> track = new BaseTableTrack<>(validated, tableName, entityType);

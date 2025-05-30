@@ -3,12 +3,14 @@ package generated.org.springframework.boot.databases.saveupddel;
 import generated.org.springframework.boot.databases.MappedTable;
 import generated.org.springframework.boot.databases.basetables.BaseTableManager;
 import generated.org.springframework.boot.databases.iterators.utils.IteratorWithMap;
+import generated.org.springframework.boot.databases.utils.DatabaseValidators;
 import generated.org.springframework.boot.databases.wrappers.ListWrapper;
 import generated.org.springframework.boot.databases.wrappers.SetWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.usvm.api.Engine;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -24,6 +26,8 @@ public class CrudManager<T, V> {
     public Function<T, Object[]> serializer; // nullable
     public Function<Object[], T> deserializer; // nullable
 
+    public boolean isAutoGenerateId;
+
     public Class<T> genericType;
 
     public CrudManager(
@@ -33,6 +37,7 @@ public class CrudManager<T, V> {
             Class<T> genericType
     ) {
         this.table = table;
+        this.isAutoGenerateId = table.isAutoGenerateId;
         this.serializer = serializer;
         this.deserializer = deserializer;
         this.genericType = genericType;
@@ -43,9 +48,15 @@ public class CrudManager<T, V> {
     public void save(T t, boolean allowUpdate) {
         Object[] row = serializer.apply(t);
 
-        if (!allowUpdate) table.pureSave(row);
+        if (isAutoGenerateId) {
+            V newId = Engine.makeSymbolic(table.idColType);
+            // default value checks null
+            Engine.assume(!DatabaseValidators.isDefaultValue(newId, table.idColType));
+            row[table.idColumnIx()] = newId;
+        }
 
-        table.save(row);
+        if (!allowUpdate) table.pureSave(row);
+        else table.save(row);
     }
 
     public Iterable<? extends T> saveAll(Iterable<? extends T> ts) {

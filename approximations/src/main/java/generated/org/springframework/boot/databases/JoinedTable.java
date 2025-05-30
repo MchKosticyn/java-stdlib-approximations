@@ -153,8 +153,8 @@ public class JoinedTable<L, R> implements ITable<Object[]> {
         if (onMethod == null) return composite(leftTable.first(), rightTable.first());
 
         Iterator<Object[]> iter = iterator();
-        if (!iter.hasNext()) return null;
-        return iter.next();
+        if (iter.hasNext()) return iter.next();
+        return null;
     }
 
     public static Object[] identity(Object[] row) {

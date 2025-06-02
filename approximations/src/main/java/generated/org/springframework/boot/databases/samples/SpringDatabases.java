@@ -31,6 +31,7 @@ public class SpringDatabases {
                     }
             },
             "_blank1",
+            true,
             true
     );
 
@@ -40,6 +41,7 @@ public class SpringDatabases {
             new Class<?>[0],
             new ConstraintValidator<?, ?>[0][],
             "_blank2",
+            true,
             true
     );
 

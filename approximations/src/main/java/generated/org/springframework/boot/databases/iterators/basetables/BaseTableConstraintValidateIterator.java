@@ -26,7 +26,12 @@ public class BaseTableConstraintValidateIterator<V> implements Iterator<Object[]
 
     @SuppressWarnings("unchecked")
     public <T> void validateValue(Object value, ConstraintValidator<?, T> validator) {
-        Engine.assume(validator.isValid((T) value, ctx));
+        try {
+            Engine.assume(validator.isValid((T) value, ctx));
+        }
+        catch (Throwable e) {
+            Engine.assume(false);
+        }
     }
 
     public void validateRow(Object[] row) {

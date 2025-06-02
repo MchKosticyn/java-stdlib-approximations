@@ -51,7 +51,8 @@ public class CrudManager<T, V> {
         if (isAutoGenerateId) {
             V newId = Engine.makeSymbolic(table.idColType);
             // default value checks null
-            Engine.assume(!DatabaseValidators.isDefaultValue(newId, table.idColType));
+            Function<Object, Boolean> idValidator = DatabaseValidators.getIdValidator(table.idColType);
+            Engine.assume(idValidator.apply(newId));
             row[table.idColumnIx()] = newId;
         }
 

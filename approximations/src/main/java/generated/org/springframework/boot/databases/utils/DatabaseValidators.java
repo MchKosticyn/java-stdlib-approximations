@@ -5,7 +5,7 @@ import java.util.function.Function;
 
 public class DatabaseValidators {
 
-    public static Function<Object, Boolean> getIdValidator (Class<?> clazz) {
+    public static Function<Object, Boolean> getIdValidator(Class<?> clazz) {
         if (clazz.equals(Boolean.class)) {
             return (Object v) -> v != null && (Boolean) v;
         }

@@ -25,6 +25,7 @@ import static generated.org.springframework.boot.pinnedValues.PinnedValueSource.
 import static generated.org.springframework.boot.pinnedValues.PinnedValueSource.REQUEST_MATRIX;
 import static generated.org.springframework.boot.pinnedValues.PinnedValueSource.REQUEST_PARAM;
 import static generated.org.springframework.boot.pinnedValues.PinnedValueSource.REQUEST_PATH;
+import static generated.org.springframework.boot.pinnedValues.PinnedValueSource.REQUEST_PATH_VARIABLE;
 
 @Approximate(AbstractNamedValueMethodArgumentResolver.class)
 public abstract class AbstractNamedValueMethodArgumentResolverImpl extends AbstractNamedValueMethodArgumentResolver {
@@ -39,7 +40,7 @@ public abstract class AbstractNamedValueMethodArgumentResolverImpl extends Abstr
         // TODO: Other annotations #AA
         PathVariable pathAnnotation = parameter.getParameterAnnotation(PathVariable.class);
         if (pathAnnotation != null)
-            return List.of(pathAnnotation.name(), REQUEST_PATH, pathAnnotation.required());
+            return List.of(pathAnnotation.name(), REQUEST_PATH_VARIABLE, pathAnnotation.required());
 
         RequestParam paramAnnotation = parameter.getParameterAnnotation(RequestParam.class);
         if (paramAnnotation != null)

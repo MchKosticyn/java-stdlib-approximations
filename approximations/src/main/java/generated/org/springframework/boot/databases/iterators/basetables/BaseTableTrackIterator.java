@@ -15,11 +15,15 @@ public class BaseTableTrackIterator<T, V> implements Iterator<Object[]> {
     public String tableName;
     public Class<T> classType;
 
+    // for tracking
+    public int ix;
+
     public BaseTableTrackIterator(BaseTableTrack<T, V> table) {
         this.table = table;
         this.iter = table.table.iterator();
         this.tableName = table.tableName;
         this.classType = table.classType;
+        this.ix = 0;
 
         if (table.deserializer == null) throw new LinkageError();
         this.deserializer = table.deserializer;
@@ -37,7 +41,7 @@ public class BaseTableTrackIterator<T, V> implements Iterator<Object[]> {
 
         Object[] row = iter.next();
         T value = deserializer.apply(row);
-        TableTracker.track(tableName, value, classType);
+        TableTracker.tryTrack(tableName, value, ix++, classType);
 
         return row;
     }

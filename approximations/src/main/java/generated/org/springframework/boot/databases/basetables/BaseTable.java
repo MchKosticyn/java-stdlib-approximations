@@ -1,10 +1,12 @@
 package generated.org.springframework.boot.databases.basetables;
 
 import generated.org.springframework.boot.databases.iterators.basetables.BaseTableIterator;
+import generated.org.springframework.boot.databases.utils.DatabaseValidators;
 import org.jetbrains.annotations.NotNull;
 import org.usvm.api.Engine;
 
 import java.util.Iterator;
+import java.util.function.Function;
 
 public class BaseTable<V> extends ABaseTable<V> {
     //      row0  row2  --  rowN
@@ -76,10 +78,17 @@ public class BaseTable<V> extends ABaseTable<V> {
         Engine.assume(ix < size);
         Object[] row = new Object[columnCount];
         for (int i = 0; i < columnCount; i++) {
+            Object v = data[i][ix];
+
             Engine.assume(ix < data[i].length);
-            if (i == idIndex) Engine.assume(data[i][ix] != null);
-            row[i] = data[i][ix];
+            if (i == idIndex) Engine.assume(v != null);
+
+            Function<Object, Boolean> soft = DatabaseValidators.getSoftValidator(columnTypes[i]);
+            if (soft != null) Engine.assumeSoft(soft.apply(v));
+            
+            row[i] = v;
         }
+
         return row;
     }
 

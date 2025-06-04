@@ -35,6 +35,25 @@ public class DatabaseValidators {
         }
     }
 
+    public static Function<Object, Boolean> getSoftValidator(Class<?> clazz) {
+        if (clazz.equals(Boolean.class)) { return null; }
+        else if (clazz.equals(Byte.class)) { return null; }
+        else if (clazz.equals(Short.class)) { return null; }
+        else if (clazz.equals(Integer.class)) { return null; }
+        else if (clazz.equals(Long.class)) { return null; }
+        else if (clazz.equals(Float.class)) { return null; }
+        else if (clazz.equals(Double.class)) { return null; }
+        else if (clazz.equals(String.class)) {
+            return (Object v) -> {
+                int len = ((String) v).length();
+                return len > 3 && len < 10;
+            };
+        }
+        else {
+            throw new IllegalArgumentException("Unsupported type soft validator");
+        }
+    }
+
     public static <T> boolean isDefaultValue(T value, Class<T> clazz) {
         return value.equals(Array.get(Array.newInstance(clazz, 1), 0));
     }

@@ -11,6 +11,9 @@ public class TestClass {
     @Autowired
     private MockMvc mockMvc;
 
+    public void fakeTest() {
+    }
+
     public static void ignoreResult(Object result) {
     }
 }

@@ -1,5 +1,7 @@
 package generated.org.springframework.boot.databases.utils;
 
+import generated.org.springframework.boot.SpringApplicationImpl;
+
 import java.lang.reflect.Array;
 import java.util.function.Function;
 
@@ -50,7 +52,8 @@ public class DatabaseValidators {
             };
         }
         else {
-            throw new IllegalArgumentException("Unsupported type soft validator");
+            SpringApplicationImpl._internalLog("Unsupported soft validator for type", clazz.getName());
+            return null;
         }
     }
 

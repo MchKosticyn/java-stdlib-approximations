@@ -1,6 +1,7 @@
 package generated.org.springframework.boot.databases;
 
 import org.jetbrains.annotations.NotNull;
+import org.usvm.api.Engine;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -178,6 +179,13 @@ public class SortedTable<T, R> implements ITable<T> {
     public T first() {
         Iterator<T> iter = iterator();
         if (!iter.hasNext()) return null;
+        return iter.next();
+    }
+
+    @Override
+    public T ensureFirst() {
+        Iterator<T> iter = iterator();
+        Engine.assume(iter.hasNext());
         return iter.next();
     }
 }

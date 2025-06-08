@@ -3,6 +3,10 @@ package generated.org.springframework.boot.databases.utils;
 import generated.org.springframework.boot.SpringEngine;
 
 import java.lang.reflect.Array;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.function.Function;
 
 public class DatabaseValidators {
@@ -32,6 +36,18 @@ public class DatabaseValidators {
         else if (clazz.equals(String.class)) {
             return (Object v) -> v != null && !((String) v).isEmpty();
         }
+        else if (clazz.equals(LocalDateTime.class)) {
+            return (Object v) -> v != null;
+        }
+        else if (clazz.equals(LocalDate.class)) {
+            return (Object v) -> v != null;
+        }
+        else if (clazz.equals(BigInteger.class)) {
+            return (Object v) -> v != null && !v.equals(BigInteger.ZERO);
+        }
+        else if (clazz.equals(BigDecimal.class)) {
+            return (Object v) -> v != null && !v.equals(BigDecimal.ZERO);
+        }
         else {
             throw new IllegalArgumentException("Unsupported id type validator");
         }
@@ -51,6 +67,10 @@ public class DatabaseValidators {
                 return len > 3 && len < 10;
             };
         }
+        else if (clazz.equals(LocalDateTime.class)) { return null; }
+        else if (clazz.equals(LocalDate.class)) { return null; }
+        else if (clazz.equals(BigInteger.class)) { return null; }
+        else if (clazz.equals(BigDecimal.class)) { return null; }
         else {
             SpringEngine._internalLog("Unsupported soft validator for type", clazz.getName());
             return null;

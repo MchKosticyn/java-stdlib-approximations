@@ -35,4 +35,7 @@ public class SingletonTable<T> implements ITable<T> {
     public T first() {
         return data;
     }
+
+    @Override
+    public T ensureFirst() { return data; }
 }

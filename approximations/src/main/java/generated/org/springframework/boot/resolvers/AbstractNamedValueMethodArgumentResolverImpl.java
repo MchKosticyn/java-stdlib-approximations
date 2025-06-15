@@ -1,7 +1,7 @@
 package generated.org.springframework.boot.resolvers;
 
-import generated.org.springframework.boot.SpringApplicationImpl;
 import generated.org.springframework.boot.SymbolicValueFactory;
+import generated.org.springframework.boot.SpringEngine;
 import generated.org.springframework.boot.pinnedValues.PinnedValueSource;
 import generated.org.springframework.boot.pinnedValues.PinnedValueStorage;
 import org.jacodb.approximation.annotation.Approximate;
@@ -24,7 +24,6 @@ import static generated.org.springframework.boot.pinnedValues.PinnedValueSource.
 import static generated.org.springframework.boot.pinnedValues.PinnedValueSource.REQUEST_HEADER;
 import static generated.org.springframework.boot.pinnedValues.PinnedValueSource.REQUEST_MATRIX;
 import static generated.org.springframework.boot.pinnedValues.PinnedValueSource.REQUEST_PARAM;
-import static generated.org.springframework.boot.pinnedValues.PinnedValueSource.REQUEST_PATH;
 import static generated.org.springframework.boot.pinnedValues.PinnedValueSource.REQUEST_PATH_VARIABLE;
 
 @Approximate(AbstractNamedValueMethodArgumentResolver.class)
@@ -58,9 +57,9 @@ public abstract class AbstractNamedValueMethodArgumentResolverImpl extends Abstr
         if (cookieAnnotation != null)
             return List.of(cookieAnnotation.name(), REQUEST_COOKIE, cookieAnnotation.required());
 
-        SpringApplicationImpl._println("Warning! Unknown annotation! All annotations:");
+        SpringEngine._println("Warning! Unknown annotation! All annotations:");
         for (Annotation annotation : annotations) {
-            SpringApplicationImpl._println(annotation.toString());
+            SpringEngine._println(annotation.toString());
         }
         Engine.assume(false);
         throw new IllegalArgumentException();

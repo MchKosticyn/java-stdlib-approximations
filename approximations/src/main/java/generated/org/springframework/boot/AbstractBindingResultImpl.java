@@ -25,7 +25,7 @@ public abstract class AbstractBindingResultImpl {
         String bindingResultKey = MODEL_KEY_PREFIX + getObjectName();
         model.put(bindingResultKey, this);
         model.lastKey = bindingResultKey;
-        SpringApplicationImpl._internalLog("getModel, lastKey = ", bindingResultKey);
+        SpringEngine._internalLog("getModel, lastKey = ", bindingResultKey);
         return model;
     }
 }

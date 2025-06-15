@@ -12,8 +12,8 @@ import com.fasterxml.jackson.databind.deser.SettableBeanProperty;
 import com.fasterxml.jackson.databind.deser.ValueInstantiator;
 import com.fasterxml.jackson.databind.deser.std.ContainerDeserializerBase;
 import com.fasterxml.jackson.databind.deser.std.ObjectArrayDeserializer;
-import generated.org.springframework.boot.SpringApplicationImpl;
 import generated.org.springframework.boot.SymbolicValueFactory;
+import generated.org.springframework.boot.SpringEngine;
 import generated.org.springframework.boot.pinnedValues.PinnedValueSource;
 import generated.org.springframework.boot.resolvers.ResolverUtils;
 import org.jacodb.approximation.annotation.Approximate;
@@ -21,7 +21,6 @@ import org.usvm.api.Engine;
 
 import java.io.IOException;
 import java.io.Serial;
-import java.lang.invoke.MethodType;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -120,7 +119,7 @@ public class BeanDeserializerImpl extends BeanDeserializer {
         }
 
         if (bean == null) {
-            SpringApplicationImpl._println(String.format(
+            SpringEngine._println(String.format(
                     "Warning! Could not instantiate bean of type %s",
                     _valueInstantiator.getValueClass().toString()
             ));
@@ -167,7 +166,7 @@ public class BeanDeserializerImpl extends BeanDeserializer {
         if (isCollection(type))
             return generateSymbolicCollection(type, deserializer, p, ctxt, depth);
 
-        SpringApplicationImpl._println(String.format("Warning! Generating symbolic JSON property value did not hit any case (type: %s) (deser: %s)",
+        SpringEngine._println(String.format("Warning! Generating symbolic JSON property value did not hit any case (type: %s) (deser: %s)",
                 type,
                 deserializer
         ));
@@ -203,7 +202,7 @@ public class BeanDeserializerImpl extends BeanDeserializer {
                 List<Object> valueAndCopy;
 
                 if (!(deserializer instanceof ObjectArrayDeserializer)) {
-                    SpringApplicationImpl._println("Warning! Object array deserializer was not of an ObjectArrayDeserializer class!");
+                    SpringEngine._println("Warning! Object array deserializer was not of an ObjectArrayDeserializer class!");
                     return Arrays.asList(null, null);
                 }
 
@@ -239,7 +238,7 @@ public class BeanDeserializerImpl extends BeanDeserializer {
             return Arrays.asList(collection, collectionCopy);
         }
 
-        SpringApplicationImpl._println(String.format(
+        SpringEngine._println(String.format(
                 "Warning! Generating symbolic JSON collection did not hit any case (type: %s) (deserializer: %s)",
                 type,
                 deserializer
@@ -283,8 +282,7 @@ public class BeanDeserializerImpl extends BeanDeserializer {
                 if (prop != null) {
                     try {
                         prop.deserializeAndSet(p, ctxt, bean);
-                    } catch (Exception var8) {
-                        Exception e = var8;
+                    } catch (Exception e) {
                         this.wrapAndThrow(e, bean, propName, ctxt);
                     }
                 } else {

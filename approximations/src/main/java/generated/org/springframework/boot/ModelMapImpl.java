@@ -10,7 +10,6 @@ import org.springframework.util.CollectionUtils;
 import org.usvm.api.Engine;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 
 @SuppressWarnings("serial")
@@ -31,7 +30,7 @@ public class ModelMapImpl extends LinkedHashMapImpl<String, Object> {
         Assert.notNull(attributeName, "Model attribute name must not be null");
         put(attributeName, attributeValue);
         lastKey = attributeName;
-        SpringApplicationImpl._internalLog("addAttribute, lastKey = ", lastKey);
+        SpringEngine._internalLog("addAttribute, lastKey = ", lastKey);
         return this;
     }
 
@@ -53,7 +52,7 @@ public class ModelMapImpl extends LinkedHashMapImpl<String, Object> {
             if (attributeValues instanceof ModelMapImpl) {
                 lastKey = ((ModelMapImpl) attributeValues).lastKey;
             }
-            SpringApplicationImpl._internalLog("addAllAttributes(Collection), lastKey = ", lastKey);
+            SpringEngine._internalLog("addAllAttributes(Collection), lastKey = ", lastKey);
         }
         return this;
     }
@@ -66,7 +65,7 @@ public class ModelMapImpl extends LinkedHashMapImpl<String, Object> {
             } else {
                 lastKey = CollectionUtils.lastElement(attributes.keySet());
             }
-            SpringApplicationImpl._internalLog("addAllAttributes(Map), lastKey = ", lastKey);
+            SpringEngine._internalLog("addAllAttributes(Map), lastKey = ", lastKey);
         }
         return this;
     }
@@ -83,7 +82,7 @@ public class ModelMapImpl extends LinkedHashMapImpl<String, Object> {
             } else {
                 lastKey = CollectionUtils.lastElement(attributes.keySet());
             }
-            SpringApplicationImpl._internalLog("mergeAttributes, lastKey = ", lastKey);
+            SpringEngine._internalLog("mergeAttributes, lastKey = ", lastKey);
         }
         return this;
     }

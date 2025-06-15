@@ -46,7 +46,7 @@ public class ServletRequestDataBinderImpl extends ServletRequestDataBinder {
                 null,
                 0
         );
-        SpringApplicationImpl._println("Bind finished");
+        SpringEngine._println("Bind finished");
     }
 
     private GenericClass getType() {
@@ -77,7 +77,7 @@ public class ServletRequestDataBinderImpl extends ServletRequestDataBinder {
         try {
             field.set(target, value);
         } catch (IllegalAccessException e) {
-            SpringApplicationImpl._println(String.format(
+            SpringEngine._println(String.format(
                     "Warning! Field %s of class %s could not be set due to IllegalAccessException!",
                     field.getName(),
                     target.getClass().getName()
@@ -91,7 +91,7 @@ public class ServletRequestDataBinderImpl extends ServletRequestDataBinder {
         try {
             return field.get(target);
         } catch (IllegalAccessException e) {
-            SpringApplicationImpl._println(String.format(
+            SpringEngine._println(String.format(
                     "Warning! Field %s of class %s could not be read due to IllegalAccessException!",
                     field.getName(),
                     target.getClass().getName()
@@ -123,7 +123,7 @@ public class ServletRequestDataBinderImpl extends ServletRequestDataBinder {
             Constructor<?> ctor = type.getInternalClass().getDeclaredConstructor();
             return BeanUtils.instantiateClass(ctor);
         } catch (NoSuchMethodException e) {
-            SpringApplicationImpl._println("Warning! Class has no default parameterless constructor!");
+            SpringEngine._println("Warning! Class has no default parameterless constructor!");
         }
         return null;
     }
@@ -213,7 +213,7 @@ public class ServletRequestDataBinderImpl extends ServletRequestDataBinder {
     ) {
 
         if (collection == null) {
-            SpringApplicationImpl._println("Warning! Collection was null!");
+            SpringEngine._println("Warning! Collection was null!");
             Engine.assume(false);
             throw new IllegalArgumentException("Collection cannot be null");
         }
@@ -245,7 +245,7 @@ public class ServletRequestDataBinderImpl extends ServletRequestDataBinder {
             }
         }
 
-        SpringApplicationImpl._internalLog("Warning! Collection type was not supported!", collectionType.getInternalClass().getName());
+        SpringEngine._internalLog("Warning! Collection type was not supported!", collectionType.getInternalClass().getName());
         Engine.assume(false);
         throw new IllegalArgumentException("Unsupported collection type");
     }
@@ -255,7 +255,7 @@ public class ServletRequestDataBinderImpl extends ServletRequestDataBinder {
             Field field,
             GenericClass childType
     ) {
-        SpringApplicationImpl._internalLog("FIELD:", field.toString(), field.getType().toString());
+        SpringEngine._internalLog("FIELD:", field.toString(), field.getType().toString());
         Object existing = readField(parent, field);
 
         if (existing != null)
@@ -291,7 +291,7 @@ public class ServletRequestDataBinderImpl extends ServletRequestDataBinder {
 
             return propertyDescriptor.getWriteMethod() != null;
         } catch (Exception e) {
-            SpringApplicationImpl._println("Warning! Error occurred " + e);
+            SpringEngine._println("Warning! Error occurred " + e);
         }
         return false;
     }
@@ -342,7 +342,7 @@ public class ServletRequestDataBinderImpl extends ServletRequestDataBinder {
                 List<Object> collectionToValue = getOrAllocateByIndex(collection, genericClass, i, maxSize);
                 collection = collectionToValue.get(0);
                 Object oldValue = collectionToValue.get(1);
-                SpringApplicationImpl._println(oldValue == null ? "null" : oldValue.toString());
+                SpringEngine._println(oldValue == null ? "null" : oldValue.toString());
                 GenericClass elementType = genericClass.collectionElementType(oldValue);
                 Object newValue = symbolicBind(oldValue, elementType, pathWithIndex, sourceField, depth + 1);
 

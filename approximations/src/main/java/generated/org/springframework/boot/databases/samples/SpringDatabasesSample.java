@@ -4,18 +4,14 @@ import generated.org.springframework.boot.databases.basetables.BaseTableManager;
 import generated.org.springframework.boot.databases.basetables.NoIdTableManager;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.internal.constraintvalidators.bv.DigitsValidatorForCharSequence;
 import org.hibernate.validator.internal.constraintvalidators.bv.DigitsValidatorForNumber;
 import org.hibernate.validator.internal.constraintvalidators.bv.NotBlankValidator;
-import org.hibernate.validator.internal.constraintvalidators.bv.NotNullValidator;
 import org.hibernate.validator.internal.constraintvalidators.bv.number.sign.PositiveValidatorForInteger;
 import org.hibernate.validator.internal.util.annotation.AnnotationDescriptor;
 import org.hibernate.validator.internal.util.annotation.AnnotationFactory;
 
-import java.util.HashMap;
-
-public class SpringDatabases {
+public class SpringDatabasesSample {
 
     // template to generate
     // plz do not delete

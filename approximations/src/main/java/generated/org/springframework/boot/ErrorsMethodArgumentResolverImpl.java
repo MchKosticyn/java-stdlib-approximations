@@ -19,7 +19,7 @@ public class ErrorsMethodArgumentResolverImpl {
         ModelMapImpl model = (ModelMapImpl) (Object) mavContainer.getModel();
         // TODO: last does not work #Approx
         String lastKey = model.lastKey;
-        SpringApplicationImpl._internalLog("ErrorsMethodArgumentResolverImpl.resolveArgument.lastKey =", lastKey);
+        SpringEngine._internalLog("ErrorsMethodArgumentResolverImpl.resolveArgument.lastKey =", lastKey);
         if (lastKey != null && lastKey.startsWith(BindingResult.MODEL_KEY_PREFIX)) {
             return model.get(lastKey);
         } else {

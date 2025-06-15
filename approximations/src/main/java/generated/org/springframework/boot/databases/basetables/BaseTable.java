@@ -81,11 +81,10 @@ public class BaseTable<V> extends ABaseTable<V> {
             Object v = data[i][ix];
 
             Engine.assume(ix < data[i].length);
-            if (i == idIndex) Engine.assume(v != null);
 
             Function<Object, Boolean> soft = DatabaseValidators.getSoftValidator(columnTypes[i]);
             if (soft != null) Engine.assumeSoft(soft.apply(v));
-            
+
             row[i] = v;
         }
 

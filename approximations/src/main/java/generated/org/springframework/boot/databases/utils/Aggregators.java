@@ -1,6 +1,6 @@
 package generated.org.springframework.boot.databases.utils;
 
-import generated.org.springframework.boot.SpringApplicationImpl;
+import generated.org.springframework.boot.SpringEngine;
 import generated.org.springframework.boot.databases.MappedTable;
 
 import java.math.BigDecimal;
@@ -84,7 +84,7 @@ public class Aggregators {
         else if (clazz.equals(BigInteger.class)) return big_integer_sum(table);
         else if (clazz.equals(BigDecimal.class)) return big_decimal_sum(table);
         else {
-            SpringApplicationImpl._internalLog("Unsupported type for aggregate SUM function", clazz.getName());
+            SpringEngine._internalLog("Unsupported type for aggregate SUM function", clazz.getName());
             return null;
         }
     }

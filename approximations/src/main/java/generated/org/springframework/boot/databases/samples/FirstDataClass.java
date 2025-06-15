@@ -67,7 +67,7 @@ public class FirstDataClass {
         this.oneToManySet = new SetWrapper<>(
                 new MappedTable<>(
                         new FiltredTable<>(
-                                SpringDatabases._blankAdd,
+                                SpringDatabasesSample._blankAdd,
                                 this::_oneToManyAddTableFilter,
                                 new Object[0]
                         ),
@@ -91,7 +91,7 @@ public class FirstDataClass {
         this.manyToManySet = new SetWrapper<>(
                 new MappedTable<>(
                         new FiltredTable<>(
-                                SpringDatabases._blankAdd,
+                                SpringDatabasesSample._blankAdd,
                                 this::_manyToManyAddTableFilter,
                                 new Object[0]
                         ),
@@ -178,7 +178,7 @@ public class FirstDataClass {
         if (ctx.contains(t)) return;
 
         CrudManager<FirstDataClass, Integer> manager = new CrudManager<>(
-                SpringDatabases._blank1,
+                SpringDatabasesSample._blank1,
                 FirstDataClass::_serilizer,
                 FirstDataClass::new,
                 FirstDataClass.class
@@ -192,7 +192,7 @@ public class FirstDataClass {
         // needs to easier code generation
         SaveUpdDelManyManager<SecondDataClass, Integer, Integer> secondDataClassManager = new SaveUpdDelManyManager<>(
                 ctx,
-                SpringDatabases._blank2,
+                SpringDatabasesSample._blank2,
                 SecondDataClass::_save,
                 SecondDataClass::_delete,
                 t_id,
@@ -210,14 +210,14 @@ public class FirstDataClass {
         SecondDataClass b1 = t.oneToOne;
         Integer b1_id = secondDataClassManager.getId(b1);
         SecondDataClass._save(b1, ctx);
-        SpringDatabases._blank2.changeSingleFieldByIdEnsure(t_id, 2, b1_id);// update null in oneToOne_id
+        SpringDatabasesSample._blank2.changeSingleFieldByIdEnsure(t_id, 2, b1_id);// update null in oneToOne_id
 
         // block 2, can not be updated recursively
         ctx.setAllowRecursiveUpdate(false);
         SecondDataClass b2 = t.manyToOne;
         Integer b2_id = secondDataClassManager.getId(b2);
         SecondDataClass._save(b2, ctx);
-        SpringDatabases._blank2.changeSingleFieldByIdEnsure(t_id, 1, b2_id); // update null in manyToOne_id
+        SpringDatabasesSample._blank2.changeSingleFieldByIdEnsure(t_id, 1, b2_id); // update null in manyToOne_id
 
         // block 3
         secondDataClassManager.setAllowRecursiveUpdate(true);
@@ -229,12 +229,12 @@ public class FirstDataClass {
         // block 4
         secondDataClassManager.setShouldShuffle(1);
         secondDataClassManager.setAllowRecursiveUpdate(false);
-        secondDataClassManager.saveUpd(t.oneToManyAddTable, SpringDatabases._blankAdd);
+        secondDataClassManager.saveUpd(t.oneToManyAddTable, SpringDatabasesSample._blankAdd);
 
         // block 5
         secondDataClassManager.setShouldShuffle(0);
         secondDataClassManager.setAllowRecursiveUpdate(true);
-        secondDataClassManager.saveUpd(t.manyToMany, SpringDatabases._blankAdd);
+        secondDataClassManager.saveUpd(t.manyToMany, SpringDatabasesSample._blankAdd);
     }
 
     @SuppressWarnings("unchecked")
@@ -243,7 +243,7 @@ public class FirstDataClass {
         if (ctx.contains(t)) return;
 
         CrudManager<FirstDataClass, Integer> manager = new CrudManager<>(
-                SpringDatabases._blank1,
+                SpringDatabasesSample._blank1,
                 FirstDataClass::_serilizer,
                 FirstDataClass::new,
                 FirstDataClass.class
@@ -257,7 +257,7 @@ public class FirstDataClass {
 
         SaveUpdDelManyManager<SecondDataClass, Integer, Integer> secondDataClassManager = new SaveUpdDelManyManager<>(
                 ctx,
-                SpringDatabases._blank2,
+                SpringDatabasesSample._blank2,
                 SecondDataClass::_save,
                 SecondDataClass::_delete,
                 t._getId(),
@@ -267,9 +267,9 @@ public class FirstDataClass {
 
         secondDataClassManager.delWithoutRelationTable(t.oneToMany);
 
-        secondDataClassManager.delete(t.oneToManyAddTable, SpringDatabases._blankAdd);
+        secondDataClassManager.delete(t.oneToManyAddTable, SpringDatabasesSample._blankAdd);
 
-        secondDataClassManager.delete(t.manyToMany, SpringDatabases._blankAdd);
+        secondDataClassManager.delete(t.manyToMany, SpringDatabasesSample._blankAdd);
     }
 
     // endregion

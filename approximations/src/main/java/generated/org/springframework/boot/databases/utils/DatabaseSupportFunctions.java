@@ -1,6 +1,6 @@
 package generated.org.springframework.boot.databases.utils;
 
-import generated.org.springframework.boot.SpringApplicationImpl;
+import generated.org.springframework.boot.SpringEngine;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -117,7 +117,7 @@ public class DatabaseSupportFunctions {
             return (Object l, Object r) -> comparer((BigDecimal) l, (BigDecimal) r);
         }
         else {
-            SpringApplicationImpl._internalLog("Unsupported type for databases comparer function");
+            SpringEngine._internalLog("Unsupported type for databases comparer function");
             return null;
         }
     }

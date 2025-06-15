@@ -19,7 +19,8 @@ import org.springframework.test.web.servlet.MockMvc;
 @TestPropertySource(properties = {
         "spring.sql.init.mode=never",
         "spring.jpa.hibernate.ddl-auto=create-drop",
-        "spring.jpa.defer-datasource-initialization=true"
+        "spring.jpa.defer-datasource-initialization=true",
+        "spring.jpa.properties.javax.persistence.validation.mode=none"
 })
 @DisabledInAotMode
 public class SpringBootTestClass {

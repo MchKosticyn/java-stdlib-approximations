@@ -13,8 +13,8 @@ public class TableTracker {
         if (returnedIxs.containsKey(tableName) && returnedIxs.get(tableName) >= ix) return;
 
         returnedIxs.put(tableName, ix);
-        track(tableName, value, type);
+        track(tableName, value, type, ix);
     }
 
-    public static <T> void track(String tableName, T value, Class<T> type) {}
+    public static <T> void track(String tableName, T value, Class<T> type, int ix) {}
 }

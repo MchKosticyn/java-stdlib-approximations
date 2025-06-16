@@ -3,6 +3,7 @@ package generated.org.springframework.boot;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -19,14 +20,16 @@ import org.springframework.test.web.servlet.MockMvc;
 @TestPropertySource(properties = {
         "spring.sql.init.mode=never",
         "spring.jpa.hibernate.ddl-auto=create-drop",
-        "spring.jpa.defer-datasource-initialization=true",
-        "spring.jpa.properties.javax.persistence.validation.mode=none"
+        "spring.jpa.defer-datasource-initialization=true"
 })
 @DisabledInAotMode
 public class SpringBootTestClass {
 
     @Autowired
     public MockMvc mockMvc;
+
+    @Autowired
+    SessionFactory sessionFactory;
 
     @PersistenceContext
     public EntityManager entityManager;

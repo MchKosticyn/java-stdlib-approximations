@@ -1,6 +1,10 @@
 package generated.org.springframework.boot.databases.iterators.basetables;
 
+import generated.org.springframework.boot.SpringBootTestClass;
 import generated.org.springframework.boot.databases.basetables.BaseTableGeneratedId;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.StatelessSession;
 import org.usvm.api.Engine;
 import stub.spring.SpringDatabases;
 
@@ -28,7 +32,11 @@ public class BaseTableGeneratedIdIterator<T, V> implements Iterator<Object[]> {
 
     public V generateNewId() {
         T blankObj = blankInit.get();
-        SpringDatabases.entityManager.persist(blankObj);
+
+        try (StatelessSession s = SpringDatabases.sessionFactory.openStatelessSession()) {
+            s.insert(blankObj);
+        }
+
         return getIdFunction.apply(blankObj);
     }
 

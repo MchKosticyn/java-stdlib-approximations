@@ -14,7 +14,7 @@ public class StartSpring {
         testContextManager.beforeTestClass();
         Method testMethod = SpringBootTestClass.class.getDeclaredMethod("fakeTest");
         testContextManager.beforeTestMethod(testClass, testMethod);
-        SpringDatabases.entityManager = testClass.entityManager;
+        SpringDatabases.sessionFactory = testClass.sessionFactory;
         SpringMvcPerformer.perform(testClass.mockMvc);
     }
 }

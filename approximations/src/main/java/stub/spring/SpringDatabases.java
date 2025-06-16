@@ -1,7 +1,7 @@
 
 package stub.spring;
 
-import jakarta.persistence.EntityManager;
+import org.hibernate.SessionFactory;
 
 public class SpringDatabases {
 
@@ -9,5 +9,5 @@ public class SpringDatabases {
         if (true) throw new LinkageError();
     }
 
-    public static EntityManager entityManager = null;
+    public static SessionFactory sessionFactory = null;
 }

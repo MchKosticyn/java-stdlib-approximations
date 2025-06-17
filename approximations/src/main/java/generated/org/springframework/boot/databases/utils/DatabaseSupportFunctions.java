@@ -1,8 +1,12 @@
 package generated.org.springframework.boot.databases.utils;
 
+import generated.org.springframework.boot.SpringEngine;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.function.BiFunction;
 
 public class DatabaseSupportFunctions {
 
@@ -55,9 +59,67 @@ public class DatabaseSupportFunctions {
         return base == null ? left.compareTo(right) : base;
     }
 
+    static Integer comparer(Byte left, Byte right) {
+        Integer base = basicComparer(left, right);
+        return base == null ? left.compareTo(right) : base;
+    }
+
+    static Integer comparer(Short left, Short right) {
+        Integer base = basicComparer(left, right);
+        return base == null ? left.compareTo(right) : base;
+    }
+
+    static Integer comparer(LocalDate left, LocalDate right) {
+        Integer base = basicComparer(left, right);
+        return base == null ? left.compareTo(right) : base;
+    }
+
     static Integer comparer(LocalDateTime left, LocalDateTime right) {
         Integer base = basicComparer(left, right);
         return base == null ? left.compareTo(right) : base;
+    }
+
+    static BiFunction<Object, Object, Integer> getComparer(Class<?> clazz) {
+        if (clazz.equals(Boolean.class)) {
+            return (Object l, Object r) -> comparer((Boolean) l, (Boolean) r);
+        }
+        else if (clazz.equals(Byte.class)) {
+            return (Object l, Object r) -> comparer((Byte) l, (Byte) r);
+        }
+        else if (clazz.equals(Short.class)) {
+            return (Object l, Object r) -> comparer((Short) l, (Short) r);
+        }
+        else if (clazz.equals(Integer.class)) {
+            return (Object l, Object r) -> comparer((Integer) l, (Integer) r);
+        }
+        else if (clazz.equals(Long.class)) {
+            return (Object l, Object r) -> comparer((Long) l, (Long) r);
+        }
+        else if (clazz.equals(Float.class)) {
+            return (Object l, Object r) -> comparer((Float) l, (Float) r);
+        }
+        else if (clazz.equals(Double.class)) {
+            return (Object l, Object r) -> comparer((Double) l, (Double) r);
+        }
+        else if (clazz.equals(String.class)) {
+            return (Object l, Object r) -> comparer((String) l, (String) r);
+        }
+        else if (clazz.equals(LocalDateTime.class)) {
+            return (Object l, Object r) -> comparer((LocalDateTime) l, (LocalDateTime) r);
+        }
+        else if (clazz.equals(LocalDate.class)) {
+            return (Object l, Object r) -> comparer((LocalDate) l, (LocalDate) r);
+        }
+        else if (clazz.equals(BigInteger.class)) {
+            return (Object l, Object r) -> comparer((BigInteger) l, (BigInteger) r);
+        }
+        else if (clazz.equals(BigDecimal.class)) {
+            return (Object l, Object r) -> comparer((BigDecimal) l, (BigDecimal) r);
+        }
+        else {
+            SpringEngine._internalLog("Unsupported type for databases comparer function");
+            return null;
+        }
     }
 
     // endregion

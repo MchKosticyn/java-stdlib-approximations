@@ -6,10 +6,12 @@ import org.usvm.api.Engine;
 
 import java.util.Iterator;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class BaseTableManager<T, V> extends ABaseTable<V> implements ITableManager {
 
     public BaseTableTrack<T, V> trackTable; // nullable
+    public BaseTableGeneratedId<T, V> generatedIdTable; // nullable
     public ABaseTable<V> tablesChain;
 
     public Class<V> idColType;
@@ -34,7 +36,16 @@ public class BaseTableManager<T, V> extends ABaseTable<V> implements ITableManag
 
         BaseTable<V> base = new BaseTable<>(idIndex, columnTypes);
 
-        BaseTableLambdaValidate<V> validatedIdDefaultValues = new BaseTableLambdaValidate<>(base);
+        ABaseTable<V> tableWithId;
+        if (isAutoGenerateId) {
+            tableWithId = new BaseTableGeneratedId<>(base, entityType);
+            this.generatedIdTable = (BaseTableGeneratedId<T, V>) tableWithId;
+        }
+        else {
+            tableWithId = new BaseTableCommonId<>(base);
+        }
+
+        BaseTableLambdaValidate<V> validatedIdDefaultValues = new BaseTableLambdaValidate<>(tableWithId);
 
         BaseTableConstraintValidate<V> validated = new BaseTableConstraintValidate<>(validatedIdDefaultValues, validators);
 
@@ -52,6 +63,13 @@ public class BaseTableManager<T, V> extends ABaseTable<V> implements ITableManag
 
     public void setDeserializerTrackTable(Function<Object[] , T> deserializer) {
         if (trackTable != null) trackTable.setDeserializer(deserializer);
+    }
+
+    public void setFunctionsGeneratedIdTable(Supplier<T> blankInit, Function<T, V> getIdFunction) {
+        if (generatedIdTable != null) {
+            generatedIdTable.setBlankInit(blankInit);
+            generatedIdTable.setGetIdFunction(getIdFunction);
+        }
     }
 
     @Override

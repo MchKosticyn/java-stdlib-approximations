@@ -157,6 +157,13 @@ public class JoinedTable<L, R> implements ITable<Object[]> {
         return null;
     }
 
+    @Override
+    public Object[] ensureFirst() {
+        Iterator<Object[]> iter = iterator();
+        Engine.assume(iter.hasNext());
+        return iter.next();
+    }
+
     public static Object[] identity(Object[] row) {
         return row;
     }

@@ -2,6 +2,7 @@ package generated.org.springframework.boot.databases.samples;
 
 import generated.org.springframework.boot.databases.basetables.BaseTableManager;
 import generated.org.springframework.boot.databases.basetables.NoIdTableManager;
+import jakarta.persistence.EntityManager;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.constraints.Digits;
 import org.hibernate.validator.internal.constraintvalidators.bv.DigitsValidatorForCharSequence;
@@ -11,10 +12,10 @@ import org.hibernate.validator.internal.constraintvalidators.bv.number.sign.Posi
 import org.hibernate.validator.internal.util.annotation.AnnotationDescriptor;
 import org.hibernate.validator.internal.util.annotation.AnnotationFactory;
 
+// Sample of generated SpringDatabases file
 public class SpringDatabasesSample {
+    public static EntityManager entityManager;
 
-    // template to generate
-    // plz do not delete
     public static BaseTableManager<FirstDataClass, Integer> _blank1 = new BaseTableManager<>(
             1,
             FirstDataClass.class,

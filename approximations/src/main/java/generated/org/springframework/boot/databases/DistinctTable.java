@@ -2,6 +2,7 @@ package generated.org.springframework.boot.databases;
 
 import generated.org.springframework.boot.databases.iterators.DistinctIterator;
 import org.jetbrains.annotations.NotNull;
+import org.usvm.api.Engine;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -57,6 +58,13 @@ public class DistinctTable<T> implements ITable<T> {
     public T first() {
         Iterator<T> iter = iterator();
         if (!iter.hasNext()) return null;
+        return iter.next();
+    }
+
+    @Override
+    public T ensureFirst() {
+        Iterator<T> iter = iterator();
+        Engine.assume(iter.hasNext());
         return iter.next();
     }
 }

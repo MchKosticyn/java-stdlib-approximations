@@ -14,8 +14,7 @@ public class FiltredIterator<T> implements Iterator<T> {
 
     public FiltredIterator(FiltredTable<T> filtredTable) {
         this.filtredTable = filtredTable;
-        ITable<T> table = filtredTable.table;
-        this.tblIter = table.iterator();
+        this.tblIter = filtredTable.table.iterator();
         this.curr = null;
     }
 

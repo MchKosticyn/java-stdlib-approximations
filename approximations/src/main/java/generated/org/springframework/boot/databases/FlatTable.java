@@ -2,6 +2,7 @@ package generated.org.springframework.boot.databases;
 
 import generated.org.springframework.boot.databases.iterators.FlatIterator;
 import org.jetbrains.annotations.NotNull;
+import org.usvm.api.Engine;
 
 import java.util.Iterator;
 
@@ -54,5 +55,12 @@ public class FlatTable<T> implements ITable<T> {
         Iterator<T> iter = iterator();
         if (iter.hasNext()) return iter.next();
         return null;
+    }
+
+    @Override
+    public T ensureFirst() {
+        Iterator<T> iter = iterator();
+        Engine.assume(iter.hasNext());
+        return iter.next();
     }
 }

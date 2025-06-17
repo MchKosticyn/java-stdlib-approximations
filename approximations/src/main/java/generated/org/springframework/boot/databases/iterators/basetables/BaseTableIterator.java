@@ -13,16 +13,12 @@ public class BaseTableIterator<V> implements Iterator<Object[]> {
     int ix;
     int endIx;
 
-    ArrayList<V> returnedIds;
-
     @SuppressWarnings("unchecked")
     public BaseTableIterator(BaseTable<V> table) {
         this.table = table;
 
         this.ix = 0;
         this.endIx = table.size();
-
-        this.returnedIds = new ArrayList<>();
     }
 
     private int nextIndex() {
@@ -31,12 +27,6 @@ public class BaseTableIterator<V> implements Iterator<Object[]> {
 
     private boolean condition() {
         return ix < endIx;
-    }
-
-    private void ensureId(V id) {
-
-        for (int i = 0; i < returnedIds.size(); i++) Engine.assume(!returnedIds.get(i).equals(id));
-        returnedIds.add(id);
     }
 
     @Override
@@ -48,12 +38,6 @@ public class BaseTableIterator<V> implements Iterator<Object[]> {
     @SuppressWarnings("unchecked")
     public Object[] next() {
         Engine.assume(hasNext());
-
-        int newIx = nextIndex();
-        Object[] row = table.getRowEnsure(newIx);
-
-        ensureId((V) row[table.idIndex]);
-
-        return row;
+        return table.getRowEnsure(nextIndex());
     }
 }

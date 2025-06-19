@@ -1,4 +1,4 @@
-package generated.org.springframework.boot;
+package generated.org.springframework.boot.testClasses;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -13,23 +13,26 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.aot.DisabledInAotMode;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import stub.spring.SpringDatabases;
 
 @AutoConfigureMockMvc
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
+// This `TestPropertySource` disables sql schemas for databases configuration
+// and forces configuration via Spring JPA data classes
 @TestPropertySource(properties = {
         "spring.sql.init.mode=never",
         "spring.jpa.hibernate.ddl-auto=create-drop",
         "spring.jpa.defer-datasource-initialization=true"
 })
 @DisabledInAotMode
-public class SpringBootTestClass {
+public class SpringBootJpaTestClass implements BaseTestClass {
 
     @Autowired
     public MockMvc mockMvc;
 
     @Autowired
-    SessionFactory sessionFactory;
+    public SessionFactory sessionFactory;
 
     @PersistenceContext
     public EntityManager entityManager;
@@ -37,6 +40,16 @@ public class SpringBootTestClass {
     @Transactional
     @DirtiesContext
     public void fakeTest() {
+    }
+
+    @Override
+    public MockMvc getMockMvc() {
+        return mockMvc;
+    }
+
+    @Override
+    public void configure() {
+        SpringDatabases.sessionFactory = sessionFactory;
     }
 
     public static void ignoreResult(Object result) {

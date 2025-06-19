@@ -1,9 +1,6 @@
 package generated.org.springframework.boot.databases.iterators.basetables;
 
-import generated.org.springframework.boot.SpringBootTestClass;
 import generated.org.springframework.boot.databases.basetables.BaseTableGeneratedId;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
 import org.usvm.api.Engine;
 import stub.spring.SpringDatabases;

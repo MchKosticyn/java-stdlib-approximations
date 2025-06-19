@@ -1,7 +1,5 @@
 package generated.org.springframework.boot.databases.basetables;
 
-import org.usvm.api.Engine;
-
 import java.util.HashMap;
 import java.util.Map;
 

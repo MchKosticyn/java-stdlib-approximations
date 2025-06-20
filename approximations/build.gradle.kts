@@ -15,13 +15,14 @@ private val jacodbPackage = "com.github.UnitTestBot.jacodb"
 private val jacodbVersion = "453ec7c0b3" // jacodb neo branch
 
 private val springVersion = "3.5.0"
+private val securityVersion = "6.5.0"
 
 dependencies {
     compileOnly("$jacodbPackage:jacodb-api-jvm:$jacodbVersion")
     compileOnly("$jacodbPackage:jacodb-approximations:$jacodbVersion")
     compileOnly(files(rootDir.resolve("usvm-api/usvm-jvm-api.jar")))
     compileOnly("org.springframework.boot:spring-boot-starter-security:$springVersion")
-    compileOnly("org.springframework.security:spring-security-test:6.2.0")
+    compileOnly("org.springframework.security:spring-security-test:$securityVersion")
     compileOnly("org.springframework.boot:spring-boot-starter-web:$springVersion")
     compileOnly("org.springframework.boot:spring-boot-starter-test:$springVersion")
     compileOnly("org.springframework.boot:spring-boot-starter-data-jpa:$springVersion")

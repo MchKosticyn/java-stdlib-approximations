@@ -19,6 +19,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static generated.org.springframework.boot.SpringEngine.*;
@@ -30,6 +31,8 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 
 public class SpringMvcPerformer {
+
+    private static final boolean SECURITY_ENABLED = true;
 
     public static void perform(MockMvc mockMvc) {
         List<List<Object>> allPaths = _allControllerPaths();
@@ -53,7 +56,8 @@ public class SpringMvcPerformer {
                 HttpMethod method = HttpMethod.valueOf(methodName);
                 MockHttpServletRequestBuilder request = request(method, path, pathArgs);
                 if (SECURITY_ENABLED) {
-                    UserDetails userDetails = _createSymbolicUser();
+                    // Makes successful authorization
+                    UserDetails userDetails = _createUser();
                     _fillSecurityHeaders();
                     request = request.with(user(userDetails));
                 }
@@ -71,8 +75,6 @@ public class SpringMvcPerformer {
         }
     }
 
-    private static final boolean SECURITY_ENABLED = false;
-
     private static void _writeResponse(MockHttpServletResponse response) {
         writePinnedValue(PinnedValueSource.RESPONSE_STATUS, response.getStatus());
         try {
@@ -89,16 +91,12 @@ public class SpringMvcPerformer {
     }
 
     private static void _fillSecurityHeaders() {
-        writePinnedValue(PinnedValueSource.REQUEST_HEADER, "AUTHORIZATION", null);
+        writePinnedValue(PinnedValueSource.REQUEST_HEADER, "AUTHORIZATION", null, String.class);
     }
 
-    private static UserDetails _createSymbolicUser() {
-        String username = getPinnedValue(PinnedValueSource.REQUEST_USER_NAME, String.class);
-        String password = getPinnedValue(PinnedValueSource.REQUEST_USER_PASSWORD, String.class);
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
-        Engine.assume(username != null && !username.isEmpty());
-        Engine.assume(password != null && !password.isEmpty());
-        return new User(username, password, authorities);
+    private static UserDetails _createUser() {
+        String warningText = "USVM USER NAME OR PASSWORD";
+        return new User(warningText, warningText, Collections.emptyList());
     }
 
     private static void writeResult(MvcResult result) {

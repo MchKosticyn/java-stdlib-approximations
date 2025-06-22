@@ -6,15 +6,15 @@ import org.usvm.api.Engine;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class BaseTableIterator<V> implements Iterator<Object[]> {
+public class BaseTableIterator<T, V> implements Iterator<Object[]> {
 
-    BaseTable<V> table;
+    BaseTable<T, V> table;
 
     int ix;
     int endIx;
 
     @SuppressWarnings("unchecked")
-    public BaseTableIterator(BaseTable<V> table) {
+    public BaseTableIterator(BaseTable<T, V> table) {
         this.table = table;
 
         this.ix = 0;

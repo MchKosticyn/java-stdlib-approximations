@@ -5,19 +5,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 
-public class BaseTablePureSave<V> extends AChainedBaseTable<V> {
+public class BaseTablePureSave<T> extends AChainedBaseTable<T> {
 
-    public Object[] saved;
+    private final T saved;
 
-    public BaseTablePureSave(ABaseTable<V> table, Object[] saved) {
+    public BaseTablePureSave(ABaseTable<T> table, T saved) {
         this.table = table;
         this.saved = saved;
     }
 
-    @Override
-    public void deleteAll() {
-        table.deleteAll();
-        saved = null;
+    public T getSaved() {
+        return saved;
     }
 
     @Override
@@ -27,7 +25,7 @@ public class BaseTablePureSave<V> extends AChainedBaseTable<V> {
 
     @NotNull
     @Override
-    public Iterator<Object[]> iterator() {
+    public Iterator<T> iterator() {
         return new BaseTablePureIterator<>(this);
     }
 }

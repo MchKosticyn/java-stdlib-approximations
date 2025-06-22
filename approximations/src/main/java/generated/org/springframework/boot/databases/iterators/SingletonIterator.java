@@ -6,8 +6,8 @@ import java.util.Iterator;
 
 public class SingletonIterator<T> implements Iterator<T> {
 
-    T data;
-    boolean returned;
+    private final T data;
+    private boolean returned;
 
     public SingletonIterator(T data) {
         this.data = data;

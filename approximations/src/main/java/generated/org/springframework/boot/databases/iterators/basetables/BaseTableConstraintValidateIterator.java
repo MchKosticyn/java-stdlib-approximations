@@ -1,47 +1,32 @@
 package generated.org.springframework.boot.databases.iterators.basetables;
 
 import generated.org.springframework.boot.databases.basetables.BaseTableConstraintValidate;
-import generated.org.springframework.boot.databases.validation.ConstraintValidatorContextImpl;
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
 import org.usvm.api.Engine;
+import stub.spring.SpringDatabases;
 
 import java.util.Iterator;
+import java.util.Set;
 
-public class BaseTableConstraintValidateIterator<V> implements Iterator<Object[]> {
+public class BaseTableConstraintValidateIterator<T> implements Iterator<T> {
 
-    public BaseTableConstraintValidate<V> table;
-    public Iterator<Object[]> tblIter;
-    public ConstraintValidator<?, ?>[][] validators;
+    private final Iterator<T> tblIter;
 
-    public ConstraintValidatorContext ctx;
+    private final String[] fieldNames;
 
-    public BaseTableConstraintValidateIterator(BaseTableConstraintValidate<V> table) {
-        this.table = table;
-        this.tblIter = table.table.iterator();
-        this.validators = table.validators;
-
-        this.ctx = new ConstraintValidatorContextImpl();
+    public BaseTableConstraintValidateIterator(BaseTableConstraintValidate<T> table) {
+        this.tblIter = table.getTable().iterator();
+        this.fieldNames = table.getFieldNames();
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> void validateValue(Object value, ConstraintValidator<?, T> validator) {
-        try {
-            Engine.assume(validator.isValid((T) value, ctx));
-        }
-        catch (Throwable e) {
-            Engine.assume(false);
-        }
+    public BaseTableConstraintValidateIterator(Iterator<T> tableIter, String[] fieldNames) {
+        this.tblIter = tableIter;
+        this.fieldNames = fieldNames;
     }
 
-    public void validateRow(Object[] row) {
-        for (int i = 0; i < table.columnCount(); i++) {
-            ConstraintValidator<?, ?>[] vs = validators[i];
-
-            Object value = row[i];
-            for (ConstraintValidator<?, ?> validator : vs) {
-                validateValue(value, validator);
-            }
+    public void validate(T t) {
+        for (String fieldName : fieldNames) {
+            Set<?> violations = SpringDatabases.validator.validateProperty(t, fieldName);
+            Engine.assume(violations.isEmpty());
         }
     }
 
@@ -51,12 +36,12 @@ public class BaseTableConstraintValidateIterator<V> implements Iterator<Object[]
     }
 
     @Override
-    public Object[] next() {
+    public T next() {
         Engine.assume(hasNext());
 
-        Object[] row = tblIter.next();
-        validateRow(row);
+        T next = tblIter.next();
+        validate(next);
 
-        return row;
+        return next;
     }
 }

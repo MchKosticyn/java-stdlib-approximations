@@ -1,6 +1,7 @@
 package generated.org.springframework.boot.databases.wrappers;
 
 import generated.org.springframework.boot.databases.ITable;
+import generated.org.springframework.boot.databases.MappedTable;
 import generated.org.springframework.boot.databases.iterators.wrappers.SetWrapperIterator;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,26 +10,25 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.function.Function;
 
 public class SetWrapper<T> implements Set<T>, IWrapper<T> {
 
-    public ITable<T> table;
-    public Iterator<T> tblIter;
-    public int sizeOfTable = -1;
-    public int ptr;
-    public Class<T> type;
+    private final ITable<T> table;
+    private final Iterator<T> tblIter;
+    private int sizeOfTable = -1;
+    private int ptr;
 
-    public Set<T> cache;
-    public Set<T> removedCache;
-    public int sizeOfCache;
+    private Set<T> cache;
+    private final Set<T> removedCache;
+    private int sizeOfCache;
 
-    public int modCount;
+    private int modCount;
 
     public SetWrapper(ITable<T> table) {
         this.table = table;
-        this.tblIter = this.table.iterator();
+        this.tblIter = table.iterator();
         this.ptr = 0;
-        this.type = table.type();
 
         this.cache = new HashSet<>();
         this.removedCache = new HashSet<>();
@@ -37,12 +37,72 @@ public class SetWrapper<T> implements Set<T>, IWrapper<T> {
         this.modCount = 0;
     }
 
+    public SetWrapper(
+            ITable<T> table,
+            Iterator<T> tblIter,
+            int sizeOfTable,
+            int ptr,
+            Set<T> cache,
+            Set<T> removedCache,
+            int sizeOfCache,
+            int modCount
+    ) {
+        this.table = table;
+        this.tblIter = tblIter;
+        this.sizeOfTable = sizeOfTable;
+        this.ptr = ptr;
+        this.cache = cache;
+        this.removedCache = removedCache;
+        this.sizeOfCache = sizeOfCache;
+        this.modCount = modCount;
+    }
+
+    // region Getters
+
+    public int getModCount() {
+        return modCount;
+    }
+
+    public Set<T> getCache() {
+        return cache;
+    }
+
+    public Set<T> getRemovedCache() {
+        return removedCache;
+    }
+
+    public ITable<T> getTable() {
+        return table;
+    }
+
+    public int getPtr() {
+        return ptr;
+    }
+
+    // endregion
+
     private int getSizeOfTable() {
         if (sizeOfTable == -1) {
             sizeOfTable = table.size();
         }
-
         return sizeOfTable;
+    }
+
+    @Override
+    public IWrapper<T> copy(Function<T, T> copyFunction) {
+        ITable<T> copied = new MappedTable<>(table, copyFunction);
+        Iterator<T> newIter = copied.iterator();
+        for (int i = 0; i < ptr; i++) newIter.next();
+        return new SetWrapper<>(
+                copied,
+                newIter,
+                sizeOfTable,
+                ptr,
+                cache,
+                removedCache,
+                sizeOfCache,
+                modCount
+        );
     }
 
     @Override
@@ -84,9 +144,7 @@ public class SetWrapper<T> implements Set<T>, IWrapper<T> {
     @Override
     public int size() {
         int count = 0;
-        Iterator<T> iter = iterator();
-        while (iter.hasNext()) {
-            T ignored = iter.next();
+        for (T ignored : this) {
             count++;
         }
 
@@ -120,13 +178,12 @@ public class SetWrapper<T> implements Set<T>, IWrapper<T> {
     }
 
     @Override
+    @NotNull
     public Object[] toArray() {
         Object[] a = new Object[size()];
 
         int ix = 0;
-        Iterator<T> iter = iterator();
-        while (iter.hasNext()) {
-            T t = iter.next();
+        for (T t : this) {
             a[ix++] = t;
         }
 
@@ -134,6 +191,7 @@ public class SetWrapper<T> implements Set<T>, IWrapper<T> {
     }
 
     @Override
+    @NotNull
     @SuppressWarnings("unchecked")
     public <T1> T1[] toArray(T1[] a) {
         Class<?> genericType = a.getClass().componentType();
@@ -167,7 +225,7 @@ public class SetWrapper<T> implements Set<T>, IWrapper<T> {
     @Override
     @SuppressWarnings("unchecked")
     public boolean remove(Object o) {
-        boolean c = contains((T) o);
+        boolean c = contains(o);
         if (c) modCount++;
 
         cache.remove(o);
@@ -178,9 +236,7 @@ public class SetWrapper<T> implements Set<T>, IWrapper<T> {
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        Iterator<?> iter = c.iterator();
-        while (iter.hasNext()) {
-            Object o = iter.next();
+        for (Object o : c) {
             if (!contains(o)) return false;
         }
 
@@ -192,9 +248,7 @@ public class SetWrapper<T> implements Set<T>, IWrapper<T> {
         if (c.isEmpty()) return false;
 
         boolean isChanged = false;
-        Iterator<? extends T> iter = c.iterator();
-        while (iter.hasNext()) {
-            T t = iter.next();
+        for (T t : c) {
             isChanged |= add(t);
         }
 
@@ -209,9 +263,7 @@ public class SetWrapper<T> implements Set<T>, IWrapper<T> {
         Set<T> newCache = new HashSet<>();
         int sizeOfNewCache = 0;
 
-        Iterator<?> iter = c.iterator();
-        while (iter.hasNext()) {
-            Object o = iter.next();
+        for (Object o : c) {
             if (contains(o)) {
                 newCache.add((T) o);
                 sizeOfNewCache++;
@@ -238,9 +290,7 @@ public class SetWrapper<T> implements Set<T>, IWrapper<T> {
         if (c.isEmpty()) return false;
 
         boolean isChanged = false;
-        Iterator<?> iter = c.iterator();
-        while (iter.hasNext()) {
-            Object o = iter.next();
+        for (Object o : c) {
             isChanged |= remove(o);
         }
 

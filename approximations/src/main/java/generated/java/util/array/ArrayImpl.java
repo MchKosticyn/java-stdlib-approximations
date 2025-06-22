@@ -1,4 +1,4 @@
-﻿package generated.java.util.array;
+package generated.java.util.array;
 
 import org.jacodb.approximation.annotation.Approximate;
 

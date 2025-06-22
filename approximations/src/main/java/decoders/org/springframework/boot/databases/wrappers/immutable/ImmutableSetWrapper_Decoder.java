@@ -1,6 +1,6 @@
-package decoders.org.springframework.boot.databases.wrappers;
+package decoders.org.springframework.boot.databases.wrappers.immutable;
 
-import generated.org.springframework.boot.databases.wrappers.ListWrapper;
+import generated.org.springframework.boot.databases.wrappers.immutable.ImmutableSetWrapper;
 import org.jacodb.api.jvm.JcClassOrInterface;
 import org.jacodb.api.jvm.JcClasspath;
 import org.jacodb.api.jvm.JcField;
@@ -18,32 +18,33 @@ import java.util.List;
 
 import static org.usvm.api.decoder.DecoderUtils.getAllFields;
 
-@DecoderFor(ListWrapper.class)
-public final class ListWrapper_Decoder implements ObjectDecoder {
+@DecoderFor(ImmutableSetWrapper.class)
+public class ImmutableSetWrapper_Decoder implements ObjectDecoder {
 
-    private volatile JcMethod cached_ArrayList_ctor = null;
-    private volatile JcMethod cached_ArrayList_add = null;
-    private volatile JcField cached_ListWrapper_cache = null;
+    private volatile JcMethod cached_HashSet_ctor = null;
+    private volatile JcMethod cached_HashSet_add = null;
+    private volatile JcField cached_ImmutableSetWrapper_cacheTable = null;
+    private volatile JcField cached_CacheTable_cache = null;
 
-    @SuppressWarnings("unchecked")
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T createInstance(final JcClassOrInterface approximation,
                                 final ObjectData<T> approximationData,
                                 final DecoderApi<T> decoder) {
 
-        JcMethod m_ctor = cached_ArrayList_ctor;
-        JcMethod m_add = cached_ArrayList_add;
+        JcMethod m_ctor = cached_HashSet_ctor;
+        JcMethod m_add = cached_HashSet_add;
         if (m_ctor == null || m_add == null) {
             JcClasspath cp = approximation.getClasspath();
-            JcClassOrInterface arrayListClass = cp.findClassOrNull("java.util.ArrayList");
-            assert arrayListClass != null;
-            final List<JcMethod> methods = arrayListClass.getDeclaredMethods();
+            JcClassOrInterface hashSetClass = cp.findClassOrNull("java.util.HashSet");
+            assert hashSetClass != null;
+            final List<JcMethod> methods = hashSetClass.getDeclaredMethods();
             for (JcMethod m : methods) {
                 if (m.isConstructor()) {
                     if (m_ctor == null) {
                         if (!m.getParameters().isEmpty()) continue;
 
-                        cached_ArrayList_ctor = m_ctor = m;
+                        cached_HashSet_ctor = m_ctor = m;
                     }
                 } else {
                     if (m_add == null) {
@@ -53,7 +54,7 @@ public final class ListWrapper_Decoder implements ObjectDecoder {
                         if (params.size() != 1) continue;
                         if (!"java.lang.Object".equals(params.get(0).getType().getTypeName())) continue;
 
-                        cached_ArrayList_add = m_add = m;
+                        cached_HashSet_add = m_add = m;
                     }
                 }
 
@@ -71,31 +72,45 @@ public final class ListWrapper_Decoder implements ObjectDecoder {
                                        final T outputInstance,
                                        final DecoderApi<T> decoder) {
 
-        JcField f_cache = cached_ListWrapper_cache;
-        if (f_cache == null) {
+        JcField f_cacheTable = cached_ImmutableSetWrapper_cacheTable;
+        if (f_cacheTable == null) {
             for (JcField field : getAllFields(approximation)) {
                 if ("cache".equals(field.getName())) {
-                    cached_ListWrapper_cache = f_cache = field;
+                    cached_ImmutableSetWrapper_cacheTable = f_cacheTable = field;
                     break;
                 }
             }
         }
 
-        if (approximationData.getObjectField(f_cache) == null)
-            return;
+        ObjectData<T> cacheTable = approximationData.getObjectField(f_cacheTable);
+        assert (cacheTable != null);
 
-        final SymbolicList<T> cache = approximationData.decodeSymbolicListField(f_cache);
-        if (cache == null)
-            return;
+        JcClasspath cp = approximation.getClasspath();
+        JcClassOrInterface cacheTableClass =
+                cp.findClassOrNull("generated.org.springframework.boot.databases.CacheTable");
+        assert (cacheTableClass != null);
+
+        JcField f_cache = cached_CacheTable_cache;
+        if (f_cache == null) {
+            for (JcField field : getAllFields(cacheTableClass)) {
+                if ("cache".equals(field.getName())) {
+                    cached_CacheTable_cache = f_cache = field;
+                    break;
+                }
+            }
+        }
+
+        final SymbolicList<T> cache = cacheTable.decodeSymbolicListField(f_cache);
+        assert (cache != null);
+
 
         for (int i = 0, c = cache.size(); i < c; i++) {
             T t = cache.get(i);
-            if (t == null) continue;
 
             ArrayList<T> args = new ArrayList<>();
             args.add(outputInstance);
             args.add(t);
-            decoder.invokeMethod(cached_ArrayList_add, args);
+            decoder.invokeMethod(cached_HashSet_add, args);
         }
     }
 }

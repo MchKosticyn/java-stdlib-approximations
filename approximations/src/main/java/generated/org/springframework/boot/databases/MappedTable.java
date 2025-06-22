@@ -11,30 +11,20 @@ import java.util.function.Function;
 
 public class MappedTable<T, R> implements ITable<R> {
 
-    public ITable<T> table;
-
-    public Class<R> type;
+    private final ITable<T> table;
 
     // only one is not null
-    public Function<T, R> mapper;
-    public BiFunction<T, Object[], R> mapper2;
+    private Function<T, R> mapper;
+    private BiFunction<T, Object[], R> mapper2;
     // 3rd arg used by aggregators
-    public TriFunction<T, Object[], ITable<T>, R> mapper3;
+    private TriFunction<T, Object[], ITable<T>, R> mapper3;
 
     // arguments of original repository method
     Object[] methodArgs;
 
-    public MappedTable(ITable<T> table, Function<T, R> mapper, Class<R> type) {
+    public MappedTable(ITable<T> table, Function<T, R> mapper) {
         this.table = table;
         this.mapper = mapper;
-        this.type = type;
-    }
-
-    public MappedTable(ITable<T> table, BiFunction<T, Object[], R> mapper2, Class<R> type, Object[] methodArgs) {
-        this.table = table;
-        this.mapper2 = mapper2;
-        this.type = type;
-        this.methodArgs = methodArgs;
     }
 
     public MappedTable(ITable<T> table, BiFunction<T, Object[], R> mapper2, Object[] methodArgs) {
@@ -46,20 +36,16 @@ public class MappedTable<T, R> implements ITable<R> {
     public MappedTable(
             ITable<T> table,
             TriFunction<T, Object[], ITable<T>, R> mapper,
-            Class<R> type,
             Object[] methodArgs
     ) {
         this.table = table;
         this.mapper3 = mapper;
-        this.type = type;
         this.methodArgs = methodArgs;
     }
 
-    public MappedTable(
-            ITable<T> table,
-            TriFunction<T, Object[], ITable<T>, R> mapper,
-            Object[] methodArgs
-    ) { this(table, mapper, null, methodArgs); }
+    public ITable<T> getTable() {
+        return table;
+    }
 
     public R applyMapper(T t) {
         if (mapper != null) return mapper.apply(t);
@@ -67,20 +53,10 @@ public class MappedTable<T, R> implements ITable<R> {
         else return mapper3.apply(t, methodArgs, table);
     }
 
-    @Override
-    public int size() {
-        return table.size();
-    }
-
     @NotNull
     @Override
     public Iterator<R> iterator() {
         return new MappedIterator<>(this);
-    }
-
-    @Override
-    public Class<R> type() {
-        return type;
     }
 
     @Override

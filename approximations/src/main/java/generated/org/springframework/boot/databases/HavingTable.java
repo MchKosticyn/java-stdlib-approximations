@@ -9,11 +9,9 @@ import java.util.Iterator;
 
 public class HavingTable<T> implements ITable<ITable<T>> {
 
-    public ITable<ITable<T>> table;
-    public TriFunction<ITable<T>, Object[], ITable<ITable<T>>, Boolean> pred;
-    public Object[] methodArgs;
-
-    private int cachedSize = -1;
+    private final ITable<ITable<T>> table;
+    private final TriFunction<ITable<T>, Object[], ITable<ITable<T>>, Boolean> pred;
+    private final Object[] methodArgs;
 
     public HavingTable(
             ITable<ITable<T>> table,
@@ -25,13 +23,16 @@ public class HavingTable<T> implements ITable<ITable<T>> {
         this.methodArgs = methodArgs;
     }
 
+    public ITable<ITable<T>> getTable() {
+        return table;
+    }
+
     public boolean callPredicate(ITable<T> tbl) {
         return pred.apply(tbl, methodArgs, this);
     }
 
     @Override
     public int size() {
-        if (cachedSize != -1) return cachedSize;
         Iterator<ITable<T>> iter = iterator();
         int count = 0;
         while (iter.hasNext()) {
@@ -39,13 +40,7 @@ public class HavingTable<T> implements ITable<ITable<T>> {
             count++;
         }
 
-        cachedSize = count;
         return count;
-    }
-
-    @Override
-    public Class<ITable<T>> type() {
-        return null;
     }
 
     @Override

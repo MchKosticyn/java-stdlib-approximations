@@ -4,8 +4,8 @@ import java.util.HashSet;
 
 public class SaveUpdDelCtx {
 
-    public boolean allowRecursiveUpdate;
-    public HashSet<Object> context;
+    private boolean allowRecursiveUpdate;
+    private final HashSet<Object> context;
 
     public SaveUpdDelCtx() {
         this.context = new HashSet<>();

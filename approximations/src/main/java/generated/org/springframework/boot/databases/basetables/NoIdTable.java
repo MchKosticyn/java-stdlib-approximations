@@ -3,20 +3,17 @@ package generated.org.springframework.boot.databases.basetables;
 import generated.org.springframework.boot.databases.iterators.basetables.NoIdIterator;
 import org.jetbrains.annotations.NotNull;
 import org.usvm.api.Engine;
-import org.usvm.api.SymbolicMap;
 
 import java.util.Iterator;
 
 // Table for many-to-many relation
 public class NoIdTable extends ANoIdTable {
 
-    // values always null
-    // this is just set
-    public Object[][] data;
-    public int size;
+    private Object[][] data;
+    private int size;
 
-    public Class<?>[] columnTypes;
-    public int columnCount;
+    private final Class<?>[] columnTypes;
+    private final int columnCount;
 
     public NoIdTable(Class<?>... columnTypes) {
 
@@ -55,19 +52,9 @@ public class NoIdTable extends ANoIdTable {
     }
 
     @Override
-    public Class<?>[] columnTypes() {
-        return columnTypes;
-    }
-
-    @Override
     @NotNull
     public Iterator<Object[]> iterator() {
         return new NoIdIterator(this);
-    }
-
-    @Override
-    public Class<Object[]> type() {
-        return Object[].class;
     }
 
     public Object[] collectRow(int ix) {

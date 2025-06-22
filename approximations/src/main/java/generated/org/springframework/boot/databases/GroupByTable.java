@@ -2,26 +2,24 @@ package generated.org.springframework.boot.databases;
 
 import generated.org.springframework.boot.databases.iterators.GroupByTableIterator;
 import org.jetbrains.annotations.NotNull;
-import org.usvm.api.Engine;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class GroupByTable<T> implements ITable<ITable<T>> {
 
-    public ITable<T> table;
-    public BiFunction<T, Object[], Object>[] translates;
-    public BiFunction<Object, Object, Integer>[] comparers;
+    private final ITable<T> table;
+    private final BiFunction<T, Object[], Object>[] translates;
+    private final BiFunction<Object, Object, Integer>[] comparers;
 
-    public Object[] methodArgs;
+    private final Object[] methodArgs;
 
     private boolean initialized = false;
 
-    private ArrayList<Object[]> keys;
-    public ArrayList<ArrayList<T>> groups;
+    private final ArrayList<Object[]> keys;
+    private final ArrayList<ArrayList<T>> groups;
 
     public GroupByTable(
             ITable<T> table,
@@ -34,6 +32,11 @@ public class GroupByTable<T> implements ITable<ITable<T>> {
         this.comparers = comparers;
         this.methodArgs = methodArgs;
         this.keys = new ArrayList<>();
+        this.groups = new ArrayList<>();
+    }
+
+    public ArrayList<ArrayList<T>> getGroups() {
+        return groups;
     }
 
     private void ensureInitialized() {
@@ -44,10 +47,8 @@ public class GroupByTable<T> implements ITable<ITable<T>> {
     }
 
     private void groupAll() {
-        Iterator<T> iter = table.iterator();
 
-        while (iter.hasNext()) {
-            T t = iter.next();
+        for (T t : table) {
             Object[] tKey = applyTranslates(t);
 
             boolean finded = false;
@@ -95,11 +96,6 @@ public class GroupByTable<T> implements ITable<ITable<T>> {
     public int size() {
         ensureInitialized();
         return groups.size();
-    }
-
-    @Override
-    public Class<ITable<T>> type() {
-        return null;
     }
 
     @Override

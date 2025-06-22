@@ -2,79 +2,36 @@ package generated.org.springframework.boot.databases.iterators.basetables;
 
 import generated.org.springframework.boot.databases.basetables.RangeUpdatedNoIdTable;
 import org.usvm.api.Engine;
-import org.usvm.api.SymbolicMap;
 
 import java.util.Iterator;
+import java.util.function.Function;
 
 public class RangeUpdatedNoIdTableIterator implements Iterator<Object[]> {
 
-    public RangeUpdatedNoIdTable table;
-    public Iterator<Object[]> tableIter;
-    public SymbolicMap<Object[], Boolean> savedRowsCopy;
-
-    public Object[] curr;
-    public boolean isEnded;
+    private final Iterator<Object[]> tableIter;
+    private final Function<Object[], Boolean> predicate;
+    private final Function<Object[], Object[]> update;
 
     public RangeUpdatedNoIdTableIterator(RangeUpdatedNoIdTable table) {
-        this.table = table;
-        this.tableIter = table.iterator();
-        this.savedRowsCopy = Engine.makeSymbolicMap();
-        savedRowsCopy.merge(table.savedRows);
-
-        this.curr = null;
-        this.isEnded = false;
+        this.tableIter = table.getTable().iterator();
+        this.predicate = table.getPredicate();
+        this.update = table.getUpdate();
     }
 
     @Override
     public boolean hasNext() {
-
-        if (isEnded) return false;
-        if (curr != null) return true;
-
-        if (tableIter != null) {
-            if (tableIter.hasNext()) {
-                Object[] next = tableIter.next();
-                curr = table.predicate.apply(next) ? table.update.apply(next) : next;
-
-                if (savedRowsCopy.containsKey(curr)) {
-
-                    if (savedRowsCopy.get(curr)) {
-                        savedRowsCopy.set(curr, false);
-                    } else {
-                        curr = null;
-                        return hasNext();
-                    }
-                }
-
-                return true;
-            }
-
-            tableIter = null;
-        }
-
-        curr = savedRowsCopy.anyKey();
-        if (savedRowsCopy.containsKey(curr)) {
-
-            if (!savedRowsCopy.get(curr)) {
-                savedRowsCopy.remove(curr);
-                curr = null;
-                return hasNext();
-            }
-
-            savedRowsCopy.remove(curr);
-            return true;
-        }
-
-        isEnded = true;
-        return false;
+        return tableIter.hasNext();
     }
 
     @Override
     public Object[] next() {
         Engine.assume(hasNext());
 
-        Object[] tmp = curr;
-        curr = null;
-        return tmp;
+        Object[] row = tableIter.next();
+        if (predicate.apply(row)) {
+            return update.apply(row);
+        }
+
+        return row;
     }
 }

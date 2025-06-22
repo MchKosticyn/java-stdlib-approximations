@@ -5,18 +5,18 @@ import org.usvm.api.Engine;
 
 import java.util.Iterator;
 
-public class BaseTableDeleteIterator<V> implements Iterator<Object[]> {
+public class BaseTableDeleteIterator<T> implements Iterator<T> {
 
-    public BaseTableDelete<V> table;
-    public Iterator<Object[]> tblIter;
-    public Object[] removed;
+    private final BaseTableDelete<T> table;
+    private final Iterator<T> tblIter;
+    private T removed;
 
-    public Object[] curr;
+    private T curr;
 
-    public BaseTableDeleteIterator(BaseTableDelete<V> table) {
+    public BaseTableDeleteIterator(BaseTableDelete<T> table) {
         this.table = table;
-        this.tblIter = table.table.iterator();
-        this.removed = table.removed;
+        this.tblIter = table.getTable().iterator();
+        this.removed = table.getRemoved();
         this.curr = null;
     }
 
@@ -26,7 +26,7 @@ public class BaseTableDeleteIterator<V> implements Iterator<Object[]> {
         if (!tblIter.hasNext()) return false;
 
         curr = tblIter.next();
-        if (removed != null && curr[table.idColumnIx()].equals(removed[table.idColumnIx()])) {
+        if (removed != null && table.isSameId(curr, removed)) {
             removed = null;
             curr = null;
             return hasNext();
@@ -36,10 +36,10 @@ public class BaseTableDeleteIterator<V> implements Iterator<Object[]> {
     }
 
     @Override
-    public Object[] next() {
+    public T next() {
         Engine.assume(hasNext());
 
-        Object[] tmp = curr;
+        T tmp = curr;
         curr = null;
 
         return tmp;

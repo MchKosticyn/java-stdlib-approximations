@@ -1,26 +1,20 @@
 package generated.org.springframework.boot.databases.basetables;
 
-public abstract class AChainedBaseTable<V> extends ABaseTable<V> {
+public abstract class AChainedBaseTable<T> extends ABaseTable<T> {
 
-    public ABaseTable<V> table;
+    protected ABaseTable<T> table;
 
-    @Override
-    public int idColumnIx() {
-        return table.idColumnIx();
+    public ABaseTable<T> getTable() {
+        return table;
     }
 
     @Override
-    public int columnCount() {
-        return table.columnCount();
+    public Object[] buildId(T t) {
+        return table.buildId(t);
     }
 
     @Override
-    public Class<?>[] columnTypes() {
-        return table.columnTypes();
-    }
-
-    @Override
-    public Class<Object[]> type() {
-        return Object[].class;
+    public boolean idEquals(Object[] left, Object[] right) {
+        return table.idEquals(left, right);
     }
 }

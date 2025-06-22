@@ -6,12 +6,12 @@ import java.util.Iterator;
 
 public class MappedIterator<T, R> implements Iterator<R> {
 
-    MappedTable<T, R> mappedTable;
-    Iterator<T> tblIter;
+    private final MappedTable<T, R> mappedTable;
+    private final Iterator<T> tblIter;
 
     public MappedIterator(MappedTable<T, R> mappedTable) {
         this.mappedTable = mappedTable;
-        this.tblIter = mappedTable.table.iterator();
+        this.tblIter = mappedTable.getTable().iterator();
     }
 
     @Override

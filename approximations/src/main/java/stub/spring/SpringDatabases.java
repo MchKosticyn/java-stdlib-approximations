@@ -1,6 +1,7 @@
 
 package stub.spring;
 
+import jakarta.validation.Validator;
 import org.hibernate.SessionFactory;
 
 public class SpringDatabases {
@@ -10,4 +11,5 @@ public class SpringDatabases {
     }
 
     public static SessionFactory sessionFactory = null;
+    public static Validator validator = null;
 }

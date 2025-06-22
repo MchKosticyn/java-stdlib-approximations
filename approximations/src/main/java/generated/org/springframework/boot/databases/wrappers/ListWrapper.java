@@ -1,6 +1,7 @@
 package generated.org.springframework.boot.databases.wrappers;
 
 import generated.org.springframework.boot.databases.ITable;
+import generated.org.springframework.boot.databases.MappedTable;
 import generated.org.springframework.boot.databases.iterators.wrappers.ListWrapperIterator;
 import generated.org.springframework.boot.databases.iterators.wrappers.ListWrapperListIterator;
 import org.jetbrains.annotations.NotNull;
@@ -13,24 +14,46 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.function.Function;
 
 public class ListWrapper<T> implements List<T>, IWrapper<T> {
 
-    public ITable<T> table;
-    public Iterator<T> tblIter;
-    public int tblStartIx;
-    public Class<T> type;
+    private final ITable<T> table;
+    private Iterator<T> tblIter;
+    private int tblStartIx;
 
-    public SymbolicList<T> cache;
-    public int sizeOfCache;
-    public int wrpStartIx;
-    public int wrpEndIx;
+    private SymbolicList<T> cache;
+    private int sizeOfCache;
+    private int wrpStartIx;
+    private int wrpEndIx;
 
-    public int modCount;
+    private int modCount;
     private boolean initialized = false;
 
     public ListWrapper(ITable<T> table) {
         this.table = table;
+    }
+
+    public ListWrapper(
+            ITable<T> table,
+            Iterator<T> tblIter,
+            int tblStartIx,
+            SymbolicList<T> cache,
+            int sizeOfCache,
+            int wrpStartIx,
+            int wrpEndIx,
+            int modCount,
+            boolean initialized
+    ) {
+        this.table = table;
+        this.tblIter = tblIter;
+        this.tblStartIx = tblStartIx;
+        this.cache = cache;
+        this.sizeOfCache = sizeOfCache;
+        this.wrpStartIx = wrpStartIx;
+        this.wrpEndIx = wrpEndIx;
+        this.modCount = modCount;
+        this.initialized = initialized;
     }
 
     // table, * - cached, 0 - uncached
@@ -47,7 +70,6 @@ public class ListWrapper<T> implements List<T>, IWrapper<T> {
         int tblSize = table.size();
         this.tblIter = table.iterator();
         this.tblStartIx = -1;
-        this.type = table.type();
 
         this.cache = Engine.makeFullySymbolicList();
         Engine.assume(cache != null);
@@ -59,6 +81,30 @@ public class ListWrapper<T> implements List<T>, IWrapper<T> {
         this.modCount = 0;
         this.initialized = true;
     }
+
+    // region Getters
+
+    public int getWrpStartIx() {
+        return wrpStartIx;
+    }
+
+    public int getWrpEndIx() {
+        return wrpEndIx;
+    }
+
+    public int getSizeOfCache() {
+        return sizeOfCache;
+    }
+
+    public int getModCount() {
+        return modCount;
+    }
+
+    public SymbolicList<T> getCache() {
+        return cache;
+    }
+
+    // endregion
 
     // region Cache
 
@@ -189,6 +235,24 @@ public class ListWrapper<T> implements List<T>, IWrapper<T> {
     // endregion
 
     @Override
+    public IWrapper<T> copy(Function<T, T> copyFunction) {
+        ITable<T> copied = new MappedTable<>(table, copyFunction);
+        Iterator<T> newIter = copied.iterator();
+        for (int i = 0; i <= tblStartIx; i++) newIter.next();
+        return new ListWrapper<>(
+                copied,
+                newIter,
+                tblStartIx,
+                cache,
+                sizeOfCache,
+                wrpStartIx,
+                wrpEndIx,
+                modCount,
+                initialized
+        );
+    }
+
+    @Override
     public ITable<T> unwrap() {
         return table;
     }
@@ -199,9 +263,7 @@ public class ListWrapper<T> implements List<T>, IWrapper<T> {
 
         // we need to force eval of all elements so size is correct
         int count = 0;
-        Iterator<T> iter = iterator();
-        while (iter.hasNext()) {
-            T ignored = iter.next();
+        for (T ignored : this) {
             count++;
         }
         return count;
@@ -213,13 +275,12 @@ public class ListWrapper<T> implements List<T>, IWrapper<T> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
+    // TODO: think about class cast exception check
     public boolean contains(Object o) {
         ensureInitialized();
 
-        if (o == null) throw new NullPointerException();
-        if (!type.isInstance(o)) throw new ClassCastException();
-
-        T t = type.cast(o);
+        T t = (T) o;
 
         int leftIx = findLeft(t);
         if (leftIx != -1) return true;
@@ -245,9 +306,7 @@ public class ListWrapper<T> implements List<T>, IWrapper<T> {
         Object[] arr = new Object[sizeOfCache];
 
         int ix = 0;
-        Iterator<T> iter = iterator();
-        while (iter.hasNext()) {
-            T t = iter.next();
+        for (T t : this) {
             arr[ix++] = t;
         }
 
@@ -290,13 +349,12 @@ public class ListWrapper<T> implements List<T>, IWrapper<T> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
+    // TODO: think about class cast exception check
     public boolean remove(Object o) {
         ensureInitialized();
 
-        if (o == null) throw new NullPointerException();
-        if (!type.isInstance(o)) throw new ClassCastException();
-
-        T t = type.cast(o);
+        T t = (T) o;
 
         if (removeLeft(t)) return true;
         if (removeMiddle(t)) return true;
@@ -308,9 +366,7 @@ public class ListWrapper<T> implements List<T>, IWrapper<T> {
     public boolean containsAll(@NotNull Collection<?> c) {
         ensureInitialized();
 
-        Iterator<?> iter = c.iterator();
-        while (iter.hasNext()) {
-            Object o = iter.next();
+        for (Object o : c) {
             if (!contains(o)) return false;
         }
         return true;
@@ -322,10 +378,7 @@ public class ListWrapper<T> implements List<T>, IWrapper<T> {
 
         if (c.isEmpty()) return false;
 
-        Iterator<? extends T> iter = c.iterator();
-        while (iter.hasNext()) {
-            add(iter.next());
-        }
+        for (T t : c) add(t);
         modCount++;
 
         return true;
@@ -343,9 +396,7 @@ public class ListWrapper<T> implements List<T>, IWrapper<T> {
 
         // cache until index-1, index is uncached (if index has not been cached)
         cacheUntilIx(index - 1);
-        Iterator<? extends T> iter = c.iterator();
-        while (iter.hasNext()) {
-            T t = iter.next();
+        for (T t : c) {
             cache.insert(index++, t);
         }
 
@@ -372,9 +423,7 @@ public class ListWrapper<T> implements List<T>, IWrapper<T> {
         if (c.isEmpty()) return false;
 
         boolean isChanged = false;
-        Iterator<?> iter = c.iterator();
-        while (iter.hasNext()) {
-            Object o = iter.next();
+        for (Object o : c) {
             isChanged |= remove(o);
         }
 
@@ -392,9 +441,7 @@ public class ListWrapper<T> implements List<T>, IWrapper<T> {
         Engine.assume(newCache != null);
         Engine.assume(newCache.size() == 0);
 
-        Iterator<T> iter = iterator();
-        while (iter.hasNext()) {
-            T t = iter.next();
+        for (T t : this) {
             if (c.contains(t)) newCache.insert(newSize++, t);
         }
 
@@ -501,13 +548,12 @@ public class ListWrapper<T> implements List<T>, IWrapper<T> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
+    // TODO: think about class cast exception check
     public int indexOf(Object o) {
         ensureInitialized();
 
-        if (o == null) throw new NullPointerException();
-        if (!type.isInstance(o)) throw new ClassCastException();
-
-        T t = type.cast(o);
+        T t = (T) o;
 
         int leftIx = findLeft(t);
         if (leftIx != -1) return leftIx;
@@ -519,13 +565,12 @@ public class ListWrapper<T> implements List<T>, IWrapper<T> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
+    // TODO: think about class cast exception check
     public int lastIndexOf(Object o) {
         ensureInitialized();
 
-        if (o == null) throw new NullPointerException();
-        if (!type.isInstance(o)) throw new ClassCastException();
-
-        T t = type.cast(o);
+        T t = (T) o;
 
         // cache all
         cacheUntilIx(wrpEndIx);

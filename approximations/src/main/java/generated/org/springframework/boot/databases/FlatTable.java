@@ -8,21 +8,12 @@ import java.util.Iterator;
 
 public class FlatTable<T> implements ITable<T> {
 
-    public ITable<ITable<T>> tables;
+    private final ITable<ITable<T>> tables;
     public int size;
 
-    public Class<T> type;
-
-    public FlatTable(ITable<ITable<T>> tables, Class<T> type) {
+    public FlatTable(ITable<ITable<T>> tables) {
         this.tables = tables;
         this.size = -1;
-        this.type = type;
-    }
-
-    public FlatTable(ITable<ITable<T>> tables, int size, Class<T> type) {
-        this.tables = tables;
-        this.size = size;
-        this.type = type;
     }
 
     @Override
@@ -30,24 +21,21 @@ public class FlatTable<T> implements ITable<T> {
         if (size != -1) return size;
 
         int count = 0;
-        Iterator<ITable<T>> iter = tables.iterator();
-        while (iter.hasNext()) {
-            ITable<T> tbl = iter.next();
+        for (ITable<T> tbl : tables) {
             count += tbl.size();
         }
         size = count;
         return count;
     }
 
+    public ITable<ITable<T>> getTables() {
+        return tables;
+    }
+
     @NotNull
     @Override
     public Iterator<T> iterator() {
         return new FlatIterator<>(this);
-    }
-
-    @Override
-    public Class<T> type() {
-        return type;
     }
 
     @Override

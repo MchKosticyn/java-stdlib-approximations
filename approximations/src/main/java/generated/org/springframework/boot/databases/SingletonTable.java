@@ -1,18 +1,22 @@
 package generated.org.springframework.boot.databases;
 
 import generated.org.springframework.boot.databases.iterators.SingletonIterator;
+import generated.org.springframework.boot.databases.utils.DataRow;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 
 public class SingletonTable<T> implements ITable<T> {
 
-    public T data;
-    Class<T> type;
+    private final T data;
 
-    public SingletonTable(T data, Class<T> type) {
+    public SingletonTable(T data) {
         this.data = data;
-        this.type = type;
+    }
+
+    public static <T> SingletonTable<DataRow> of(String name, T data) {
+        DataRow row = new DataRow(name, data);
+        return new SingletonTable<>(row);
     }
 
     @Override
@@ -27,15 +31,12 @@ public class SingletonTable<T> implements ITable<T> {
     }
 
     @Override
-    public Class<T> type() {
-        return type;
-    }
-
-    @Override
     public T first() {
         return data;
     }
 
     @Override
-    public T ensureFirst() { return data; }
+    public T ensureFirst() {
+        return data;
+    }
 }

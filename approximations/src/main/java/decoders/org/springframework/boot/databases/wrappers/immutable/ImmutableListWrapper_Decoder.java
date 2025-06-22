@@ -1,6 +1,6 @@
-package decoders.org.springframework.boot.databases.wrappers;
+package decoders.org.springframework.boot.databases.wrappers.immutable;
 
-import generated.org.springframework.boot.databases.wrappers.ListWrapper;
+import generated.org.springframework.boot.databases.wrappers.immutable.ImmutableListWrapper;
 import org.jacodb.api.jvm.JcClassOrInterface;
 import org.jacodb.api.jvm.JcClasspath;
 import org.jacodb.api.jvm.JcField;
@@ -18,15 +18,16 @@ import java.util.List;
 
 import static org.usvm.api.decoder.DecoderUtils.getAllFields;
 
-@DecoderFor(ListWrapper.class)
-public final class ListWrapper_Decoder implements ObjectDecoder {
+@DecoderFor(ImmutableListWrapper.class)
+public class ImmutableListWrapper_Decoder implements ObjectDecoder {
 
     private volatile JcMethod cached_ArrayList_ctor = null;
     private volatile JcMethod cached_ArrayList_add = null;
-    private volatile JcField cached_ListWrapper_cache = null;
+    private volatile JcField cached_ImmutableListWrapper_cacheTable = null;
+    private volatile JcField cached_CacheTable_cache = null;
 
-    @SuppressWarnings("unchecked")
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T createInstance(final JcClassOrInterface approximation,
                                 final ObjectData<T> approximationData,
                                 final DecoderApi<T> decoder) {
@@ -71,26 +72,41 @@ public final class ListWrapper_Decoder implements ObjectDecoder {
                                        final T outputInstance,
                                        final DecoderApi<T> decoder) {
 
-        JcField f_cache = cached_ListWrapper_cache;
-        if (f_cache == null) {
+        JcField f_cacheTable = cached_ImmutableListWrapper_cacheTable;
+        if (f_cacheTable == null) {
             for (JcField field : getAllFields(approximation)) {
                 if ("cache".equals(field.getName())) {
-                    cached_ListWrapper_cache = f_cache = field;
+                    cached_ImmutableListWrapper_cacheTable = f_cacheTable = field;
                     break;
                 }
             }
         }
 
-        if (approximationData.getObjectField(f_cache) == null)
-            return;
+        ObjectData<T> cacheTable = approximationData.getObjectField(f_cacheTable);
+        assert (cacheTable != null);
 
-        final SymbolicList<T> cache = approximationData.decodeSymbolicListField(f_cache);
-        if (cache == null)
-            return;
+        JcClasspath cp = approximation.getClasspath();
+        JcClassOrInterface cacheTableClass =
+                cp.findClassOrNull("generated.org.springframework.boot.databases.CacheTable");
+        assert (cacheTableClass != null);
+
+        JcField f_cache = cached_CacheTable_cache;
+        if (f_cache == null) {
+            for (JcField field : getAllFields(cacheTableClass)) {
+                if ("cache".equals(field.getName())) {
+                    cached_CacheTable_cache = f_cache = field;
+                    break;
+                }
+            }
+        }
+
+        assert (f_cache != null);
+
+        final SymbolicList<T> cache = cacheTable.decodeSymbolicListField(f_cache);
+        assert (cache != null);
 
         for (int i = 0, c = cache.size(); i < c; i++) {
             T t = cache.get(i);
-            if (t == null) continue;
 
             ArrayList<T> args = new ArrayList<>();
             args.add(outputInstance);

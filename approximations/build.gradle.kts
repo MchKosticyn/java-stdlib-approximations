@@ -14,7 +14,7 @@ repositories {
 private val jacodbPackage = "com.github.UnitTestBot.jacodb"
 private val jacodbVersion = "453ec7c0b3" // jacodb neo branch
 
-private val springVersion = "3.5.0"
+private val springVersion = "3.3.4"
 private val securityVersion = "6.5.0"
 
 dependencies {

@@ -1,122 +1,79 @@
 package generated.org.springframework.boot.databases;
 
 import generated.org.springframework.boot.databases.iterators.JoinedIterator;
+import generated.org.springframework.boot.databases.utils.DataRow;
 import org.jetbrains.annotations.NotNull;
 import org.usvm.api.Engine;
 
 import java.util.Iterator;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
-public class JoinedTable<L, R> implements ITable<Object[]> {
+public class JoinedTable implements ITable<DataRow> {
 
-    public int size;
+    private int size;
 
-    public ITable<L> leftTable;
-    public ITable<R> rightTable;
-
-    // nullable
-    Function<L, Object[]> leftSerializer;
-    Function<R, Object[]> rightSerializer;
-
-    int rightSize; // fields count of right class
+    private final ITable<DataRow> leftTable;
+    private final ITable<DataRow> rightTable;
 
     // nullable
-    Predicate<Object[]> onMethod;
+    private final Function<DataRow, Boolean> onMethod;
 
     // true - JOIN LEFT, false - normal join, to RIGHT JOIN replace left and right tables
-    public boolean isLeft;
+    private final boolean isLeft;
 
     public JoinedTable(
-            ITable<L> leftTable,
-            ITable<R> rightTable,
-            Function<L, Object[]> leftSerializer,
-            Function<R, Object[]> rightSerializer,
-            int rightSize,
-            Predicate<Object[]> onMethod,
+            ITable<DataRow> leftTable,
+            ITable<DataRow> rightTable,
+            Function<DataRow, Boolean> onMethod,
             boolean isLeft
     ) {
-        this(-1, leftTable, rightTable, leftSerializer, rightSerializer, rightSize, onMethod, isLeft);
+        this(-1, leftTable, rightTable, onMethod, isLeft);
     }
 
     public JoinedTable(
-            ITable<L> leftTable, // ITable<Object[]>
-            ITable<R> rightTable, // ITable<Object[]>
-            Predicate<Object[]> onMethod,
-            boolean isLeft
+            ITable<DataRow> leftTable,
+            ITable<DataRow> rightTable
     ) {
-        this(-1, leftTable, rightTable, null, null, -1, onMethod, isLeft);
-    }
-
-    public JoinedTable(ITable<L> leftTable, ITable<R> rightTable) {
         this(leftTable, rightTable, null, false);
     }
 
     public JoinedTable(
-            ITable<L> leftTable,
-            ITable<R> rightTable,
-            Function<L, Object[]> leftSerializer,
-            Function<R, Object[]> rightSerializer
-    ) {
-        this(leftTable, rightTable, leftSerializer, rightSerializer, -1, null, false);
-    }
-
-    public JoinedTable(
             int size,
-            ITable<L> leftTable,
-            ITable<R> rightTable,
-            Function<L, Object[]> leftSerializer,
-            Function<R, Object[]> rightSerializer,
-            int rightSize,
-            Predicate<Object[]> onMethod,
+            ITable<DataRow> leftTable,
+            ITable<DataRow> rightTable,
+            Function<DataRow, Boolean> onMethod,
             boolean isLeft
     ) {
         this.size = size;
         this.leftTable = leftTable;
         this.rightTable = rightTable;
-        this.leftSerializer = leftSerializer;
-        this.rightSerializer = rightSerializer;
-        this.rightSize = rightSize;
         this.onMethod = onMethod;
         this.isLeft = isLeft;
     }
 
-    public boolean applyPredicate(Object[] row) {
+    public boolean isLeft() {
+        return isLeft;
+    }
+
+    public ITable<DataRow> getLeftTable() {
+        return leftTable;
+    }
+
+    public ITable<DataRow> getRightTable() {
+        return rightTable;
+    }
+
+    public boolean applyPredicate(DataRow row) {
         if (onMethod == null) return true;
-        return onMethod.test(row);
-    }
-
-    public Object[] serializeLeft(L l) {
-        if (leftSerializer == null) return (Object[]) l;
-        return leftSerializer.apply(l);
-    }
-
-    public Object[] serializeRight(R r) {
-        if (rightSerializer == null) return (Object[]) r;
-        return r != null ? rightSerializer.apply(r) : new Object[rightSize];
+        return onMethod.apply(row);
     }
 
     // r is null when isLeft and onMethod is false for all rs
-    public Object[] composite(L l, R r) {
-        if (l != null && r != null) {
-
-            Object[] lRow = serializeLeft(l);
-            Object[] rRow = serializeRight(r);
-
-            Object[] row = new Object[lRow.length + rRow.length];
-
-            for (int i = 0; i < lRow.length; i++) row[i] = lRow[i];
-            for (int i = 0; i < rRow.length; i++) row[i + lRow.length] = rRow[i];
-
-            return row;
-        }
-
-        if (l != null) return serializeLeft(l);
-        if (r != null) return serializeRight(r);
-
-        return null;
+    public DataRow composite(DataRow l, DataRow r) {
+        return DataRow.merge(l, r);
     }
 
+    @Override
     public int size() {
         if (size != -1) return size;
 
@@ -125,10 +82,10 @@ public class JoinedTable<L, R> implements ITable<Object[]> {
             return size;
         }
 
-        Iterator<Object[]> iter = new JoinedIterator<>(this);
+        Iterator<DataRow> iter = iterator();
         int count = 0;
         while (iter.hasNext()) {
-            Object[] candidate = iter.next();
+            DataRow candidate = iter.next();
             Engine.assume(applyPredicate(candidate));
             count++;
         }
@@ -139,32 +96,23 @@ public class JoinedTable<L, R> implements ITable<Object[]> {
 
     @NotNull
     @Override
-    public Iterator<Object[]> iterator() {
-        return new JoinedIterator<>(this);
+    public Iterator<DataRow> iterator() {
+        return new JoinedIterator(this);
     }
 
     @Override
-    public Class<Object[]> type() {
-        return Object[].class;
-    }
-
-    @Override
-    public Object[] first() {
+    public DataRow first() {
         if (onMethod == null) return composite(leftTable.first(), rightTable.first());
 
-        Iterator<Object[]> iter = iterator();
+        Iterator<DataRow> iter = iterator();
         if (iter.hasNext()) return iter.next();
         return null;
     }
 
     @Override
-    public Object[] ensureFirst() {
-        Iterator<Object[]> iter = iterator();
+    public DataRow ensureFirst() {
+        Iterator<DataRow> iter = iterator();
         Engine.assume(iter.hasNext());
         return iter.next();
-    }
-
-    public static Object[] identity(Object[] row) {
-        return row;
     }
 }

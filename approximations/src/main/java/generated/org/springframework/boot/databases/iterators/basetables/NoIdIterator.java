@@ -7,10 +7,10 @@ import java.util.Iterator;
 
 public class NoIdIterator implements Iterator<Object[]> {
 
-    public NoIdTable table;
+    private final NoIdTable table;
 
-    public int ix;
-    public int endIx;
+    private int ix;
+    private final int endIx;
 
     public NoIdIterator(NoIdTable table) {
         this.table = table;
@@ -27,8 +27,6 @@ public class NoIdIterator implements Iterator<Object[]> {
     @Override
     public Object[] next() {
         Engine.assume(hasNext());
-
-        Object[] row = table.collectRow(ix++);
-        return row;
+        return table.collectRow(ix++);
     }
 }

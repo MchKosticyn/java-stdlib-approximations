@@ -5,30 +5,27 @@ import generated.org.springframework.boot.databases.basetables.TableTracker;
 import org.usvm.api.Engine;
 
 import java.util.Iterator;
-import java.util.function.Function;
 
-public class BaseTableTrackIterator<T, V> implements Iterator<Object[]> {
+public class BaseTableTrackIterator<T> implements Iterator<T> {
 
-    public BaseTableTrack<T, V> table;
-    public Iterator<Object[]> iter;
-    public Function<Object[], T> deserializer;
-    public String tableName;
-    public Class<T> classType;
+    private final Iterator<T> iter;
+    private final String tableName;
+    private final Class<T> classType;
 
     // for tracking
-    public int ix;
+    private int ix;
 
-    public BaseTableTrackIterator(BaseTableTrack<T, V> table) {
-        this.table = table;
-        this.iter = table.table.iterator();
-        this.tableName = table.tableName;
-        this.classType = table.classType;
+    public BaseTableTrackIterator(BaseTableTrack<T> table) {
+        this.iter = table.getTable().iterator();
+        this.tableName = table.getTableName();
+        this.classType = table.getClassType();
         this.ix = 0;
-
-        if (table.deserializer == null) throw new LinkageError();
-        this.deserializer = table.deserializer;
     }
 
+
+    public String getTableName() {
+        return tableName;
+    }
 
     @Override
     public boolean hasNext() {
@@ -36,13 +33,12 @@ public class BaseTableTrackIterator<T, V> implements Iterator<Object[]> {
     }
 
     @Override
-    public Object[] next() {
+    public T next() {
         Engine.assume(hasNext());
 
-        Object[] row = iter.next();
-        T value = deserializer.apply(row);
-        TableTracker.tryTrack(tableName, value, ix++, classType);
+        T t = iter.next();
+        TableTracker.tryTrack(getTableName(), t, ix++, classType);
 
-        return row;
+        return t;
     }
 }

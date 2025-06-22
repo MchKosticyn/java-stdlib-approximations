@@ -4,38 +4,33 @@ import generated.org.springframework.boot.databases.basetables.BaseTableManager;
 import generated.org.springframework.boot.databases.basetables.NoIdTableManager;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-// T - type of objects to save
-// V1 - type of id field of parent class
-// V2 - type of id field of objects class
-public class SaveUpdDelManyManager<T, V1, V2> {
+// T - type of objects to save, V - type of id field
+public class SaveUpdDelManyManager<T, V> {
 
-    public SaveUpdDelCtx context;
+    private final SaveUpdDelCtx context;
 
-    public BaseTableManager<T, V2> manager;
+    private final BaseTableManager<T, V> manager;
 
-    public BiConsumer<T, SaveUpdDelCtx> saveUpd; // nullable
-    public BiConsumer<T, SaveUpdDelCtx> delete; // nullable
+    private final BiConsumer<T, SaveUpdDelCtx> saveUpd; // nullable
+    private final BiConsumer<T, SaveUpdDelCtx> delete; // nullable
 
-    public V1 parentId; // nullable
-    public Function<T, V2> getTId; // nullable
+    private final Object[] parentId; // nullable
+    private final Function<T, Object[]> getTId; // nullable
 
-    // decides view of row in relation table: is [V1; V2] or [V2; V1]
-    // 1 means [V2; V1], 0 means [V1; V2]
-    public int shouldShuffle; // nullable
+    private int[] parentJoinIds;
+    private int[] childJoinIds;
 
     public SaveUpdDelManyManager(
             SaveUpdDelCtx context,
-            BaseTableManager<T, V2> manager,
+            BaseTableManager<T, V> manager,
             BiConsumer<T, SaveUpdDelCtx> saveUpd, // nullable
             BiConsumer<T, SaveUpdDelCtx> delete, // nullable
 
-            V1 parentId, // nullable
-            Function<T, V2> getTId, // nullable
-            int shouldShuffle
+            Object[] parentId, // nullable
+            Function<T, Object[]> getTId // nullable
     ) {
         this.context = context;
         this.manager = manager;
@@ -44,61 +39,71 @@ public class SaveUpdDelManyManager<T, V1, V2> {
 
         this.parentId = parentId;
         this.getTId = getTId;
-        this.shouldShuffle = shouldShuffle;
     }
 
-    public V2 getId(T t) {
+    public Object[] getId(T t) {
         return getTId.apply(t);
     }
 
-    public void setShouldShuffle(int shouldShuffle) {
-        this.shouldShuffle = shouldShuffle;
+    public void setParentJoinIds(int[] parentJoinIds) {
+        this.parentJoinIds = parentJoinIds;
+    }
+
+    public void setChildJoinIds(int[] childJoinIds) {
+        this.childJoinIds = childJoinIds;
     }
 
     public void setAllowRecursiveUpdate(boolean allowRecursiveUpdate) {
         context.setAllowRecursiveUpdate(allowRecursiveUpdate);
     }
 
-    public void saveUpdWithoutRelationTable(Collection<T> objects, int rel_pos) {
-        Iterator<T> iter = objects.iterator();
-        while (iter.hasNext()) {
-            T t = iter.next();
+    public void saveUpdWithoutRelationTable(Collection<T> objects, String[] names) {
+        for (T t : objects) {
             saveUpd.accept(t, context);
-            manager.changeSingleFieldByIdEnsure(getTId.apply(t), rel_pos, parentId);
+            manager.changeFieldsByIdEnsure(getTId.apply(t), names, parentId);
         }
     }
 
     public void delWithoutRelationTable(Collection<T> objects) {
-        Iterator<T> iter = objects.iterator();
-        while (iter.hasNext()) {
-            T t = iter.next();
+        for (T t : objects) {
             delete.accept(t, context);
         }
     }
 
     public void saveUpd(Collection<T> objects, NoIdTableManager relationTable) {
-        Iterator<T> iter = objects.iterator();
-        while (iter.hasNext()) {
-            T t = iter.next();
+        for (T t : objects) {
+            Object[] childId = getTId.apply(t);
             saveUpd.accept(t, context);
 
-            // saved relation in additional table
-            Object[] relRow = new Object[2];
-            relRow[1 - shouldShuffle] = getTId.apply(t);
-            relRow[shouldShuffle] = parentId;
+            Object[] relRow = new Object[parentJoinIds.length + childJoinIds.length];
+
+            for (int i = 0; i < parentJoinIds.length; i++) {
+                relRow[parentJoinIds[i]] = parentId[i];
+            }
+
+            for (int i = 0; i < childJoinIds.length; i++) {
+                relRow[childJoinIds[i]] = childId[i];
+            }
+
             relationTable.save(relRow);
         }
     }
 
     public void delete(Collection<T> objects, NoIdTableManager relationTable) {
-        Iterator<T> iter = objects.iterator();
-        while (iter.hasNext()) {
-            T t = iter.next();
+        for (T t : objects) {
+            Object[] childId = getTId.apply(t);
             delete.accept(t, context);
 
-            Object[] relRow = new Object[2];
-            relRow[1 - shouldShuffle] = getTId.apply(t);
-            relRow[shouldShuffle] = parentId;
+            Object[] relRow = new Object[parentJoinIds.length + childJoinIds.length];
+
+            for (int i = 0; i < parentJoinIds.length; i++) {
+                relRow[parentJoinIds[i]] = parentId[i];
+            }
+
+            for (int i = 0; i < childJoinIds.length; i++) {
+                relRow[childJoinIds[i]] = childId[i];
+            }
+
             relationTable.delete(relRow);
         }
     }

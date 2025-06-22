@@ -1,32 +1,33 @@
 package generated.org.springframework.boot.databases;
 
+import generated.org.springframework.boot.databases.iterators.SortedIterator;
 import org.jetbrains.annotations.NotNull;
 import org.usvm.api.Engine;
 
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 import java.util.function.BiFunction;
 
 public class SortedTable<T, R> implements ITable<T> {
 
-    public ITable<T> table;
-    public int size;
-    public int limit; // -1 if no limit
-    public int offset; // 0 if no offset
-    public boolean direction; // true -  ASC, false - DESC
-    public boolean nulls; // true - LAST, false - FIRST
+    private final ITable<T> table;
+    private int size;
+    private final int limit; // -1 if no limit
+    private final int offset; // 0 if no offset
+    private final boolean direction; // true -  ASC, false - DESC
+    private final boolean nulls; // true - LAST, false - FIRST
 
-    public int tblSize;
+    private int tblSize;
 
-    public BiFunction<T, Object[], R> translate;
-    public BiFunction<R, R, Integer> comparer;
+    private final BiFunction<T, Object[], R> translate;
+    private final BiFunction<R, R, Integer> comparer;
 
-    public Object[] sorted;
+    private Object[] sorted;
 
     // arguments of original repository method
-    Object[] methodArgs;
+    private final Object[] methodArgs;
 
-    @SuppressWarnings("unchecked")
+    private boolean initialized = false;
+
     public SortedTable(
             ITable<T> table,
             int limit,
@@ -46,23 +47,6 @@ public class SortedTable<T, R> implements ITable<T> {
         this.direction = direction;
         this.nulls = nulls;
         this.methodArgs = methodArgs;
-
-        this.tblSize = table.size();
-
-        if (limit == -1) {
-            this.size = tblSize - offset;
-        } else {
-            this.size = Math.min(tblSize - offset, limit);
-        }
-
-        //this.sorted = (T[]) Array.newInstance(table.type(), tblSize);
-        this.sorted = new Object[tblSize];
-        Iterator<T> tblIter = table.iterator();
-        int ix = 0;
-        while (tblIter.hasNext()) {
-            sorted[ix++] = tblIter.next();
-        }
-        Sort();
     }
 
     public SortedTable(
@@ -103,6 +87,40 @@ public class SortedTable<T, R> implements ITable<T> {
         this.sorted = sorted;
     }
 
+    private void ensureInitialized() {
+        if (initialized) return;
+
+        this.tblSize = table.size();
+
+        if (limit == -1) {
+            this.size = tblSize - offset;
+        } else {
+            this.size = Math.min(tblSize - offset, limit);
+        }
+
+        this.sorted = new Object[tblSize];
+        Iterator<T> tblIter = table.iterator();
+        int ix = 0;
+        while (tblIter.hasNext()) {
+            sorted[ix++] = tblIter.next();
+        }
+
+        sort();
+        initialized = true;
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public Object[] getSorted() {
+        return sorted;
+    }
+
     public boolean compare(R left, R right) {
         if (left == null) return nulls; // NULLs always bigger or else
         boolean common = comparer.apply(left, right) > 0;
@@ -115,7 +133,7 @@ public class SortedTable<T, R> implements ITable<T> {
 
     // bubble sort
     @SuppressWarnings("unchecked")
-    public void Sort() {
+    private void sort() {
         for (int i = 0; i < tblSize; i++) {
             boolean swapped = false;
             for (int j = 0; j < tblSize - i - 1; j++) {
@@ -138,41 +156,15 @@ public class SortedTable<T, R> implements ITable<T> {
 
     @Override
     public int size() {
+        ensureInitialized();
         return size;
-    }
-
-    class SortedIterator implements Iterator<T> {
-
-        int ix;
-        int endIx;
-
-        public SortedIterator() {
-            this.ix = offset;
-            this.endIx = size;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return ix < endIx;
-        }
-
-        @Override
-        @SuppressWarnings("unchecked")
-        public T next() {
-            if (!hasNext()) throw new NoSuchElementException();
-            return (T) sorted[ix++];
-        }
     }
 
     @NotNull
     @Override
     public Iterator<T> iterator() {
-        return new SortedIterator();
-    }
-
-    @Override
-    public Class<T> type() {
-        return table.type();
+        ensureInitialized();
+        return new SortedIterator<>(this);
     }
 
     @Override

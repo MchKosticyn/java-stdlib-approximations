@@ -84,7 +84,7 @@ public class Aggregators {
         else if (clazz.equals(BigInteger.class)) return big_integer_sum(table);
         else if (clazz.equals(BigDecimal.class)) return big_decimal_sum(table);
         else {
-            SpringEngine._internalLog("Unsupported type for aggregate SUM function", clazz.getName());
+            SpringEngine._internalLog("[DB Warning] Unsupported type for aggregate SUM function", clazz.getName());
             return null;
         }
     }
@@ -178,7 +178,7 @@ public class Aggregators {
 
     public static Boolean any(MappedTable<Object[], Object[]> table) {
         Iterator<Object[]> tableIter = table.iterator();
-        while  (true) {
+        while (true) {
             if (!tableIter.hasNext()) break;
             if ((Boolean) (tableIter.next()[0])) return true;
         }

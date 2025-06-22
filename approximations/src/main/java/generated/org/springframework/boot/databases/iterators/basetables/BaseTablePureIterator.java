@@ -5,16 +5,16 @@ import org.usvm.api.Engine;
 
 import java.util.Iterator;
 
-public class BaseTablePureIterator<V> implements Iterator<Object[]> {
+public class BaseTablePureIterator<T> implements Iterator<T> {
 
-    public BaseTablePureSave<V> table;
-    public Iterator<Object[]> tblIter;
-    public Object[] saved;
+    private final BaseTablePureSave<T> table;
+    private final Iterator<T> tblIter;
+    private T saved;
 
-    public BaseTablePureIterator(BaseTablePureSave<V> table) {
+    public BaseTablePureIterator(BaseTablePureSave<T> table) {
         this.table = table;
-        this.tblIter = table.table.iterator();
-        this.saved = table.saved;
+        this.tblIter = table.getTable().iterator();
+        this.saved = table.getSaved();
     }
 
     @Override
@@ -24,16 +24,17 @@ public class BaseTablePureIterator<V> implements Iterator<Object[]> {
     }
 
     @Override
-    public Object[] next() {
+    public T next() {
         Engine.assume(hasNext());
 
         if (tblIter.hasNext()) {
-            Object[] row = tblIter.next();
-            Engine.assume(row[table.idColumnIx()].equals(saved[table.idColumnIx()]));
-            return row;
+            T t = tblIter.next();
+            Engine.assume(saved != null);
+            Engine.assume(!table.isSameId(saved, t));
+            return t;
         }
 
-        Object[] tmp = saved;
+        T tmp = saved;
         saved = null;
 
         return tmp;

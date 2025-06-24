@@ -1,6 +1,7 @@
 package generated.org.springframework.boot.databases.utils;
 
 import generated.org.springframework.boot.SpringEngine;
+import org.usvm.api.Engine;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -26,7 +27,7 @@ public class DatabaseSupportFunctions {
 
     static Integer comparer(Integer left, Integer right) {
         Integer base = basicComparer(left, right);
-        return base == null ? left - right : base;
+        return base == null ? left.compareTo(right) : base;
     }
 
     static Integer comparer(Long left, Long right) {

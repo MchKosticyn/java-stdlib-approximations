@@ -21,9 +21,6 @@ public class FiltredTable<T> implements ITable<T> {
     // 3rd arg used by aggregators
     public TriFunction<T, Object[], ITable<T>, Boolean> filter3;
 
-    public List<T> cache;
-    public int cacheSize;
-
     // arguments of original repository method
     Object[] methodArgs;
 
@@ -31,9 +28,6 @@ public class FiltredTable<T> implements ITable<T> {
         this.table = table;
         this.filter = null;
         this.filter2 = filter2;
-
-        this.cache = new ArrayList<>();
-        this.cacheSize = -1;
 
         this.methodArgs = methodArgs;
     }
@@ -43,9 +37,6 @@ public class FiltredTable<T> implements ITable<T> {
         this.filter = null;
         this.filter2 = filter2;
 
-        this.cache = new ArrayList<>();
-        this.cacheSize = -1;
-
         this.methodArgs = new Object[0];
     }
 
@@ -54,9 +45,6 @@ public class FiltredTable<T> implements ITable<T> {
         this.table = table;
         this.filter = filter;
         this.filter2 = null;
-
-        this.cache = new ArrayList<>();
-        this.cacheSize = -1;
 
         this.methodArgs = new Object[0];
     }
@@ -74,8 +62,6 @@ public class FiltredTable<T> implements ITable<T> {
         this.filter = filter;
         this.filter2 = filter2;
         this.filter3 = filter3;
-        this.cache = cache;
-        this.cacheSize = cacheSize;
         this.methodArgs = methodArgs;
     }
 
@@ -88,9 +74,6 @@ public class FiltredTable<T> implements ITable<T> {
         this.filter = null;
         this.filter3 = filter3;
 
-        this.cache = new ArrayList<>();
-        this.cacheSize = -1;
-
         this.methodArgs = methodArgs;
     }
 
@@ -101,25 +84,20 @@ public class FiltredTable<T> implements ITable<T> {
     }
 
     public int size() {
-        if (cacheSize != -1) return cacheSize;
-
         Iterator<T> iter = iterator();
         int count = 0;
         while (iter.hasNext()) {
             T candidate = iter.next();
             Engine.assume(callFilter(candidate));
-            cache.add(candidate);
             count++;
         }
 
-        cacheSize = count;
-        return cacheSize;
+        return count;
     }
 
     @NotNull
     @Override
     public Iterator<T> iterator() {
-        if (cacheSize != -1) return cache.iterator();
         return new FiltredIterator<>(this);
     }
 

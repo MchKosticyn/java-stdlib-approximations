@@ -2,6 +2,7 @@ package generated.org.springframework.boot;
 
 import generated.org.springframework.boot.pinnedValues.PinnedValueSource;
 import generated.org.springframework.boot.pinnedValues.PinnedValueStorage;
+import generated.org.springframework.security.SecurityContextImplImpl;
 import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.Cookie;
 import org.springframework.http.HttpMethod;
@@ -69,6 +70,9 @@ public class SpringMvcPerformer {
                 _internalLog("[USVM] analysis finished with exception", path);
             } finally {
                 PinnedValueStorage.preparePinnedValues();
+                if (SECURITY_ENABLED) {
+                    assumeRolesCorrectness();
+                }
                 _endAnalysis();
             }
             return;
@@ -92,6 +96,18 @@ public class SpringMvcPerformer {
 
     private static void _fillSecurityHeaders() {
         writePinnedValue(PinnedValueSource.REQUEST_HEADER, "AUTHORIZATION", null, String.class);
+    }
+
+    private static void assumeRolesCorrectness() {
+        Collection<? extends GrantedAuthority> authorities = new SecurityContextImplImpl()
+                .getAuthentication()
+                .getAuthorities();
+
+        for (Object authority : authorities) {
+            Engine.assume(authority != null);
+            Engine.assume(authority instanceof GrantedAuthority);
+            Engine.assume(((GrantedAuthority)authority).getAuthority() != null);
+        }
     }
 
     private static UserDetails _createUser() {

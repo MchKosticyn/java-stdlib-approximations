@@ -24,11 +24,14 @@ public class SecurityExpressionRootImpl {
 
         Collection<GrantedAuthority> roleSet = getAuthoritySet();
         for (String neededRole : roles) {
-            for (GrantedAuthority authority : roleSet) {
+            for (Object authority : roleSet) {
                 Engine.assume(authority != null);
-                Engine.assume(authority.getAuthority() != null);
+                Engine.assume(authority instanceof GrantedAuthority);
 
-                if (Engine.forceStringEquals(authority.getAuthority(), roleWithPrefix(prefix, neededRole)))
+                String authorityString = ((GrantedAuthority)authority).getAuthority();
+                Engine.assume(authorityString != null);
+
+                if (Engine.forceStringEquals(authorityString, roleWithPrefix(prefix, neededRole)))
                     return true;
             }
         }

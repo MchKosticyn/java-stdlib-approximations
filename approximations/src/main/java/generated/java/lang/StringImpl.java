@@ -320,4 +320,9 @@ public class StringImpl implements Serializable {
             return false;
         }
     }
+
+    public boolean isEmpty() {
+        _assumeInvariants();
+        return value.length == 0;
+    }
 }

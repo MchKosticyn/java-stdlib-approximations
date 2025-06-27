@@ -33,10 +33,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 public class SpringMvcPerformer {
 
-    private static final boolean SECURITY_ENABLED = true;
+    private static boolean _isSecurityEnabled() {
+        return false;
+    }
 
     public static void perform(MockMvc mockMvc) {
         List<List<Object>> allPaths = _allControllerPaths();
+        boolean securityEnabled = _isSecurityEnabled();
         for (List<Object> pathData : allPaths) {
             boolean pathFound = Engine.makeSymbolicBoolean();
             if (!pathFound)
@@ -56,10 +59,10 @@ public class SpringMvcPerformer {
             try {
                 HttpMethod method = HttpMethod.valueOf(methodName);
                 MockHttpServletRequestBuilder request = request(method, path, pathArgs);
-                if (SECURITY_ENABLED) {
+                if (securityEnabled) {
                     // Makes successful authorization
-                    UserDetails userDetails = _createUser();
-                    _fillSecurityHeaders();
+                    UserDetails userDetails = createUser();
+                    fillSecurityHeaders();
                     request = request.with(user(userDetails));
                 }
                 MvcResult result = mockMvc.perform(request).andReturn();
@@ -70,7 +73,7 @@ public class SpringMvcPerformer {
                 _internalLog("[USVM] analysis finished with exception", path);
             } finally {
                 PinnedValueStorage.preparePinnedValues();
-                if (SECURITY_ENABLED) {
+                if (securityEnabled) {
                     assumeRolesCorrectness();
                 }
                 _endAnalysis();
@@ -79,7 +82,7 @@ public class SpringMvcPerformer {
         }
     }
 
-    private static void _writeResponse(MockHttpServletResponse response) {
+    private static void writeResponse(MockHttpServletResponse response) {
         writePinnedValue(PinnedValueSource.RESPONSE_STATUS, response.getStatus());
         try {
             writePinnedValue(PinnedValueSource.RESPONSE_CONTENT, response.getContentAsString());
@@ -94,7 +97,7 @@ public class SpringMvcPerformer {
         }
     }
 
-    private static void _fillSecurityHeaders() {
+    private static void fillSecurityHeaders() {
         writePinnedValue(PinnedValueSource.REQUEST_HEADER, "AUTHORIZATION", null, String.class);
     }
 
@@ -110,13 +113,13 @@ public class SpringMvcPerformer {
         }
     }
 
-    private static UserDetails _createUser() {
+    private static UserDetails createUser() {
         String warningText = "USVM USER NAME OR PASSWORD";
         return new User(warningText, warningText, Collections.emptyList());
     }
 
     private static void writeResult(MvcResult result) {
-        _writeResponse(result.getResponse());
+        writeResponse(result.getResponse());
         Throwable resolvedException = result.getResolvedException();
 
         if (resolvedException != null) {

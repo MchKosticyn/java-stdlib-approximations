@@ -3,7 +3,6 @@
 plugins {
     java
     `maven-publish`
-    id("org.springframework.boot") version "3.3.4" apply false
 }
 
 repositories {
@@ -12,21 +11,12 @@ repositories {
 }
 
 private val jacodbPackage = "com.github.UnitTestBot.jacodb"
-private val jacodbVersion = "453ec7c0b3" // jacodb neo branch
-
-private val springVersion = "3.3.4"
-private val securityVersion = "6.5.0"
+private val jacodbVersion = "4ff7243d3a" // jacodb neo branch
 
 dependencies {
     compileOnly("$jacodbPackage:jacodb-api-jvm:$jacodbVersion")
     compileOnly("$jacodbPackage:jacodb-approximations:$jacodbVersion")
     compileOnly(files(rootDir.resolve("usvm-api/usvm-jvm-api.jar")))
-    compileOnly("org.springframework.boot:spring-boot-starter-security:$springVersion")
-    compileOnly("org.springframework.security:spring-security-test:$securityVersion")
-    compileOnly("org.springframework.boot:spring-boot-starter-web:$springVersion")
-    compileOnly("org.springframework.boot:spring-boot-starter-test:$springVersion")
-    compileOnly("org.springframework.boot:spring-boot-starter-data-jpa:$springVersion")
-    compileOnly("org.springframework.boot:spring-boot-starter-validation:$springVersion")
     // Fixes "unknown enum constant 'When.MAYBE'" warning
     compileOnly("com.google.code.findbugs:jsr305:3.0.2")
 }

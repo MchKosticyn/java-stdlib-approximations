@@ -1,6 +1,7 @@
 package generated.org.springframework.boot.databases.utils;
 
 import generated.org.springframework.boot.SpringEngine;
+import org.usvm.api.Engine;
 
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
@@ -63,6 +64,7 @@ public class DatabaseValidators {
         else if (clazz.equals(Double.class)) { return null; }
         else if (clazz.equals(String.class)) {
             return (Object v) -> {
+                if (v == null) return false;
                 int len = ((String) v).length();
                 return len > 3 && len < 10;
             };

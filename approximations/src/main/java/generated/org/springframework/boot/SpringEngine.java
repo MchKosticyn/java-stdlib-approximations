@@ -19,4 +19,6 @@ public class SpringEngine {
     public static List<List<Object>> _allControllerPaths() {
         return new ArrayList<>();
     }
+
+    public static boolean _isSecurityEnabled() { throw new IllegalStateException("This method must be approximated!"); }
 }

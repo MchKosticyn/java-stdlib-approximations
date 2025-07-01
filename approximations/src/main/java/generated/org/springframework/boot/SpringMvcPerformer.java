@@ -33,10 +33,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 public class SpringMvcPerformer {
 
-    private static boolean _isSecurityEnabled() {
-        return false;
-    }
-
     public static void perform(MockMvc mockMvc) {
         List<List<Object>> allPaths = _allControllerPaths();
         boolean securityEnabled = _isSecurityEnabled();

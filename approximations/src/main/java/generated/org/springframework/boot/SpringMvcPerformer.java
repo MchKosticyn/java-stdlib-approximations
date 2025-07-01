@@ -110,7 +110,7 @@ public class SpringMvcPerformer {
     }
 
     private static UserDetails createUser() {
-        String warningText = "USVM USER NAME OR PASSWORD";
+        String warningText = "Should not appear in test!";
         return new User(warningText, warningText, Collections.emptyList());
     }
 

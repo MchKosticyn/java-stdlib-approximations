@@ -211,32 +211,50 @@ public class ArrayImpl {
         if (array == null)
             throw new NullPointerException();
 
-        if (array instanceof int[])
+        if (array instanceof int[]) {
             ((int[]) array)[index] = (int) value;
+            return;
+        }
 
-        if (array instanceof byte[])
+        if (array instanceof byte[]) {
             ((byte[]) array)[index] = (byte) value;
+            return;
+        }
 
-        if (array instanceof char[])
+        if (array instanceof char[]) {
             ((char[]) array)[index] = (char) value;
+            return;
+        }
 
-        if (array instanceof long[])
+        if (array instanceof long[]) {
             ((long[]) array)[index] = (long) value;
+            return;
+        }
 
-        if (array instanceof boolean[])
+        if (array instanceof boolean[]) {
             ((boolean[]) array)[index] = (boolean) value;
+            return;
+        }
 
-        if (array instanceof short[])
+        if (array instanceof short[]) {
             ((short[]) array)[index] = (short) value;
+            return;
+        }
 
-        if (array instanceof float[])
+        if (array instanceof float[]) {
             ((float[]) array)[index] = (float) value;
+            return;
+        }
 
-        if (array instanceof double[])
+        if (array instanceof double[]) {
             ((double[]) array)[index] = (double) value;
+            return;
+        }
 
-        if (array instanceof Object[])
+        if (array instanceof Object[]) {
             ((Object[]) array)[index] = value;
+            return;
+        }
 
         throw new IllegalArgumentException();
     }
@@ -245,8 +263,10 @@ public class ArrayImpl {
         if (array == null)
             throw new NullPointerException();
 
-        if (array instanceof boolean[])
+        if (array instanceof boolean[]) {
             ((boolean[]) array)[index] = value;
+            return;
+        }
 
         throw new IllegalArgumentException();
     }
@@ -255,23 +275,35 @@ public class ArrayImpl {
         if (array == null)
             throw new NullPointerException();
 
-        if (array instanceof int[])
+        if (array instanceof int[]) {
             ((int[]) array)[index] = value;
+            return;
+        }
 
-        if (array instanceof byte[])
+        if (array instanceof byte[]) {
             ((byte[]) array)[index] = value;
+            return;
+        }
 
-        if (array instanceof long[])
+        if (array instanceof long[]) {
             ((long[]) array)[index] = value;
+            return;
+        }
 
-        if (array instanceof short[])
+        if (array instanceof short[]) {
             ((short[]) array)[index] = value;
+            return;
+        }
 
-        if (array instanceof float[])
+        if (array instanceof float[]) {
             ((float[]) array)[index] = value;
+            return;
+        }
 
-        if (array instanceof double[])
+        if (array instanceof double[]) {
             ((double[]) array)[index] = value;
+            return;
+        }
 
         throw new IllegalArgumentException();
     }
@@ -280,20 +312,30 @@ public class ArrayImpl {
         if (array == null)
             throw new NullPointerException();
 
-        if (array instanceof int[])
+        if (array instanceof int[]) {
             ((int[]) array)[index] = value;
+            return;
+        }
 
-        if (array instanceof char[])
+        if (array instanceof char[]) {
             ((char[]) array)[index] = value;
+            return;
+        }
 
-        if (array instanceof long[])
+        if (array instanceof long[]) {
             ((long[]) array)[index] = value;
+            return;
+        }
 
-        if (array instanceof float[])
+        if (array instanceof float[]) {
             ((float[]) array)[index] = value;
+            return;
+        }
 
-        if (array instanceof double[])
+        if (array instanceof double[]) {
             ((double[]) array)[index] = value;
+            return;
+        }
 
         throw new IllegalArgumentException();
     }
@@ -302,20 +344,30 @@ public class ArrayImpl {
         if (array == null)
             throw new NullPointerException();
 
-        if (array instanceof int[])
+        if (array instanceof int[]) {
             ((int[]) array)[index] = value;
+            return;
+        }
 
-        if (array instanceof long[])
+        if (array instanceof long[]) {
             ((long[]) array)[index] = value;
+            return;
+        }
 
-        if (array instanceof short[])
+        if (array instanceof short[]) {
             ((short[]) array)[index] = value;
+            return;
+        }
 
-        if (array instanceof float[])
+        if (array instanceof float[]) {
             ((float[]) array)[index] = value;
+            return;
+        }
 
-        if (array instanceof double[])
+        if (array instanceof double[]) {
             ((double[]) array)[index] = value;
+            return;
+        }
 
         throw new IllegalArgumentException();
     }
@@ -324,17 +376,25 @@ public class ArrayImpl {
         if (array == null)
             throw new NullPointerException();
 
-        if (array instanceof int[])
+        if (array instanceof int[]) {
             ((int[]) array)[index] = value;
+            return;
+        }
 
-        if (array instanceof long[])
+        if (array instanceof long[]) {
             ((long[]) array)[index] = value;
+            return;
+        }
 
-        if (array instanceof float[])
+        if (array instanceof float[]) {
             ((float[]) array)[index] = (float) value;
+            return;
+        }
 
-        if (array instanceof double[])
+        if (array instanceof double[]) {
             ((double[]) array)[index] = value;
+            return;
+        }
 
         throw new IllegalArgumentException();
     }
@@ -343,11 +403,15 @@ public class ArrayImpl {
         if (array == null)
             throw new NullPointerException();
 
-        if (array instanceof long[])
+        if (array instanceof long[]) {
             ((long[]) array)[index] = value;
+            return;
+        }
 
-        if (array instanceof double[])
+        if (array instanceof double[]) {
             ((double[]) array)[index] = (double) value;
+            return;
+        }
 
         throw new IllegalArgumentException();
     }
@@ -356,11 +420,15 @@ public class ArrayImpl {
         if (array == null)
             throw new NullPointerException();
 
-        if (array instanceof float[])
+        if (array instanceof float[]) {
             ((float[]) array)[index] = value;
+            return;
+        }
 
-        if (array instanceof double[])
+        if (array instanceof double[]) {
             ((double[]) array)[index] = value;
+            return;
+        }
 
         throw new IllegalArgumentException();
     }
@@ -369,8 +437,10 @@ public class ArrayImpl {
         if (array == null)
             throw new NullPointerException();
 
-        if (array instanceof double[])
+        if (array instanceof double[]) {
             ((double[]) array)[index] = (double) value;
+            return;
+        }
 
         throw new IllegalArgumentException();
     }

@@ -49,8 +49,8 @@ public class SecurityContextImplImpl {
             }
         }
 
-        Engine.assumeSoft(Engine.forceStringEquals(user.getUsername(), "Test user"));
-        Engine.assumeSoft(Engine.forceStringEquals(user.getPassword(), "Test password"));
+        Engine.assumeSoft(user.getUsername().equals("Test user"));
+        Engine.assumeSoft(user.getPassword().equals("Test password"));
 
         Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
         Engine.assume(authorities.size() < 5);

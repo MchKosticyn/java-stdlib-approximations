@@ -31,7 +31,7 @@ public class SecurityExpressionRootImpl {
                 String authorityString = ((GrantedAuthority)authority).getAuthority();
                 Engine.assume(authorityString != null);
 
-                if (Engine.forceStringEquals(authorityString, roleWithPrefix(prefix, neededRole)))
+                if (authorityString.equals(roleWithPrefix(prefix, neededRole)))
                     return true;
             }
         }

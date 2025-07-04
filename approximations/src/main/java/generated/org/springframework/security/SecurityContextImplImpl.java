@@ -29,8 +29,6 @@ public class SecurityContextImplImpl {
     }
 
     private static void assumeUserInvariants(UserDetails user, Class<?> userClass) {
-        Engine.assume(user != null);
-
         Field[] fields = userClass.getDeclaredFields();
         for (Field field : fields) {
             try {
@@ -74,7 +72,7 @@ public class SecurityContextImplImpl {
 
     private static Authentication getSymbolicAuthentication() {
         Class<? extends UserDetails> userClass = _getUserClass();
-        UserDetails user = Engine.makeNullableSymbolicSubtype(userClass);
+        UserDetails user = Engine.makeSymbolicSubtype(userClass);
         assumeUserInvariants(user, userClass);
         writePinnedValue(PinnedValueSource.REQUEST_USER, user);
 

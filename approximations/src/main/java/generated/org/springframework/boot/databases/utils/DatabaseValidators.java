@@ -1,7 +1,6 @@
 package generated.org.springframework.boot.databases.utils;
 
 import generated.org.springframework.boot.SpringEngine;
-import org.usvm.api.Engine;
 
 import java.lang.reflect.Array;
 import java.math.BigDecimal;

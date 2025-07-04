@@ -2,6 +2,7 @@ package generated.org.springframework.boot;
 
 import generated.org.springframework.boot.pinnedValues.PinnedValueSource;
 import generated.org.springframework.boot.pinnedValues.PinnedValueStorage;
+import generated.org.springframework.security.SecurityContextImplImpl;
 import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.Cookie;
 import org.springframework.http.HttpMethod;
@@ -19,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static generated.org.springframework.boot.SpringEngine.*;
@@ -33,6 +35,7 @@ public class SpringMvcPerformer {
 
     public static void perform(MockMvc mockMvc) {
         List<List<Object>> allPaths = _allControllerPaths();
+        boolean securityEnabled = _isSecurityEnabled();
         for (List<Object> pathData : allPaths) {
             boolean pathFound = Engine.makeSymbolicBoolean();
             if (!pathFound)
@@ -52,9 +55,10 @@ public class SpringMvcPerformer {
             try {
                 HttpMethod method = HttpMethod.valueOf(methodName);
                 MockHttpServletRequestBuilder request = request(method, path, pathArgs);
-                if (SECURITY_ENABLED) {
-                    UserDetails userDetails = _createSymbolicUser();
-                    _fillSecurityHeaders();
+                if (securityEnabled) {
+                    // Makes successful authorization
+                    UserDetails userDetails = createUser();
+                    fillSecurityHeaders();
                     request = request.with(user(userDetails));
                 }
                 MvcResult result = mockMvc.perform(request).andReturn();
@@ -65,15 +69,16 @@ public class SpringMvcPerformer {
                 _internalLog("[USVM] analysis finished with exception", path);
             } finally {
                 PinnedValueStorage.preparePinnedValues();
+                if (securityEnabled) {
+                    assumeRolesCorrectness();
+                }
                 _endAnalysis();
             }
             return;
         }
     }
 
-    private static final boolean SECURITY_ENABLED = false;
-
-    private static void _writeResponse(MockHttpServletResponse response) {
+    private static void writeResponse(MockHttpServletResponse response) {
         writePinnedValue(PinnedValueSource.RESPONSE_STATUS, response.getStatus());
         try {
             writePinnedValue(PinnedValueSource.RESPONSE_CONTENT, response.getContentAsString());
@@ -88,21 +93,29 @@ public class SpringMvcPerformer {
         }
     }
 
-    private static void _fillSecurityHeaders() {
-        writePinnedValue(PinnedValueSource.REQUEST_HEADER, "AUTHORIZATION", null);
+    private static void fillSecurityHeaders() {
+        writePinnedValue(PinnedValueSource.REQUEST_HEADER, "AUTHORIZATION", null, String.class);
     }
 
-    private static UserDetails _createSymbolicUser() {
-        String username = getPinnedValue(PinnedValueSource.REQUEST_USER_NAME, String.class);
-        String password = getPinnedValue(PinnedValueSource.REQUEST_USER_PASSWORD, String.class);
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
-        Engine.assume(username != null && !username.isEmpty());
-        Engine.assume(password != null && !password.isEmpty());
-        return new User(username, password, authorities);
+    private static void assumeRolesCorrectness() {
+        Collection<? extends GrantedAuthority> authorities = new SecurityContextImplImpl()
+                .getAuthentication()
+                .getAuthorities();
+
+        for (Object authority : authorities) {
+            Engine.assume(authority != null);
+            Engine.assume(authority instanceof GrantedAuthority);
+            Engine.assume(((GrantedAuthority)authority).getAuthority() != null);
+        }
+    }
+
+    private static UserDetails createUser() {
+        String warningText = "Should not appear in test!";
+        return new User(warningText, warningText, Collections.emptyList());
     }
 
     private static void writeResult(MvcResult result) {
-        _writeResponse(result.getResponse());
+        writeResponse(result.getResponse());
         Throwable resolvedException = result.getResolvedException();
 
         if (resolvedException != null) {

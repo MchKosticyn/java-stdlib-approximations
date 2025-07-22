@@ -26,7 +26,7 @@ public class DatabaseSupportFunctions {
 
     static Integer comparer(Integer left, Integer right) {
         Integer base = basicComparer(left, right);
-        return base == null ? left - right : base;
+        return base == null ? left.compareTo(right) : base;
     }
 
     static Integer comparer(Long left, Long right) {

@@ -36,143 +36,143 @@ public class ImmutableListWrapper<T> implements List<T>, IWrapper<T> {
 
     @Override
     public int size() {
-        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's not implemented function");
+        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's immutable");
         return 0;
     }
 
     @Override
     public boolean isEmpty() {
-        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's not implemented function");
+        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's immutable");;
         return false;
     }
 
     @Override
     public boolean contains(Object o) {
-        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's not implemented function");
+        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's immutable");;
         return false;
     }
 
     @NotNull
     @Override
     public Iterator<T> iterator() {
-        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's not implemented function");
+        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's immutable");;
         return null;
     }
 
     @NotNull
     @Override
     public Object[] toArray() {
-        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's not implemented function");
+        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's immutable");;
         return new Object[0];
     }
 
     @NotNull
     @Override
     public <T1> T1[] toArray(@NotNull T1[] a) {
-        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's not implemented function");
+        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's immutable");;
         return null;
     }
 
     @Override
     public boolean add(T t) {
-        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's not implemented function");
+        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's immutable");;
         return false;
     }
 
     @Override
     public boolean remove(Object o) {
-        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's not implemented function");
+        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's immutable");;
         return false;
     }
 
     @Override
     public boolean containsAll(@NotNull Collection<?> c) {
-        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's not implemented function");
+        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's immutable");;
         return false;
     }
 
     @Override
     public boolean addAll(@NotNull Collection<? extends T> c) {
-        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's not implemented function");
+        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's immutable");;
         return false;
     }
 
     @Override
     public boolean addAll(int index, @NotNull Collection<? extends T> c) {
-        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's not implemented function");
+        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's immutable");;
         return false;
     }
 
     @Override
     public boolean removeAll(@NotNull Collection<?> c) {
-        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's not implemented function");
+        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's immutable");;
         return false;
     }
 
     @Override
     public boolean retainAll(@NotNull Collection<?> c) {
-        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's not implemented function");
+        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's immutable");;
         return false;
     }
 
     @Override
     public void clear() {
-        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's not implemented function");
+        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's immutable");;
     }
 
     @Override
     public T get(int index) {
-        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's not implemented function");
+        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's immutable");;
         return null;
     }
 
     @Override
     public T set(int index, T element) {
-        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's not implemented function");
+        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's immutable");;
         return null;
     }
 
     @Override
     public void add(int index, T element) {
-        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's not implemented function");
+        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's immutable");;
     }
 
     @Override
     public T remove(int index) {
-        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's not implemented function");
+        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's immutable");;
         return null;
     }
 
     @Override
     public int indexOf(Object o) {
-        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's not implemented function");
+        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's immutable");;
         return 0;
     }
 
     @Override
     public int lastIndexOf(Object o) {
-        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's not implemented function");
+        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's immutable");;
         return 0;
     }
 
     @NotNull
     @Override
     public ListIterator<T> listIterator() {
-        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's not implemented function");
+        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's immutable");;
         return null;
     }
 
     @NotNull
     @Override
     public ListIterator<T> listIterator(int index) {
-        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's not implemented function");
+        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's immutable");;
         return null;
     }
 
     @NotNull
     @Override
     public List<T> subList(int fromIndex, int toIndex) {
-        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's not implemented function");
+        SpringEngine._internalLog("[DB Warning] ImmutableListWrapper's immutable");;
         return List.of();
     }
 }

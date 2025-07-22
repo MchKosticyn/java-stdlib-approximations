@@ -49,7 +49,7 @@ public class BaseTable<T> extends ABaseTable<T> {
         Engine.assume(size > 0);
         Engine.assume(size <= 10);
 
-        this.data = Engine.makeConcreteArrayWithSymbolicSize(type, size);
+        this.data = Engine.makeConcreteArray(type, size);
         Engine.assume(this.data != null);
 
         this.blankInit = null;

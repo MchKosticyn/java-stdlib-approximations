@@ -5,13 +5,13 @@ import org.usvm.api.Engine;
 
 import java.util.Iterator;
 
-public class BaseTablePureIterator<T> implements Iterator<T> {
+public class BaseTablePureSaveIterator<T> implements Iterator<T> {
 
     private final BaseTablePureSave<T> table;
     private final Iterator<T> tblIter;
     private T saved;
 
-    public BaseTablePureIterator(BaseTablePureSave<T> table) {
+    public BaseTablePureSaveIterator(BaseTablePureSave<T> table) {
         this.table = table;
         this.tblIter = table.getTable().iterator();
         this.saved = table.getSaved();

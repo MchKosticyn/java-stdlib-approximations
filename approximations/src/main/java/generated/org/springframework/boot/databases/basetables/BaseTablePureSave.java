@@ -1,6 +1,6 @@
 package generated.org.springframework.boot.databases.basetables;
 
-import generated.org.springframework.boot.databases.iterators.basetables.BaseTablePureIterator;
+import generated.org.springframework.boot.databases.iterators.basetables.BaseTablePureSaveIterator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
@@ -26,6 +26,6 @@ public class BaseTablePureSave<T> extends AChainedBaseTable<T> {
     @NotNull
     @Override
     public Iterator<T> iterator() {
-        return new BaseTablePureIterator<>(this);
+        return new BaseTablePureSaveIterator<>(this);
     }
 }

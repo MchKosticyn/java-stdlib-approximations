@@ -5,35 +5,22 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 
-public class BaseTableSave<V> extends AChainedBaseTable<V> {
+public class BaseTableSave<T> extends AChainedBaseTable<T> {
 
-    public Object[] saved;
+    private final T saved;
 
-    public BaseTableSave(ABaseTable<V> table, Object[] saved) {
+    public BaseTableSave(ABaseTable<T> table, T saved) {
         this.table = table;
         this.saved = saved;
     }
 
-    @Override
-    public int size() {
-        int count = 0;
-        Iterator<Object[]> iter = iterator();
-        while (iter.hasNext()) {
-            Object[] ignored = iter.next();
-            count++;
-        }
-        return count;
+    public T getSaved() {
+        return saved;
     }
 
     @NotNull
     @Override
-    public Iterator<Object[]> iterator() {
+    public Iterator<T> iterator() {
         return new BaseTableSaveIterator<>(this);
-    }
-
-    @Override
-    public void deleteAll() {
-        table.deleteAll();
-        this.saved = null;
     }
 }

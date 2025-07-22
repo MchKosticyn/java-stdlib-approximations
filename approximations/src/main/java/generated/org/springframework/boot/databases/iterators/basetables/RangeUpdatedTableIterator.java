@@ -2,98 +2,36 @@ package generated.org.springframework.boot.databases.iterators.basetables;
 
 import generated.org.springframework.boot.databases.basetables.RangeUpdatedTable;
 import org.usvm.api.Engine;
-import org.usvm.api.SymbolicMap;
 
 import java.util.Iterator;
+import java.util.function.Function;
 
-public class RangeUpdatedTableIterator<V> implements Iterator<Object[]> {
+public class RangeUpdatedTableIterator<T> implements Iterator<T> {
 
-    RangeUpdatedTable<V> table;
-    public Iterator<Object[]> tableIter;
+    private final Iterator<T> tblIter;
+    private final Function<T, Boolean> predicate;
+    private final Function<T, T> update;
 
-    int currSavedIx;
-    public SymbolicMap<V, Object[]> savedRowsCopy;
-    public SymbolicMap<V, Boolean> savedRowsStatusCopy;
-    public SymbolicMap<Integer, V> saveOrderCopy;
-
-    public Object[] curr;
-    public boolean isEnded;
-
-    public RangeUpdatedTableIterator(RangeUpdatedTable<V> table) {
-        this.table = table;
-        this.tableIter = table.iterator();
-
-        this.currSavedIx = 0;
-        this.savedRowsCopy = Engine.makeSymbolicMap();
-        savedRowsCopy.merge(table.savedRows);
-        this.savedRowsStatusCopy = Engine.makeSymbolicMap();
-        savedRowsStatusCopy.merge(table.savedRowsStatus);
-        this.saveOrderCopy = Engine.makeSymbolicMap();
-        saveOrderCopy.merge(table.saveOrder);
-
-        this.curr = null;
-        this.isEnded = false;
-    }
-
-    public int nextSavedIx() {
-        return currSavedIx++;
-    }
-
-    public boolean hasNextSaved() {
-        return currSavedIx <= table.currSaveIx;
+    public RangeUpdatedTableIterator(RangeUpdatedTable<T> table) {
+        this.tblIter = table.getTable().iterator();
+        this.predicate = table.getPredicate();
+        this.update = table.getUpdate();
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public boolean hasNext() {
-
-        if (isEnded) return false;
-        if (curr != null) return true;
-
-        if (tableIter != null) {
-            if (tableIter.hasNext()) {
-                Object[] next = tableIter.next();
-                curr = table.predicate.apply(next) ? table.update.apply(next) : next;
-
-                V id = (V) curr[table.idColumnIx()];
-                if (savedRowsCopy.containsKey(id)) {
-
-                    if (savedRowsStatusCopy.get(id)) {
-                        savedRowsStatusCopy.set(id, false);
-                    } else {
-                        curr = null;
-                        return hasNext();
-                    }
-                }
-
-                return true;
-            }
-
-            tableIter = null;
-        }
-
-        if (hasNextSaved()) {
-            V id = saveOrderCopy.get(nextSavedIx());
-
-            if (!savedRowsStatusCopy.get(id)) {
-                curr = null;
-                return hasNext();
-            }
-
-            return true;
-
-        }
-
-        isEnded = true;
-        return false;
+        return tblIter.hasNext();
     }
 
     @Override
-    public Object[] next() {
+    public T next() {
         Engine.assume(hasNext());
 
-        Object[] tmp = curr;
-        curr = null;
-        return tmp;
+        T t = tblIter.next();
+        if (predicate.apply(t)) {
+            return update.apply(t);
+        }
+
+        return t;
     }
 }

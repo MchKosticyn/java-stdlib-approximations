@@ -7,27 +7,25 @@ import java.util.Iterator;
 
 public class NoIdTableDeleteIterator implements Iterator<Object[]> {
 
-    public NoIdTableDelete table;
-    public Iterator<Object[]> tblIter;
-    public Object[] deleted;
+    private final NoIdTableDelete table;
+    private final Iterator<Object[]> tblIter;
+    private Object[] deleted;
 
-    public Object[] curr;
+    private Object[] curr;
 
     public NoIdTableDeleteIterator(NoIdTableDelete table) {
         this.table = table;
-        this.tblIter = table.table.iterator();
-        this.deleted = table.deleted;
+        this.tblIter = table.getTable().iterator();
+        this.deleted = table.getDeleted();
         this.curr = null;
     }
 
     @Override
     public boolean hasNext() {
-
         if (curr != null) return true;
 
         if (tblIter.hasNext()) {
             curr = tblIter.next();
-
             if (deleted != null && table.rowEquals(curr, deleted)) {
                 deleted = null;
                 curr = null;

@@ -1,24 +1,25 @@
 package generated.org.springframework.boot.databases.iterators;
 
 import generated.org.springframework.boot.databases.JoinedTable;
+import generated.org.springframework.boot.databases.utils.DataRow;
 import org.usvm.api.Engine;
 
 import java.util.Iterator;
 
-public class JoinedIterator<L, R> implements Iterator<Object[]> {
+public class JoinedIterator implements Iterator<DataRow> {
 
-    JoinedTable<L, R> joinedTable;
+    private final JoinedTable joinedTable;
 
-    Iterator<L> leftIter;
-    Iterator<R> rightIter;
+    private Iterator<DataRow> leftIter;
+    private Iterator<DataRow> rightIter;
 
-    L currLeft;
-    Object[] currComposited;
+    private DataRow currLeft;
+    private DataRow currComposited;
 
-    boolean isEmpty;
-    boolean findedRight;
+    private final boolean isEmpty;
+    private boolean findedRight;
 
-    public JoinedIterator(JoinedTable<L, R> joinedTable) {
+    public JoinedIterator(JoinedTable joinedTable) {
         this.joinedTable = joinedTable;
 
         this.findedRight = false;
@@ -33,11 +34,11 @@ public class JoinedIterator<L, R> implements Iterator<Object[]> {
     }
 
     private void resetLeftIter() {
-        leftIter = joinedTable.leftTable.iterator();
+        leftIter = joinedTable.getLeftTable().iterator();
     }
 
     private void resetRightIter() {
-        rightIter = joinedTable.rightTable.iterator();
+        rightIter = joinedTable.getRightTable().iterator();
     }
 
     @Override
@@ -50,8 +51,8 @@ public class JoinedIterator<L, R> implements Iterator<Object[]> {
 
     private boolean notEmptyHasNext() {
         while (rightIter.hasNext()) {
-            R right = rightIter.next();
-            Object[] candidate = joinedTable.composite(currLeft, right);
+            DataRow right = rightIter.next();
+            DataRow candidate = joinedTable.composite(currLeft, right);
             if (joinedTable.applyPredicate(candidate)) {
                 findedRight = true;
                 currComposited = candidate;
@@ -59,7 +60,7 @@ public class JoinedIterator<L, R> implements Iterator<Object[]> {
             }
         }
 
-        if (joinedTable.isLeft && !findedRight) {
+        if (joinedTable.isLeft() && !findedRight) {
             findedRight = true;
             currComposited = joinedTable.composite(currLeft, null);
             return true;
@@ -77,10 +78,10 @@ public class JoinedIterator<L, R> implements Iterator<Object[]> {
     }
 
     @Override
-    public Object[] next() {
+    public DataRow next() {
         Engine.assume(hasNext());
 
-        Object[] tmp = currComposited;
+        DataRow tmp = currComposited;
         currComposited = null;
         return tmp;
     }

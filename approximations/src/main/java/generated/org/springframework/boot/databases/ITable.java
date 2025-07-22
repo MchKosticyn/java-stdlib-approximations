@@ -1,10 +1,18 @@
 package generated.org.springframework.boot.databases;
 
+import java.util.Iterator;
+
 public interface ITable<T> extends Iterable<T> {
 
-    int size();
-
-    Class<T> type();
+    default int size() {
+        Iterator<T> iter = iterator();
+        int count = 0;
+        while (iter.hasNext()) {
+            T ignored = iter.next();
+            count++;
+        }
+        return count;
+    }
 
     T first();
 

@@ -10,13 +10,11 @@ import java.util.Iterator;
 
 public class GroupByTableIterator<T> implements Iterator<ITable<T>> {
 
-    public GroupByTable<T> table;
-    public Iterator<ArrayList<T>> groupsIter;
+    private final Iterator<ArrayList<T>> groupsIter;
 
 
     public GroupByTableIterator(GroupByTable<T> table) {
-        this.table = table;
-        this.groupsIter = table.groups.iterator();
+        this.groupsIter = table.getGroups().iterator();
     }
 
     @Override

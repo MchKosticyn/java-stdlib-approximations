@@ -1,16 +1,33 @@
 package generated.org.springframework.boot.databases.basetables;
 
+import generated.org.springframework.boot.SpringEngine;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.function.Function;
 
-public class NoIdTableManager extends ANoIdTable implements ITableManager {
+public class NoIdTableManager extends ANoIdTable implements ITableManager<Object[]> {
 
-    public ANoIdTable tablesChain;
+    private ANoIdTable tablesChain;
 
-    public NoIdTableManager(Class<?>... columnTypes) {
+    private final String tableName;
+
+    public NoIdTableManager(String tableName) {
+        this.tableName = tableName;
+    }
+
+    private boolean initialized = false;
+
+    public void initialize(Class<?>... columnTypes) {
+        if (initialized) return;
+
         this.tablesChain = new NoIdTable(columnTypes);
+
+        initialized = true;
+    }
+
+    private void checkInitialized() {
+        if (!initialized) SpringEngine._internalLog("[DB Warning] BaseTableManager is not initialized");
     }
 
     @Override
@@ -35,18 +52,8 @@ public class NoIdTableManager extends ANoIdTable implements ITableManager {
     }
 
     @Override
-    public Class<Object[]> type() {
-        return tablesChain.type();
-    }
-
-    @Override
     public int columnCount() {
         return tablesChain.columnCount();
-    }
-
-    @Override
-    public Class<?>[] columnTypes() {
-        return tablesChain.columnTypes();
     }
 
     @Override

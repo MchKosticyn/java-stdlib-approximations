@@ -5,26 +5,29 @@ import generated.org.springframework.boot.databases.wrappers.SetWrapper;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 public class SetWrapperIterator<T> implements Iterator<T> {
 
-    SetWrapper<T> set;
-    Iterator<T> tblIter;
-    Iterator<T> cacheIter;
-    T curr;
+    private final SetWrapper<T> set;
+    private final Set<T> cache;
+    private final Iterator<T> tblIter;
+    private final Iterator<T> cacheIter;
+    private T curr;
 
-    int expectedModCount;
+    private final int expectedModCount;
 
     public SetWrapperIterator(SetWrapper<T> set) {
         this.set = set;
-        this.tblIter = set.table.iterator();
-        for (int i = 0; i < set.ptr; i++) {
+        this.cache = set.getCache();
+        this.tblIter = set.getTable().iterator();
+        for (int i = 0; i < set.getPtr(); i++) {
             tblIter.next();
         }
 
-        this.cacheIter = set.cache.iterator();
+        this.cacheIter = cache.iterator();
         this.curr = null;
-        this.expectedModCount = set.modCount;
+        this.expectedModCount = set.getModCount();
     }
 
     @Override
@@ -34,7 +37,7 @@ public class SetWrapperIterator<T> implements Iterator<T> {
 
         if (cacheIter.hasNext()) {
             T candidate = cacheIter.next();
-            if (set.removedCache.contains(candidate)) {
+            if (set.getRemovedCache().contains(candidate)) {
                 return hasNext();
             }
 
@@ -44,7 +47,7 @@ public class SetWrapperIterator<T> implements Iterator<T> {
 
         if (tblIter.hasNext()) {
             T candidate = tblIter.next();
-            if (set.removedCache.contains(candidate) || set.cache.contains(candidate)) {
+            if (set.getRemovedCache().contains(candidate) || cache.contains(candidate)) {
                 return hasNext();
             }
 
@@ -58,7 +61,7 @@ public class SetWrapperIterator<T> implements Iterator<T> {
     @Override
     public T next() {
         if (!hasNext()) throw new NoSuchElementException();
-        if (expectedModCount != set.modCount) throw new ConcurrentModificationException();
+        if (expectedModCount != set.getModCount()) throw new ConcurrentModificationException();
 
         T tmp = curr;
         curr = null;

@@ -2,6 +2,7 @@ package generated.org.springframework.boot.databases.iterators.wrappers;
 
 
 import generated.org.springframework.boot.databases.wrappers.ListWrapper;
+import org.usvm.api.SymbolicList;
 
 import java.util.ConcurrentModificationException;
 import java.util.ListIterator;
@@ -9,27 +10,29 @@ import java.util.NoSuchElementException;
 
 public class ListWrapperListIterator<T> implements ListIterator<T> {
 
-    ListWrapper<T> list;
+    private final ListWrapper<T> list;
+    private final SymbolicList<T> cache;
 
-    public int ix;
-    public int lastReturnedIx;
+    private int ix;
+    private int lastReturnedIx;
 
-    public int expectedModCount;
+    private int expectedModCount;
 
     public ListWrapperListIterator(ListWrapper<T> list, int ix) {
         this.list = list;
+        this.cache = list.getCache();
         this.ix = ix;
         this.lastReturnedIx = -1;
-        this.expectedModCount = list.modCount;
+        this.expectedModCount = list.getModCount();
     }
 
     public void concModificationCheck() {
-        if (expectedModCount != list.modCount) throw new ConcurrentModificationException();
+        if (expectedModCount != list.getModCount()) throw new ConcurrentModificationException();
     }
 
     @Override
     public boolean hasNext() {
-        return ix < list.sizeOfCache;
+        return ix < list.getSizeOfCache();
     }
 
     @Override
@@ -40,11 +43,11 @@ public class ListWrapperListIterator<T> implements ListIterator<T> {
 
         lastReturnedIx = ix;
 
-        if (ix <= list.wrpStartIx || list.wrpEndIx <= ix) return list.cache.get(ix++);
+        if (ix <= list.getWrpStartIx() || list.getWrpEndIx() <= ix) return list.get(ix++);
 
         list.cacheNext();
 
-        return list.cache.get(ix++);
+        return list.get(ix++);
     }
 
     @Override
@@ -60,11 +63,11 @@ public class ListWrapperListIterator<T> implements ListIterator<T> {
 
         lastReturnedIx = ix - 1;
 
-        if (ix <= list.wrpStartIx || list.wrpEndIx < ix) return list.cache.get(--ix);
+        if (ix <= list.getWrpStartIx() || list.getWrpEndIx() < ix) return cache.get(--ix);
 
         list.cacheUntilIx(--ix);
 
-        return list.cache.get(ix);
+        return cache.get(ix);
     }
 
     @Override

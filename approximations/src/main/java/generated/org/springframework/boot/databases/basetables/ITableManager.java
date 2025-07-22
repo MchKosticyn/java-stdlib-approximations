@@ -2,12 +2,12 @@ package generated.org.springframework.boot.databases.basetables;
 
 import java.util.function.Function;
 
-public interface ITableManager {
-    void applyRangeUpdate(Function<Object[], Boolean> predicate, Function<Object[], Object[]> update);
+public interface ITableManager<T> {
+    void applyRangeUpdate(Function<T, Boolean> predicate, Function<T, T> update);
 
-    void applyRangeDelete(Function<Object[], Boolean> predicate);
+    void applyRangeDelete(Function<T, Boolean> predicate);
 
-    void save(Object[] row);
+    void save(T row);
 
-    void delete(Object[] row);
+    void delete(T row);
 }

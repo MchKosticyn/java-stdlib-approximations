@@ -1,80 +1,69 @@
 package generated.org.springframework.boot.databases.saveupddel;
 
-import generated.org.springframework.boot.databases.MappedTable;
 import generated.org.springframework.boot.databases.basetables.BaseTableManager;
-import generated.org.springframework.boot.databases.iterators.utils.IteratorWithMap;
-import generated.org.springframework.boot.databases.utils.DatabaseValidators;
 import generated.org.springframework.boot.databases.wrappers.ListWrapper;
 import generated.org.springframework.boot.databases.wrappers.SetWrapper;
 import org.hibernate.type.descriptor.java.JavaType;
 import org.hibernate.type.descriptor.java.spi.JavaTypeRegistry;
 import org.hibernate.type.spi.TypeConfiguration;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.usvm.api.Engine;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
-// T - type of dataclass, V - type of id field, X - type of id from repository
+// T - type of dataclass, V -type of id from DTO, X - type of id from repository
 public class CrudManager<T, V, X> {
 
-    public BaseTableManager<T, V> table;
-    public Function<T, Object[]> serializer; // nullable
-    public Function<Object[], T> deserializer; // nullable
+    private final BaseTableManager<T, V> table;
+    private final Function<X, Object[]> complexIdFieldTranslator; // nullable
 
-    public boolean isAutoGenerateId;
-
-    public Class<V> idType;
-    public Class<T> genericType;
-
-    public JavaType<V> idHibernateType;
+    private final JavaType<?> idHibernateType;
 
     public CrudManager(
             BaseTableManager<T, V> table,
-            Function<T, Object[]> serializer,
-            Function<Object[], T> deserializer,
-            Class<T> genericType
+            Function<X, Object[]> complexIdFieldTranslator
     ) {
         this.table = table;
-        this.isAutoGenerateId = table.isAutoGenerateId;
-        this.serializer = serializer;
-        this.deserializer = deserializer;
-        this.idType = table.idColType;
-        this.genericType = genericType;
+        this.complexIdFieldTranslator = complexIdFieldTranslator;
 
-        this.idHibernateType = new TypeConfiguration().getJavaTypeRegistry().getDescriptor(idType);
+        Class<V> idType = table.getIdType();
+        if (idType != null) {
+            JavaTypeRegistry register = new TypeConfiguration().getJavaTypeRegistry();
+            this.idHibernateType = register.getDescriptor(idType);
+        } else {
+            this.idHibernateType = null;
+        }
     }
 
-    public V parseIdField(X value) {
-        return idHibernateType.coerce(value, null);
+    public Object[] parseIdField(X value) {
+        if (complexIdFieldTranslator != null) {
+            return complexIdFieldTranslator.apply(value);
+        } else {
+            Object id = idHibernateType.coerce(value, null);
+            return new Object[]{id};
+        }
     }
 
-    @SuppressWarnings("unchecked")
     // allowUpdate - may or not update given entity in database
     public void save(T t, boolean allowUpdate) {
-        Object[] row = serializer.apply(t);
-        if (!allowUpdate) table.pureSave(row);
-        else table.save(row);
+        if (!allowUpdate) table.pureSave(t);
+        else table.save(t);
     }
 
     public Iterable<? extends T> saveAll(Iterable<? extends T> ts) {
         for (T t : ts) {
-            Object[] row = serializer.apply(t);
-            table.save(row);
+            table.save(t);
         }
         return ts;
     }
 
     public void delete(T t) {
-        Object[] row = serializer.apply(t);
-        table.delete(row);
+        table.delete(t);
     }
 
     public void deleteAll() {
@@ -83,63 +72,40 @@ public class CrudManager<T, V, X> {
 
     public void deleteAll(Iterable<? extends T> ts) {
         for (T t : ts) {
-            Object[] row = serializer.apply(t);
-            table.delete(row);
+            table.delete(t);
         }
     }
 
     // It is important that names of following template
     // [name of repository method]_[return type where "." replaced with "_"]
     public Iterable<T> findAll_java_lang_Iterable() {
-        return new IterableWithMap<>(table.findAll(), deserializer);
+        return table.getCopiedTable();
     }
 
     public List<T> findAll_java_util_List() {
-        MappedTable<Object[], T> mapped = new MappedTable<>(table, deserializer, genericType);
-        return new ListWrapper<>(mapped);
+        return new ListWrapper<>(table.getCopiedTable());
     }
 
     public Collection<T> findAll_java_util_Collection() {
-        MappedTable<Object[], T> mapped = new MappedTable<>(table, deserializer, genericType);
-        return new ListWrapper<>(mapped);
+        return new ListWrapper<>(table.getCopiedTable());
     }
 
     public Page<T> findAll_org_springframework_data_domain_Page(Pageable pageable) {
-        MappedTable<Object[], T> mapped = new MappedTable<>(table, deserializer, genericType);
-        List<T> list = new ListWrapper<>(mapped);
-        return new PageImpl<T>(list, pageable, list.size());
+        List<T> list = new ListWrapper<>(table.getCopiedTable());
+        return new PageImpl<>(list, pageable, list.size());
     }
 
     public Set<T> findAll_java_util_Set() {
-        MappedTable<Object[], T> mapped = new MappedTable<>(table, deserializer, genericType);
-        return new SetWrapper<>(mapped);
+        return new SetWrapper<>(table.getCopiedTable());
     }
 
     public T findById_T(X repoKey) {
-        V key = parseIdField(repoKey);
-        Optional<Object[]> row = table.findById(key);
-        return row.map(deserializer).orElse(null);
+        Object[] key = parseIdField(repoKey);
+        return table.findById(key).orElse(null);
     }
 
     public Optional<T> findById_java_util_Optional(X repoKey) {
-        V key = parseIdField(repoKey);
-        return table.findById(key).map(deserializer);
-    }
-
-    class IterableWithMap<I, R> implements Iterable<R> {
-
-        Iterable<I> iterable;
-        Function<I, R> mapper;
-
-        public IterableWithMap(Iterable<I> iterable, Function<I, R> mapper) {
-            this.iterable = iterable;
-            this.mapper = mapper;
-        }
-
-        @NotNull
-        @Override
-        public Iterator<R> iterator() {
-            return new IteratorWithMap<>(iterable.iterator(), mapper);
-        }
+        Object[] key = parseIdField(repoKey);
+        return table.findById(key);
     }
 }

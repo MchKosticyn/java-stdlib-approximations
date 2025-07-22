@@ -5,16 +5,16 @@ import org.usvm.api.Engine;
 
 import java.util.Iterator;
 
-public class BaseTableSaveIterator<V> implements Iterator<Object[]> {
+public class BaseTableSaveIterator<T> implements Iterator<T> {
 
-    public BaseTableSave<V> table;
-    public Iterator<Object[]> tblIter;
-    public Object[] saved;
+    private final BaseTableSave<T> table;
+    private final Iterator<T> tblIter;
+    private T saved;
 
-    public BaseTableSaveIterator(BaseTableSave<V> table) {
+    public BaseTableSaveIterator(BaseTableSave<T> table) {
         this.table = table;
-        this.tblIter = table.table.iterator();
-        this.saved = table.saved;
+        this.tblIter = table.getTable().iterator();
+        this.saved = table.getSaved();
     }
 
     @Override
@@ -24,22 +24,22 @@ public class BaseTableSaveIterator<V> implements Iterator<Object[]> {
     }
 
     @Override
-    public Object[] next() {
+    public T next() {
         Engine.assume(hasNext());
 
-        Object[] row;
+        T t;
         if (!tblIter.hasNext()) {
             Engine.assume(saved != null);
-            row = saved;
+            t = saved;
             saved = null;
         } else {
-            row = tblIter.next();
-            if (saved != null && row[table.idColumnIx()].equals(saved[table.idColumnIx()])) {
-                row = saved;
+            t = tblIter.next();
+            if (saved != null && table.isSameId(saved, t)) {
+                t = saved;
                 saved = null;
             }
         }
 
-        return row;
+        return t;
     }
 }

@@ -7,21 +7,19 @@ import java.util.Iterator;
 
 public class NoIdTableSaveIterator implements Iterator<Object[]> {
 
-    public NoIdTableSave table;
-    public Iterator<Object[]> tblIter;
-    public Object[] saved;
+    private final NoIdTableSave table;
+    private final Iterator<Object[]> tblIter;
+    private Object[] saved;
 
     public NoIdTableSaveIterator(NoIdTableSave table) {
         this.table = table;
-        this.tblIter = table.table.iterator();
-        this.saved = table.saved;
+        this.tblIter = table.getTable().iterator();
+        this.saved = table.getSaved();
     }
-
 
     @Override
     public boolean hasNext() {
         if (tblIter.hasNext()) return true;
-
         return saved != null;
     }
 

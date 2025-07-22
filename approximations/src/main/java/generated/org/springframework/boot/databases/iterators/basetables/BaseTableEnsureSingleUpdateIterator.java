@@ -4,34 +4,29 @@ import generated.org.springframework.boot.databases.basetables.BaseTableEnsureSi
 import org.usvm.api.Engine;
 
 import java.util.Iterator;
+import java.util.function.Consumer;
 
-public class BaseTableEnsureSingleUpdateIterator<V> implements Iterator<Object[]> {
+public class BaseTableEnsureSingleUpdateIterator<T> implements Iterator<T> {
 
-    public BaseTableEnsureSingleUpdate<V> table;
-    public Iterator<Object[]> tblIter;
+    private final BaseTableEnsureSingleUpdate<T> table;
+    private final Iterator<T> tblIter;
 
-    public V id;
-    public int pos;
-    public Object value;
+    private final Object[] id;
+    private Consumer<T> update;
 
-    public boolean updated;
-
-    public BaseTableEnsureSingleUpdateIterator(BaseTableEnsureSingleUpdate<V> table) {
+    public BaseTableEnsureSingleUpdateIterator(BaseTableEnsureSingleUpdate<T> table) {
         this.table = table;
-        this.tblIter = table.table.iterator();
+        this.tblIter = table.getTable().iterator();
 
-        this.id = table.id;
-        this.pos = table.pos;
-        this.value = table.value;
-
-        this.updated = false;
+        this.id = table.getId();
+        this.update = table.getUpdate();
     }
 
 
     @Override
     public boolean hasNext() {
         if (!tblIter.hasNext()) {
-            Engine.assume(value == null);
+            Engine.assume(update == null);
             return false;
         }
 
@@ -39,17 +34,17 @@ public class BaseTableEnsureSingleUpdateIterator<V> implements Iterator<Object[]
     }
 
     @Override
-    public Object[] next() {
+    public T next() {
         Engine.assume(hasNext());
 
-        Object[] row = tblIter.next();
+        T next = tblIter.next();
 
-        if (value != null && row[table.idColumnIx()].equals(id)) {
-            row[pos] = value;
-            value = null;
-            return row;
+        if (update != null && table.hasId(id, next)) {
+            update.accept(next);
+            update = null;
+            return next;
         }
 
-        return row;
+        return next;
     }
 }

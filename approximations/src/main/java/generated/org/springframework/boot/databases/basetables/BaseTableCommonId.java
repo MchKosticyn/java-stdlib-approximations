@@ -5,31 +5,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 
-public class BaseTableCommonId<V> extends AChainedBaseTable<V> {
+public class BaseTableCommonId<T> extends AChainedBaseTable<T> {
 
-    public BaseTableCommonId(ABaseTable<V> table) {
+    public BaseTableCommonId(ABaseTable<T> table) {
         this.table = table;
-    }
-
-    @Override
-    public void deleteAll() {
-        table.deleteAll();
-    }
-
-    @Override
-    public int size() {
-        Iterator<Object[]> iter = iterator();
-        int count = 0;
-        while (iter.hasNext()) {
-            Object[] ignored = iter.next();
-            count++;
-        }
-        return count;
     }
 
     @NotNull
     @Override
-    public Iterator<Object[]> iterator() {
+    public Iterator<T> iterator() {
         return new BaseTableCommonIdIterator<>(this);
     }
 }

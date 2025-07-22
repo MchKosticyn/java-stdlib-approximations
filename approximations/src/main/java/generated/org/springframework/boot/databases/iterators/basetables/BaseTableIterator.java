@@ -3,41 +3,30 @@ package generated.org.springframework.boot.databases.iterators.basetables;
 import generated.org.springframework.boot.databases.basetables.BaseTable;
 import org.usvm.api.Engine;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 
-public class BaseTableIterator<T, V> implements Iterator<Object[]> {
+public class BaseTableIterator<T> implements Iterator<T> {
 
-    BaseTable<T, V> table;
+    private final BaseTable<T> table;
 
-    int ix;
-    int endIx;
+    private int ix;
+    private final int endIx;
 
-    @SuppressWarnings("unchecked")
-    public BaseTableIterator(BaseTable<T, V> table) {
+    public BaseTableIterator(BaseTable<T> table) {
         this.table = table;
 
         this.ix = 0;
         this.endIx = table.size();
     }
 
-    private int nextIndex() {
-        return ix++;
-    }
-
-    private boolean condition() {
+    @Override
+    public boolean hasNext() {
         return ix < endIx;
     }
 
     @Override
-    public boolean hasNext() {
-        return condition();
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public Object[] next() {
+    public T next() {
         Engine.assume(hasNext());
-        return table.getRowEnsure(nextIndex());
+        return table.getRowEnsure(ix++);
     }
 }

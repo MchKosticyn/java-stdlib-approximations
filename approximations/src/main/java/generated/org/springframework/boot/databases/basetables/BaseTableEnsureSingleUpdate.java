@@ -4,34 +4,30 @@ import generated.org.springframework.boot.databases.iterators.basetables.BaseTab
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
+import java.util.function.Consumer;
 
-public class BaseTableEnsureSingleUpdate<V> extends AChainedBaseTable<V> {
+public class BaseTableEnsureSingleUpdate<T> extends AChainedBaseTable<T> {
 
-    public V id;
-    public int pos;
-    public Object value;
+    private final Object[] id;
+    private final Consumer<T> update;
 
-    public BaseTableEnsureSingleUpdate(ABaseTable<V> table, V id, int pos, Object value) {
+    public BaseTableEnsureSingleUpdate(ABaseTable<T> table, Object[] id, Consumer<T> update) {
         this.table = table;
         this.id = id;
-        this.pos = pos;
-        this.value = value;
+        this.update = update;
     }
 
-    @Override
-    public void deleteAll() {
-        table.deleteAll();
-        value = null;
+    public Object[] getId() {
+        return id;
     }
 
-    @Override
-    public int size() {
-        return table.size();
+    public Consumer<T> getUpdate() {
+        return update;
     }
 
     @NotNull
     @Override
-    public Iterator<Object[]> iterator() {
+    public Iterator<T> iterator() {
         return new BaseTableEnsureSingleUpdateIterator<>(this);
     }
 }

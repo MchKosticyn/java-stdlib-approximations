@@ -5,41 +5,22 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 
-public class BaseTableDelete<V> extends AChainedBaseTable<V> {
+public class BaseTableDelete<T> extends AChainedBaseTable<T> {
 
-    public Object[] removed;
+    private final T removed;
 
-    public int cachedSize;
-
-    public BaseTableDelete(ABaseTable<V> table, Object[] removed) {
+    public BaseTableDelete(ABaseTable<T> table, T removed) {
         this.table = table;
         this.removed = removed;
-        this.cachedSize = -1;
     }
 
-    @Override
-    public int size() {
-        if (cachedSize != -1) return cachedSize;
-
-        int count = 0;
-        Iterator<Object[]> iter = iterator();
-        while (iter.hasNext()) {
-            Object[] ignored = iter.next();
-            count++;
-        }
-        cachedSize = count;
-        return count;
+    public T getRemoved() {
+        return removed;
     }
 
     @NotNull
     @Override
-    public Iterator<Object[]> iterator() {
+    public Iterator<T> iterator() {
         return new BaseTableDeleteIterator<>(this);
-    }
-
-    @Override
-    public void deleteAll() {
-        table.deleteAll();
-        removed = null;
     }
 }

@@ -9,10 +9,10 @@ import java.util.Set;
 
 public class DistinctIterator<T> implements Iterator<T> {
 
-    Iterator<T> tblIter;
-    T curr;
+    private final Iterator<T> tblIter;
+    private T curr;
 
-    Set<T> cache;
+    private final Set<T> cache;
 
     public DistinctIterator(ITable<T> table) {
         this.tblIter = table.iterator();
@@ -22,7 +22,6 @@ public class DistinctIterator<T> implements Iterator<T> {
 
     @Override
     public boolean hasNext() {
-
         if (curr != null) return true;
 
         while (tblIter.hasNext()) {

@@ -15,7 +15,7 @@ public class HavingTableIterator<T> implements Iterator<ITable<T>> {
 
     public HavingTableIterator(HavingTable<T> table) {
         this.table = table;
-        this.iter = table.table.iterator();
+        this.iter = table.getTable().iterator();
         this.curr = null;
     }
 
@@ -23,8 +23,7 @@ public class HavingTableIterator<T> implements Iterator<ITable<T>> {
     public boolean hasNext() {
         if (curr != null) return true;
 
-        if (iter.hasNext())
-        {
+        if (iter.hasNext()) {
             curr = iter.next();
             if (table.callPredicate(curr)) return true;
 

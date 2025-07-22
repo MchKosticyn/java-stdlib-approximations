@@ -7,34 +7,21 @@ import java.util.Iterator;
 
 public class NoIdTableDelete extends AChainedNoIdTable {
 
-    public Object[] deleted;
-    public int cachedSize;
+    private Object[] deleted;
 
     public NoIdTableDelete(ANoIdTable table, Object[] deleted) {
         this.table = table;
         this.deleted = deleted;
-        cachedSize = -1;
+    }
+
+    public Object[] getDeleted() {
+        return deleted;
     }
 
     @Override
     public void deleteAll() {
         table.deleteAll();
         deleted = null;
-        cachedSize = 0;
-    }
-
-    @Override
-    public int size() {
-        if (cachedSize != -1) return cachedSize;
-
-        int count = 0;
-        Iterator<Object[]> iter = iterator();
-        while (iter.hasNext()) {
-            Object[] ignored = iter.next();
-            count++;
-        }
-        cachedSize = count;
-        return count;
     }
 
     @NotNull

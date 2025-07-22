@@ -8,11 +8,11 @@ import java.util.Iterator;
 
 public class FlatIterator<T> implements Iterator<T> {
 
-    Iterator<ITable<T>> iters;
-    Iterator<T> currIter;
+    private final Iterator<ITable<T>> iters;
+    private Iterator<T> currIter;
 
     public FlatIterator(FlatTable<T> flat) {
-        this.iters = flat.tables.iterator();
+        this.iters = flat.getTables().iterator();
         this.currIter = null;
     }
 

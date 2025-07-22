@@ -3,6 +3,7 @@ package generated.org.springframework.boot.testClasses;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Validator;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,9 @@ public class SpringBootJpaTestClass implements BaseTestClass {
     @Autowired
     public SessionFactory sessionFactory;
 
+    @Autowired
+    Validator validator;
+
     @PersistenceContext
     public EntityManager entityManager;
 
@@ -50,6 +54,7 @@ public class SpringBootJpaTestClass implements BaseTestClass {
     @Override
     public void configure() {
         SpringDatabases.sessionFactory = sessionFactory;
+        SpringDatabases.validator = validator;
     }
 
     public static void ignoreResult(Object result) {

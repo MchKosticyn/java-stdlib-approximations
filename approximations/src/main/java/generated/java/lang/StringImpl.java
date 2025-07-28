@@ -16,7 +16,7 @@ public class StringImpl implements Serializable {
     @java.io.Serial
     private static final long serialVersionUID = -6849794470754667710L;
 
-    private static final int STRING_LENGTH_MAX = 256;
+    private static final int STRING_LENGTH_MAX = 50;
 
     static final byte UTF16 = 1;
 
@@ -219,8 +219,7 @@ public class StringImpl implements Serializable {
         Engine.assume(obj.value != null);
         int len = obj.value.length >> obj.coder;
         Engine.assume(len >= 0);
-        // TODO: add Engine.assumeSymbolic(instance, bool) #ASAP
-        Engine.assume(len <= STRING_LENGTH_MAX);
+        Engine.assumeSymbolic(obj, len <= STRING_LENGTH_MAX);
     }
 
     private void _assumeInvariants() {
@@ -293,6 +292,10 @@ public class StringImpl implements Serializable {
     }
 
     public static boolean latin1Equals(byte[] value, byte[] other) {
+        Boolean arrayEquals = Engine.arrayEquals(value, other);
+        if (arrayEquals != null)
+            return arrayEquals;
+
         if (value.length == other.length) {
             for(int i = 0; i < value.length; ++i) {
                 if (value[i] != other[i]) {
@@ -313,11 +316,17 @@ public class StringImpl implements Serializable {
         } else {
             if (anObject instanceof StringImpl) {
                 StringImpl aString = (StringImpl)anObject;
+                Engine.assume(aString.value != value);
                 _assumeInvariants(aString);
                 return (!COMPACT_STRINGS || this.coder == aString.coder) && latin1Equals(this.value, aString.value);
             }
 
             return false;
         }
+    }
+
+    public boolean isEmpty() {
+        _assumeInvariants();
+        return value.length == 0;
     }
 }

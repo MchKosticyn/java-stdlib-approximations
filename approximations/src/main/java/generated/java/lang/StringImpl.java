@@ -292,6 +292,11 @@ public class StringImpl implements Serializable {
     }
 
     public static boolean latin1Equals(byte[] value, byte[] other) {
+        /*
+            `Engine.arrayEquals` checks arrays lengths:
+                - if they are equal, but symbolic, returns null
+                - Otherwise checks equality of each element and returns non-null value
+         */
         Boolean arrayEquals = Engine.arrayEquals(value, other);
         if (arrayEquals != null)
             return arrayEquals;
